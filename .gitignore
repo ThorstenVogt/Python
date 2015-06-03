@@ -6,6 +6,10 @@
 *.twbx
 *.tde
 
+# Data/log files
+*.log
+*.csv
+*.dat
 
 # =========================
 # Operating System Files
