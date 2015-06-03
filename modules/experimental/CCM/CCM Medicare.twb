@@ -1,0 +1,1028 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<workbook source-platform='win' version='8.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <!-- build 8200.14.0819.2015                                -->
+  <preferences>
+  </preferences>
+  <datasources>
+    <datasource caption='CCM Mockup Data Source' inline='true' name='sqlserver.42082.488967766207' version='8.3'>
+      <connection authentication='sqlserver' class='sqlserver' dbname='gGastro' odbc-native-protocol='yes' server='130.211.152.190' username='Mimir'>
+        <relation join='inner' type='join'>
+          <clause type='join'>
+            <expression op='='>
+              <expression op='[Patient].[Id]'>
+              </expression>
+              <expression op='[Insurance Status SQL].[PatientId]'>
+              </expression>
+            </expression>
+          </clause>
+          <relation name='Patient' table='[dbo].[Patient]' type='table' />
+          <relation name='Insurance Status SQL' type='text'>-- THIS QUERY combines all ACTIVE insurances for a patient and determines if &#13;&#10;-- Medicare is one of them.   &#13;&#10;-- The optional WHERE clause at the end filters for Medicare patients.&#13;&#10;&#13;&#10;SELECT DISTINCT insONE.PatientId, insONE.PlanName AS PrimIns, insTWO.PlanName AS SecIns, insTHREE.PlanName as TertIns, insFOUR.PlanName as QuartIns, &#13;&#10;&quot;Medicare Patient&quot; = CASE &#13;&#10;         WHEN insONE.PlanName LIKE &apos;%Medicar%&apos; THEN &apos;True&apos;&#13;&#10;         WHEN insTWO.PlanName LIKE &apos;%Medicar%&apos; THEN &apos;True&apos;&#13;&#10;         WHEN insTHREE.PlanName LIKE &apos;%Medicar%&apos; THEN &apos;True&apos;&#13;&#10;         WHEN insFOUR.PlanName LIKE &apos;%Medicar%&apos; THEN &apos;True&apos;&#13;&#10;         ELSE &apos;False&apos;&#13;&#10;      END &#13;&#10;FROM   (SELECT PatientId, PlanName, PolicyNumber&#13;&#10;           FROM            dbo.Insurance AS ins1&#13;&#10;           WHERE        (PlanType = 0) AND (ACTIVE = 1) ) AS insONE &#13;&#10;&#9;   FULL OUTER JOIN&#13;&#10;       (SELECT          PatientId, PlanName&#13;&#10;           FROM         dbo.Insurance AS ins2&#13;&#10;           WHERE        (PlanType = 1) AND (ACTIVE = 1)) AS insTWO &#13;&#10;        ON insONE.PatientId = insTWO.PatientId&#13;&#10;&#9;&#9;&#9;   FULL OUTER JOIN&#13;&#10;       (SELECT          PatientId, PlanName&#13;&#10;           FROM         dbo.Insurance AS ins3&#13;&#10;           WHERE        (PlanType = 2) AND (ACTIVE = 1)) AS insTHREE &#13;&#10;        ON insONE.PatientId = insTHREE.PatientId&#13;&#10;&#9;&#9;&#9;&#9;&#9;   FULL OUTER JOIN&#13;&#10;       (SELECT          PatientId, PlanName&#13;&#10;           FROM         dbo.Insurance AS ins4&#13;&#10;           WHERE        (PlanType = 2) AND (ACTIVE = 1)) AS insFOUR &#13;&#10;        ON insONE.PatientId = insFOUR.PatientId&#13;&#10;/*WHERE insONE.PlanName LIKE &apos;%Medicar%&apos;&#13;&#10;      OR insTWO.PlanName LIKE &apos;%Medicar%&apos; &#13;&#10;      OR insTHREE.PlanName LIKE &apos;%Medicar%&apos; &#13;&#10;      OR insFOUR.PlanName LIKE &apos;%Medicar%&apos; */</relation>
+        </relation>
+        <cols>
+          <map key='[ConsentToImportMedicationHistory]' value='[Patient].[ConsentToImportMedicationHistory]' />
+          <map key='[DeceasedOn]' value='[Patient].[DeceasedOn]' />
+          <map key='[DeletedOn]' value='[Patient].[DeletedOn]' />
+          <map key='[ExcludeFromReporting]' value='[Patient].[ExcludeFromReporting]' />
+          <map key='[ExportStatus]' value='[Patient].[ExportStatus]' />
+          <map key='[HealthStatus]' value='[Patient].[HealthStatus]' />
+          <map key='[Id]' value='[Patient].[Id]' />
+          <map key='[Medicare Patient]' value='[Insurance Status SQL].[Medicare Patient]' />
+          <map key='[OptOutReminderCall]' value='[Patient].[OptOutReminderCall]' />
+          <map key='[OptOutReminderPortal]' value='[Patient].[OptOutReminderPortal]' />
+          <map key='[OptOutReminderText]' value='[Patient].[OptOutReminderText]' />
+          <map key='[PatientDeclineToReceiveReminders]' value='[Patient].[PatientDeclineToReceiveReminders]' />
+          <map key='[PatientId (Custom SQL Query)]' value='[Insurance Status SQL].[PatientId]' />
+          <map key='[PrimIns]' value='[Insurance Status SQL].[PrimIns]' />
+          <map key='[PrivacyPolicy]' value='[Patient].[PrivacyPolicy]' />
+          <map key='[ProtectDataDate]' value='[Patient].[ProtectDataDate]' />
+          <map key='[ProtectData]' value='[Patient].[ProtectData]' />
+          <map key='[QuartIns]' value='[Insurance Status SQL].[QuartIns]' />
+          <map key='[RecordNumberNumber]' value='[Patient].[RecordNumberNumber]' />
+          <map key='[RecordNumberPrefix]' value='[Patient].[RecordNumberPrefix]' />
+          <map key='[RecordNumber]' value='[Patient].[RecordNumber]' />
+          <map key='[ReferralSourceId]' value='[Patient].[ReferralSourceId]' />
+          <map key='[SecIns]' value='[Insurance Status SQL].[SecIns]' />
+          <map key='[Status]' value='[Patient].[Status]' />
+          <map key='[SummaryNotes]' value='[Patient].[SummaryNotes]' />
+          <map key='[TerminatedOn]' value='[Patient].[TerminatedOn]' />
+          <map key='[TerminationNotes]' value='[Patient].[TerminationNotes]' />
+          <map key='[TertIns]' value='[Insurance Status SQL].[TertIns]' />
+          <map key='[Title]' value='[Patient].[Title]' />
+          <map key='[Type]' value='[Patient].[Type]' />
+        </cols>
+        <metadata-records>
+          <metadata-record class='column'>
+            <remote-name>Id</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[Id]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>Id</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>RecordNumber</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[RecordNumber]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>RecordNumber</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>DeceasedOn</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[DeceasedOn]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>DeceasedOn</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>datetime</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_TIMESTAMP&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_TIMESTAMP&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>DeletedOn</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[DeletedOn]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>DeletedOn</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>datetime</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_TIMESTAMP&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_TIMESTAMP&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>HealthStatus</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[HealthStatus]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>HealthStatus</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Status</remote-name>
+            <remote-type>17</remote-type>
+            <local-name>[Status]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>Status</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>3</precision>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TINYINT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_UTINYINT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Type</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[Type]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>Type</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Title</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Title]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>Title</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ExcludeFromReporting</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[ExcludeFromReporting]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>ExcludeFromReporting</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>SummaryNotes</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[SummaryNotes]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>SummaryNotes</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>RecordNumberPrefix</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[RecordNumberPrefix]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>RecordNumberPrefix</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>6</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>RecordNumberNumber</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[RecordNumberNumber]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>RecordNumberNumber</remote-alias>
+            <ordinal>12</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PrivacyPolicy</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[PrivacyPolicy]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>PrivacyPolicy</remote-alias>
+            <ordinal>13</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ConsentToImportMedicationHistory</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[ConsentToImportMedicationHistory]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>ConsentToImportMedicationHistory</remote-alias>
+            <ordinal>14</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ReferralSourceId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[ReferralSourceId]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>ReferralSourceId</remote-alias>
+            <ordinal>15</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ExportStatus</remote-name>
+            <remote-type>17</remote-type>
+            <local-name>[ExportStatus]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>ExportStatus</remote-alias>
+            <ordinal>16</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>3</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TINYINT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_UTINYINT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PatientDeclineToReceiveReminders</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[PatientDeclineToReceiveReminders]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>PatientDeclineToReceiveReminders</remote-alias>
+            <ordinal>17</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProtectData</remote-name>
+            <remote-type>17</remote-type>
+            <local-name>[ProtectData]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>ProtectData</remote-alias>
+            <ordinal>18</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>3</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TINYINT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_UTINYINT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProtectDataDate</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[ProtectDataDate]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>ProtectDataDate</remote-alias>
+            <ordinal>19</ordinal>
+            <local-type>datetime</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_TIMESTAMP&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_TIMESTAMP&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>OptOutReminderCall</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[OptOutReminderCall]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>OptOutReminderCall</remote-alias>
+            <ordinal>20</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>OptOutReminderText</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[OptOutReminderText]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>OptOutReminderText</remote-alias>
+            <ordinal>21</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>OptOutReminderPortal</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[OptOutReminderPortal]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>OptOutReminderPortal</remote-alias>
+            <ordinal>22</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>TerminatedOn</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[TerminatedOn]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>TerminatedOn</remote-alias>
+            <ordinal>23</ordinal>
+            <local-type>datetime</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_TIMESTAMP&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_TIMESTAMP&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>TerminationNotes</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[TerminationNotes]</local-name>
+            <parent-name>[Patient]</parent-name>
+            <remote-alias>TerminationNotes</remote-alias>
+            <ordinal>24</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>500</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PatientId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[PatientId (Custom SQL Query)]</local-name>
+            <parent-name>[Insurance Status SQL]</parent-name>
+            <remote-alias>PatientId</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PrimIns</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[PrimIns]</local-name>
+            <parent-name>[Insurance Status SQL]</parent-name>
+            <remote-alias>PrimIns</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>SecIns</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[SecIns]</local-name>
+            <parent-name>[Insurance Status SQL]</parent-name>
+            <remote-alias>SecIns</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>TertIns</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[TertIns]</local-name>
+            <parent-name>[Insurance Status SQL]</parent-name>
+            <remote-alias>TertIns</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>QuartIns</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[QuartIns]</local-name>
+            <parent-name>[Insurance Status SQL]</parent-name>
+            <remote-alias>QuartIns</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Medicare Patient</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Medicare Patient]</local-name>
+            <parent-name>[Insurance Status SQL]</parent-name>
+            <remote-alias>Medicare Patient</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>5</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column caption='PatientCount' datatype='integer' name='[Calculation_6680319155714421]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='COUNTD([PatientId (Custom SQL Query) (copy)])' scope-isolation='false' />
+      </column>
+      <column caption='Consent To Import Medication History' datatype='boolean' name='[ConsentToImportMedicationHistory]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Deceased On' datatype='datetime' name='[DeceasedOn]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Deleted On' datatype='datetime' name='[DeletedOn]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Exclude From Reporting' datatype='boolean' name='[ExcludeFromReporting]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Export Status' datatype='integer' name='[ExportStatus]' role='measure' type='quantitative'>
+      </column>
+      <column caption='Health Status' datatype='string' name='[HealthStatus]' role='dimension' type='nominal'>
+      </column>
+      <column datatype='string' name='[Id (copy)]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Id]' />
+      </column>
+      <column datatype='string' datatype-customized='true' name='[Medicare Patient]' role='dimension' type='nominal'>
+        <aliases>
+          <alias key='&quot;False&quot;' value='non Medicare' />
+          <alias key='&quot;True&quot;' value='Medicare' />
+        </aliases>
+      </column>
+      <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <column caption='Opt Out Reminder Call' datatype='boolean' name='[OptOutReminderCall]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Opt Out Reminder Portal' datatype='boolean' name='[OptOutReminderPortal]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Opt Out Reminder Text' datatype='boolean' name='[OptOutReminderText]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Patient Decline To Receive Reminders' datatype='boolean' name='[PatientDeclineToReceiveReminders]' role='dimension' type='nominal'>
+      </column>
+      <column datatype='string' name='[PatientId (Custom SQL Query) (copy)]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[PatientId (Custom SQL Query)]' />
+      </column>
+      <column caption='Privacy Policy' datatype='boolean' name='[PrivacyPolicy]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Protect Data Date' datatype='datetime' name='[ProtectDataDate]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Protect Data' datatype='integer' name='[ProtectData]' role='measure' type='quantitative'>
+      </column>
+      <column caption='Record Number Number' datatype='integer' name='[RecordNumberNumber]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Record Number Prefix' datatype='string' name='[RecordNumberPrefix]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Record Number' datatype='string' name='[RecordNumber]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Referral Source Id' datatype='string' name='[ReferralSourceId]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Summary Notes' datatype='string' name='[SummaryNotes]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Terminated On' datatype='datetime' name='[TerminatedOn]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Termination Notes' datatype='string' name='[TerminationNotes]' role='dimension' type='nominal'>
+      </column>
+      <column-instance column='[DeceasedOn]' derivation='None' name='[none:DeceasedOn:ok]' pivot='key' type='ordinal' />
+      <column-instance column='[DeletedOn]' derivation='None' name='[none:DeletedOn:ok]' pivot='key' type='ordinal' />
+      <column-instance column='[Medicare Patient]' derivation='None' name='[none:Medicare Patient:nk]' pivot='key' type='nominal' />
+      <group name='[Medicare]' name-style='unqualified' user:ui-builder='filter-group'>
+        <groupfilter function='union' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+          <groupfilter function='member' level='[PlanName]' member='%null%' />
+        </groupfilter>
+      </group>
+      <layout dim-ordering='alphabetic' dim-percentage='0.5' measure-ordering='alphabetic' measure-percentage='0.4' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[none:Medicare Patient:nk]' type='palette'>
+            <map to='#41738c'>
+              <bucket>&quot;False&quot;</bucket>
+            </map>
+            <map to='#dfe4e8'>
+              <bucket>&quot;True&quot;</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+      <filter class='categorical' column='[none:DeceasedOn:ok]' filter-group='2'>
+        <groupfilter function='member' level='[none:DeceasedOn:ok]' member='%null%' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+      </filter>
+      <filter class='categorical' column='[none:DeletedOn:ok]' filter-group='2'>
+        <groupfilter function='member' level='[none:DeletedOn:ok]' member='%null%' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+      </filter>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Medicare or not'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run>&lt;</run>
+            <run>Sheet Name</run>
+            <run>&gt;</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='CCM Mockup Data Source' name='sqlserver.42082.488967766207' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42082.488967766207'>
+            <column datatype='string' datatype-customized='true' name='[Medicare Patient]' role='dimension' type='nominal'>
+              <aliases>
+                <alias key='&quot;False&quot;' value='non Medicare' />
+                <alias key='&quot;True&quot;' value='Medicare' />
+              </aliases>
+            </column>
+            <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+              <calculation class='tableau' formula='1' />
+            </column>
+            <column-instance column='[Medicare Patient]' derivation='None' name='[none:Medicare Patient:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Number of Records]' derivation='Sum' name='[sum:Number of Records:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='height' value='414' />
+            <format attr='width' value='592' />
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='font-family' value='Montserrat' />
+          </style-rule>
+          <style-rule element='legend-title-text'>
+            <format attr='color' field='[sqlserver.42082.488967766207].[none:Medicare Patient:nk]' value='Insurance' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Pie' />
+            <encodings>
+              <color column='[sqlserver.42082.488967766207].[none:Medicare Patient:nk]' />
+              <wedge-size column='[sqlserver.42082.488967766207].[sum:Number of Records:qk]' />
+              <text column='[sqlserver.42082.488967766207].[none:Medicare Patient:nk]' />
+              <text column='[sqlserver.42082.488967766207].[sum:Number of Records:qk]' />
+            </encodings>
+            <customized-tooltip>
+              <formatted-text>
+                <run fontname='Montserrat'>&lt;[sqlserver.42082.488967766207].[none:Medicare Patient:nk]&gt;: </run>
+                <run fontcolor='#787878' fontname='Montserrat'>Æ&#9;</run>
+                <run bold='true' fontname='Montserrat'>&lt;[sqlserver.42082.488967766207].[sum:Number of Records:qk]&gt;</run>
+              </formatted-text>
+            </customized-tooltip>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-show' value='true' />
+                <format attr='size' value='1.6591712236404419' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='minheight' value='-1' />
+                <format attr='maxheight' value='-1' />
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows></rows>
+        <cols></cols>
+      </table>
+    </worksheet>
+  </worksheets>
+  <dashboards>
+    <dashboard name='Medicare Patients'>
+      <style>
+      </style>
+      <size maxheight='600' maxwidth='800' minheight='600' minwidth='800' />
+      <zones>
+        <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
+          <zone h='100000' id='5' param='horz' type='layout-flow' w='100000' x='0' y='0'>
+            <zone h='100000' id='3' type='layout-basic' w='99500' x='0' y='0'>
+              <zone h='86875' id='1' name='Medicare or not' show-title='true' w='80875' x='0' y='13125'>
+              </zone>
+              <zone h='13125' id='7' type='empty' w='56843' x='0' y='0'>
+              </zone>
+              <zone fixed-size='160' h='25000' id='4' is-fixed='true' param='vert' type='layout-flow' w='18625' x='80875' y='75000'>
+                <zone h='10667' id='6' name='Medicare or not' pane-specification-id='0' param='[sqlserver.42082.488967766207].[none:Medicare Patient:nk]' type='color' w='18625' x='80875' y='75000'>
+                </zone>
+              </zone>
+              <zone forceUpdate='true' h='13125' id='8' is-scaled='1' param='C:\Users\Mahitha\Google Drive\Mimir Graphics\Mimir Logo resize.jpg' type='bitmap' w='42657' x='56843' y='0'>
+              </zone>
+              <zone h='61875' id='9' type='empty' w='18625' x='80875' y='13125'>
+              </zone>
+            </zone>
+          </zone>
+        </zone>
+      </zones>
+    </dashboard>
+  </dashboards>
+  <windows>
+    <window class='schema' source-height='-1' />
+    <window auto-hidden='0' class='worksheet' maximized='0' name='Medicare or not'>
+      <cards>
+        <edge name='left'>
+          <strip size='209'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42082.488967766207].[none:Medicare Patient:nk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+        </edge>
+      </cards>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42082.488967766207].[io:Medicare:nk]</field>
+          <field>[sqlserver.42082.488967766207].[none:PlanType:ok]</field>
+        </color-one-way>
+      </highlight>
+    </window>
+    <window auto-hidden='0' class='dashboard' maximized='1' name='Medicare Patients'>
+      <zones>
+        <zone name='Medicare or not' pane-specification-id='0' param='[sqlserver.42082.488967766207].[none:Medicare Patient:nk]' type='color' />
+        <zone forceUpdate='true' is-scaled='1' name='' type='bitmap' />
+      </zones>
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Medicare or not' width='192'>
+      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
+      QmCC
+    </thumbnail>
+    <thumbnail height='192' name='Medicare Patients' width='192'>
+      iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAAA7EAAAOxAGVKw4b
+      AAAYiklEQVR4nO3deXhc1X3/8fedXctot2QttiTbkm3Z8oYwNpvNHorjJBBIgfxoStNsv1+a
+      kvKkDWkT52kTStNfePIrJS1pSikpq8GAjQ3eJBtb3m1ZkmXti7Vb20gzo9nv+f3hJQ4YL1jS
+      nTv3vHh4HtAjzXxn+dxz7rnnnKsIIQSSZFAmrQuQJC1ZtC5AMqZo6XjIAEiaURRF6xJkF0gy
+      NtkCSLogAC7oNk1U6yFbACnqCQSRUJj3X3uHf3jix5xq7UAIwUScRShyGFTSghDiskfxc0f9
+      6sNVrH/xNZbecB0tDU3YbDbsDgf/6/88TnxC/DW1BrIFkKKPOBOQ0929/OJvfsaxysM89c/r
+      mDk7H9fgMI9//1vcvuYu/umv/54t6zcSDoX/4O/O/XPmR+LMz879e8H/g5AtgKSNS7UAQgjW
+      v/garQ3NfO17f44Qgtf+/WWS05JZtHwZ77/+Djesuonb7ruDXR+UU7l9N3/6xDeZUTiTUa+P
+      9v4hFuRnY7VYEELg8ozTcXqYkpnT6RtxEwqHmZU9jfrOPtkCSNFHURRa6pt48udPUb5pGy8/
+      91se+NM/5mvf+wbLbizjqX/+KSD4+ZM/paikmLWPPkD1waOgwPHWLr773OuUVzWcv9bwb5s+
+      4skX3mbU6+O1isP8etNHAPzslQ9kAKToZDaZURSFD956H6vVxvnGQiiggN1hJ+DzU/7+dkwm
+      EygKCmBSFCwWC69WHCEUidAz5GLn8UYsZjMoCiZFwWQ682AmkyKHQaXotnDZIh78s0dY/+Kr
+      JKUms3RFGVvWv8eCZYv49lPfY/s7mz/xNxaTid7hUfbUtnC06RRxNguBUOSijy9bACmqCSHI
+      yc/juz/+KxYuXcTr//E7vvnXf8Hah7+EzW775O8DVouJe68v4cUP97H9WD1rbliIqn7yVFdB
+      kQGQotu5no9iMlE4bzaFRbNJzUi74BqAwsdPpYUQ3H/TUobcXgqy0lk0a8anPLqQXSApOgWD
+      QV7/ze9oOtlIfdUJ5i0uAc5dG4BQMMiWNzdSdfAYCc5EEpMSL7xQTKozgR88eCfZ6cmMevwI
+      5dwfc0FgZAsgRSMh6G7vxO5w8Owrz7N3+y6e/fEzDPYNAIKPtlbw93/5dyxevpSf/uvT7Hhv
+      K4lJSaDAzGlpPHxbGTaLmVWLiinOzSInPYmv3lZGvMPKivmF3L5kLgBrV5bK6wCSNi53HcDj
+      9vDqv72E3+/n4W88RsDv56Vf/Qf1NSd54Gtf4XMPrOFo5SG2vr2Zex/8PMtXrfxMV4RlACRN
+      XNFUCCHoaGnn9RdeZta8IlbcfhNb3niPO9bew5v/+SpzSopZ+/D9WG02UPjEucCVkAGQNHEl
+      AYCzUxlUwYGKSras30hXeydlN9/AQ19/lPTMdC52Enw1ZAAkTVxpAM7+MgLw+/wMnR4kNz8P
+      mJgp0TIAkiauKgCTSI4CSYYmAyAZmgyApIlo6P6ADIBkcDIAkqHJAEiGdj4AajhES2MDnkCI
+      sN9LQ2ML4YtMIfWNDXCw6iRH9uxg0BuekiLVSJCOU91T8lySsZjXrVu3DiDoGeanP3oST1w+
+      /vZ9PP38eu6+73ZqKsupaekjLy+HuiN7OHzkGNVtQySER5k2p4T2qj0cPtFOZkYKBz/aSX3X
+      MNmpDg4cOow3ZMLV3cCegzVk5uadWZjgHWHntm0M+CDdHmLvoWMEsZOeEk/VwUpqa0/gJY5U
+      h2Dn1g/p9wjswX6efvYFZs1fREZKosZvmRRL/qALlJI5g5N7N7JhVz056Q46ju/mrZ3HqKvc
+      wob33mNDeQ2ZqXFEBPR3ddBeu59NB9qZMS2JQMDHqZ5+Kt55lerGZt79oAJHZJDn/vMthrvq
+      +J93ywHY/PrLhJOyObzlVY6dqGfjjoM4E+MBlb07t+FMS2fD+g1seuO/8CfOoHrnm7S7zSQl
+      pzMjK1WL90iKYX8QAHtSNrcsyWfWslVkJtqwWq2Eg34Sps1kQVE+asDL4JCLcz0js81G0DtG
+      X28PLbVHqO8eI95uJhRWySmcS352JooII6wJLFt4Zgqq3WZheGgIbyCMzWIiv3gB2elJZ4qx
+      OSgoLMCKis1mY2RoAI8vRIIzGXPYQ2tn35S+OVLsOz8VIhIK0NRyiuJ5RZiAhroTFM6bT3dT
+      LSMBG4tL59LX3siQN0x8Ygq2sIf0mUUMdzZw2i1YtGA2J2tqUKwOsnOyGXH7KCrIY6C7jdae
+      EUoXLybeZkYN+amursaZmc+MVCudI0Fmz5gOqLQ2NZEzs4CO9k7mzJ5JTVUViZkzmTMji1Mt
+      Jwna0pgzc7q275gUU+RcIMnQ5DCoZGjn1wR7PJ6ouWmBJE2FYDD4+wAIIXA6nVrWI0lTyu12
+      yy6QZGwyAJKhyQBIhiYDIBmaDIBkaDIAkqHJAEiGJgMgGZoMgGRocnv0KRBRVYbHvAyMehj1
+      jjPm9eP2+QmGwoQiEVbMLSQr1Yly9vY9JpMJs8mE2WzCbDZj0mIHBaESUQWRiIrNZp36558i
+      MgATLBAM0dDVT/2pXlp7B2ntHaBnaJRgOExEFRedb5WWEIfdcvHGWFHAbDZjs1iwWS3YbFbs
+      Vitm80Q03v08uOZv+JcXfshf/fA5fvV/f0BtQx/LSws4sG87nQMm0nOLyI0bIzF3LgOtJ8if
+      V0pfdy9Z0xJo7vayasXiCahDOzIA10AICEcitPQMcLChjcMN7TR09hOKXPx+VJ/5OcIRwuEI
+      4/7A+Z9bLRYcdivxDjt2mxVFUT7DXjshivKc/O+/fJq5JSU8/6tfohDHxvfNPPaFm6k71Ub7
+      jnfoWHgr9yT3UVd9jIp9h3GJJOxDNZgUK9Pn/Yq5KRP2cqecDMBnEApHaOrup7yqgT21zfSP
+      jGlQQ5hQOIzb68NkUoh32EmIc1xlGBK488HHeGR6PCP9fcTHCdoHw8zNdlJVX8/8ufOIzCml
+      v6OBrgErNmcapbOyiU/PIzFQyCm3jWIdf/nhggUxbrdbzga9BCEEw24v5VUNbD1cR3PP6Ql7
+      7Ce+dDulBTkT8lgWs4n4OAfOhDgsZnPU7MAWjdxut2wBLkcIQefAMO9WHmfH0ZOMjfu1LumS
+      whGVMc84bq+POIeNpIT4863CpYwNdrJ9z3HuuuceutoaKZpXwmhnHZsr67jzzjs4sqeCkrLl
+      tJ+oIm/BSopnpE/RK5pcMgCX0DUwwmvlB9lZ1YA/GNK6nKsihGDcF2DcFyDOYSPZmYDd+ulB
+      2Pzay7SrqRTU7OPd7cd54oliRk7V0dwzxrSKt9l1wkV2yTKO7tmObeZSiqf49UwWGYCLcHnG
+      ea38EBv3H8cX0NcX/2J8/iA+f5D4ODspzkRs1k9+7GkZafT0+ThW34unq5by3R8xO7OQGZbt
+      NA+nkZ5o5eihgxTMKaa5qY2bS3I1eCUTT54DXCCiqmw9fIIXP6xkcNQzZc87kecAl6MoCsmJ
+      8SQlJmAy/b41iISDuMa8pKSkEAkGGDrdR3x6JiG/n9TUZMZGXMQlJuJ1e3CmpGCzmKek3skk
+      zwEu0DUwwv/bsIMjjR3E8spoIQQutxevz096ShKOs3dbN1tspKed/W+Hg+yZBWf+ICEegNT0
+      M31+h90+5TVPJsMHIKKqfHj4BM+/W8F4IKh1OVMmFI7QNzhCcmI8KUmJhh0tMnQAPD4/z761
+      nfKqBq1L0cyoZxx/MERGShLWi5wbxDrjveKzWnsH+Nn/bKatb1DrUjQXCIboHRwmIyWJOIfd
+      UK2B4QIghODAyTaeef0DRr0+rcuJGqoqGBgeJTU5EWdCvGFCYKgAqELw/v5qfv1eBf7Q1Nzb
+      QE8EMDzqIRSOkJbsNEQIDBMAVVV5Y9cRfrtlDxFV1bqcqOb2+lBVQUZqUsyHwBABUFXB73Yc
+      4L+37kOV2z9eEa/Pj0AwLTU5pkMQ8yvChBC8seswL22tlF/+qzTuCzAwPBrTe8bGdACEEGzc
+      d5wX3t9NDH+Gk2rcH2DI5Y7ZEMR0APafbOVf3inXugzd84z7GHV7YzIEMRuAxq5+nn5lizzh
+      nSAutxfPuD/mQhCTARhxj/PzVzbjuWAJoXTtRkbdBGNs+DjmAhCKRHj2rW2cOj2sdSkxRxWC
+      wZFRIpHYaVVjLgDvVR5n74lmrcuIWaFwhOHRsZjpCsVUAJq6T/Pih3vliM8k8/oCeH3RvTT0
+      SsVMAIKhMM+9s5Nxv3GmNGtpeNRDeAK3f9FKTARACMF7+45T09atdSmGoaoqwzFwfSAmAjDg
+      cvPy9v1al2E44/4Afp0vItJ9AIQQvLRtH+4o364kVo2M6fv2uroPQHPPAFsP12ldhmEFQ2E8
+      4/pdV6HrAAgB/71tn7zaq7FRtxdVp5+BrgPQ2NVH5YkWrcswvHBE1e2wqK4D8Mauw7ruf8aS
+      Mc+4Lqeb6zYAPYMu9tTKK77RwhcI0qXD6Se6XRG2cX81obD+L8TomRACl9fHR7XNVNQ0kTct
+      jWe//RBmk36Oq7oMgC8QZOexk1qXYViRiEr76SF2Hm/kcNOp8wcij6+X1t4BinKzNK7wyuky
+      AIca2hmYwr07pTPGA0GqWruoqG6ipXfgE3OuwhGVbUdOygBMJiEw9E5uU00IwcCoh711LVTW
+      tTHk9l7y9/edaOHxz92EQyc31tNdAEa94xxrPqV1GTEvoqo09wyw83gjNW3dV7yPUveQi4bO
+      PhbPnjHJFU4M3QWguq0r6u/SomfjgSBHmk5RUd1Ex+nhzzS0WXmiRQZgshyqb9e6hJhzrpuz
+      u6aZypOtuK5xy8gjZ0+MrTq4h4CuAhAMhalq6dS6jJghhKC+q58dVQ1Ut3UTnqClju19gwyM
+      uslJj/5bSOoqAH0jY5rckjSWCCHwBUMcbOhgx/EGugddE/4cqhDUtvfIAEy0+s6+CTtKGY0q
+      BP0jY+yubWZvXSse3+TumFHb1s1dy+ZH/baKugrAyY4erUvQnVA4QkNXP+XHG6np6JmyA0hD
+      Zx+qEJhlACaGEILWXnkziys1Nu7nUGMHu2qa6JqEbs7ldA6MEApHMNuie1qEbgLgCwTpGx7V
+      uoyoJoSga9DFR7XNHGzs0HS42B8M0TPkYlb2NM1quBK6CYDHF2DYPa51GVEpHIlQ295LeXUj
+      9Z39hKJkt4bO0yMyABNlYNQjV359jMcXYG9dC7tqmul3jUXdfkh9I9HfYusmAHp4M6dK16CL
+      nccbONjQzngU38leD11W3QRgeOzSk7BimRCCcESlpr2HHVUN1Hf1Rd3R/mL00GXVTQBGDTj/
+      RwjB6LiffXWt7Kpt5rTLrXVJV2VMB3fh1E0A3Dp4MydKRFXpHBihorqJQ40d+ILR2825FD1M
+      WtRNAAIxti/9xfiDIWraeyivbqSp+zQRVQf9nEvQw2emmwBEy9DeZPAFgmw6UMOeE62cHtVX
+      N+dS9LBmWzcBUHV+NLyUl7Yf0G0351JUEf3D1tF9nfoCFh3MLf+sYvHLD2AxR/9nppsAWM26
+      KVU6yyoDMHHiHXatS5CuUrzDpnUJl6WbACTHx2ldgnSVkhOi/zPTTwB08GZKf0gPn5luApCZ
+      4tS6BOkqTdPBZ6abAGSlJWldgnSVpqdG/2emmwCkJMQRb4/+kyrp9/SwKF43AUiMc5CRnKh1
+      GdJVKJiernUJl6WbAFjMJmZkpmldhnSFMpISSdLByJ1uAqAoCsW5mVqXIV2hwuwMLDq4eBn9
+      FV5gQUGu1iVIV2hBQU7U7wkEOgtAQVY6iXHyirAeLNTJwUpXAUhxxjNreobWZUiX4YxzUKST
+      7qquAmBSFMrmFmhdhnQZJfnZummpdRUAgLK5Bbq6CZsRLZ9XqIv+P+gwALNzppE3LVXrMqRP
+      YbdaWFEyS+syrpjuAmA1m7l54Ryty5A+xfz8bLJSon8KxDm6CwDAbUvm6mKxhRHdtawEk0kf
+      3R/QaQAKp2dQkp+tdRnSx6QmxnPjgtlal3FVdBkARVG4b8UircuQPuaWRUW6WANwIV0GAOCW
+      0iJdTLc1CpvVwtqVi7Uu46rpNgB2q4Uv3LRE6zKks66fW0ChDi9S6jYAAGtWLCJFZ01uLLKY
+      TXxldZluxv4vpOsAJDjsPLT6eq3LMLwb5hWyID9H6zI+E10HAGDtysVyvbCGLGYTf3L3jbo8
+      +kMMBCDeYePP7r1Z6zIM697lpczRycS3i9F9AABWL57Loll5WpdhOM54B1+750aty7gmMREA
+      q8XMd9auxmGzal2KoXxzza2kJsZrXcY1iYkAABTlZvLgquu0LsMwyorzufu6BVqXcc1iJgCK
+      ovCV1dfLKRJTICUhju/df4cu1vxejv5fwQXi7Ta+/+W7dLMYQ49MisJ3vrBaF3v+XImYCgCc
+      mSj3nbWrMel0WC7arVmxiNuWzNPtsOfHxVwAFEXhnrIFrL1Rf/NSot3Cghy+uebWmFqRFzuv
+      5AKKovDtz6+mrDhf61JiRnZaMj969D7iYmx7ypgMAJwZGv27r67R5QStaJMU7+Anj32erBic
+      fRuzAYAzF2r+4fEvxswJmxbi7Fb+9qv3UZyXpXUpkyKmAwBnmu6fPf7FmDx6TTabxcyPHrmP
+      suICrUuZNDEfAID8rHR+/viXyElP1roU3YizWfnbR+/T3RLHq2WIAMCZzVr/8esPkJ8V/Vt2
+      ay0xzs5PHvs8Nxlg9w3DBAAgb1oqv/jGlykt1Me+lVrITHHyzJ8/wPVzC2JmrP9SDBUAgIzk
+      RJ7++v3cvnSe1qVEneK8LJ799kPMmzHdEF9+AEUIIQDcbjdOp3EWlgghWL/7KL/ZvJtwRNW6
+      HE0pCtxTtoDvfvH2mBvnvxS3223cAJxzvKWTX7yxlZ4hl9alaCLBYedba27l3htKDTd9RAbg
+      LJdnnF9v3MXOY/VEVOO0BgsKcnjywbsNOzBgmACoqoqqqlgslkv+TmVdK/++aRfdg7HdGjjj
+      7Dx65wq+eOMSbNZPf09indvtxrxu3bp1AMFgELs9eqcRuwb7aevsISnZSWtjPTank962NkYD
+      ghRnPL/95U8IJs9h02+eQcldiKe3A3tSGr3tjbyzZRujwyOkJzno6Hch/C76R/2EfaMEwtDZ
+      1kxccjpzcjK4Y+l8zCaFlp4BQpGI1i97QplNJm5bPJenHr2PlfNnYTH4/qrBYFA/LcDrzz9D
+      KCWdzg43xUsWMdBXQ3djBEeqwo9+8H1++Y8/Zuj0IF6/SkHxPHqGR8h22ggmzsE72ERmcgKo
+      Jlbedie9jYfZvK+RaY4QNy2bwwdHeykuXc63Hr4XOHOC3Dkwwu+276fieIPuT5IVYNHsPB67
+      ayWLZ+VhiqHZnNfC7Xajm/Yvp3AemUUzccb1MtjTTn7RYrLTzMAIALPnX8cdt6URiYQZDipY
+      6+q5ZfUqKssrsKRnMyM3A8U/SkdXDx6Xl1mF+RTkZnHdskLq+/Zzy4ql559LURRmZqbxw4fv
+      5aFVZbyy8wB7apt1GYTSwlweueMGriuaafgj/sXopgXQkhCCrkEXG/YcZduROrz+oNYlXZLZ
+      ZOLGkll8eVUZJfnZMTV/fyLp/iRYiAgHdpeTX7qCkY5aTKn5WDzd+OxZLCyawWBnEw39fmam
+      WCAuiZPHjlB83S0UZn/2O8yM+4NUVDew5WAtDZ19UdMqmBSF3IwU7i4r4e6yBUxL1tdnqQVd
+      dYEuKuTFbFF46823cfU2ojizeeCem/ng3Q3Mf/IvePONN+kfDPLgH6+koqKfzsYWCpfcdE1P
+      Ge+w8UfLS/mj5aX0DLr4qLaJyhMtNHefxhcMTdALuzI2i5ncjFRWzJ/FrYuKKMrNlP37q6Tr
+      ACiobHh7M/f/yWNsebeLsM/D/h2bKFhyF13t7fgDIZyOAAGRiCNRcMcKE9t3H6L4kc9NyPPn
+      ZKTwldXX89CqMobd45xo76amrZva9h56hlx4fQHUMw3shIi325iWnEhJfg4LC3MoLcwjNyPF
+      MNMWJoOuu0AEvRypqSc1MxeTfxglMZ3AcD8BUxwhn4f8nAx6XCHmF2Yy7A7Q391FftF8kuIn
+      93K/EIIxr49+l5uO/iE6B0boGx6lf2QMl9dHIBgiEAoTUVVUVSCEwGwyYTIp2KwW7FYLzjgH
+      WalJTE9LIic9hcLpGWSlJZHmTJB9+gmi+3MAPVJVQSAUJhgOE4moRISKEGA2KZhNJmwWM3ar
+      FZPJhDywTy79nwPokMmkEGe3EmeX2zhGA9mWSoYmAyAZmgyAZGgyAJKhyQBIhiYDIBmaDIBk
+      aDIAkqHJAEiGdn4qhNfrRTXQgnBJCoVCvw+AJBmR7AJJhiYDIBmaDIBkaDIAkqHJAEiGJgMg
+      GZoMgGRoMgCSockASIYmAyAZmgyAZGgyAJKhyQBIhiYDIBmaDIBkaDIAkqHJAEiGJgMgGZoM
+      gGRoMgCSockASIYmAyAZmgyAZGj/H49h4JvEGXSYAAAAAElFTkSuQmCC
+    </thumbnail>
+  </thumbnails>
+</workbook>

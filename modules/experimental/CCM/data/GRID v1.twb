@@ -1,0 +1,722 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<workbook source-platform='win' version='8.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <!-- build 8200.14.0819.2015                                -->
+  <preferences>
+    <color-palette custom='true' name='BuGn 9 Color Seq Palette' type='ordered-sequential'>
+      <color>#f7fcfd</color>
+      <color>#e5f5f9</color>
+      <color>#ccece6</color>
+      <color>#99d8c9</color>
+      <color>#66c2a4</color>
+      <color>#41ae76</color>
+      <color>#238b45</color>
+      <color>#006d2c</color>
+      <color>#00441b</color>
+    </color-palette>
+  </preferences>
+  <datasources>
+    <datasource caption='Patients+ (CCM Mock Data)' inline='true' name='excel.42088.623973217589' version='8.3'>
+      <connection auto-extract='yes' class='excel' driver='Ace12' filename='C:\Users\Mahitha\Google Drive\CCM Program\CCM Mock Data\CCM Mock Data.xlsx' header='yes' imex='1'>
+        <relation name='Custom SQL Query' type='text'>SELECT p.[MRNO], p.Diagnosis, p.ICD9Code,&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=250.00),TRUE,FALSE) AS [Diabetes no compl],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=250.40),TRUE,FALSE) AS [Diab w Renal],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=250.50),TRUE,FALSE) AS [Diab w Ophthalmic],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=250.70),TRUE,FALSE) AS [Diab w Peri Circ],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=369.4),TRUE,FALSE) AS [Blindness],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=401.1),TRUE,FALSE) AS [Art Hypert],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=414.0),TRUE,FALSE) AS [Coron Heart Dis],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=585.3),TRUE,FALSE) AS [Chr Kidney Dis],&#13;&#10;IIF(EXISTS(SELECT d.MRNO, d.ICD9Code FROM [Diagnoses$] d WHERE p.[MRNO]=d.MRNO AND d.ICD9Code=733.00),TRUE,FALSE) AS [Osteoporosis]&#13;&#10;FROM [Diagnoses$] p</relation>
+        <metadata-records>
+          <metadata-record class='column'>
+            <remote-name>MRNO</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[MRNO]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>MRNO</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>15</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;R8&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Diagnosis</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[Diagnosis]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Diagnosis</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;WSTR&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ICD9Code</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[ICD9Code]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>ICD9Code</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>15</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;R8&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Diabetes no compl</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Diabetes no compl]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Diabetes no compl</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Diab w Renal</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Diab w Renal]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Diab w Renal</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Diab w Ophthalmic</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Diab w Ophthalmic]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Diab w Ophthalmic</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Diab w Peri Circ</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Diab w Peri Circ]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Diab w Peri Circ</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Blindness</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Blindness]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Blindness</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Art Hypert</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Art Hypert]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Art Hypert</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Coron Heart Dis</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Coron Heart Dis]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Coron Heart Dis</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Chr Kidney Dis</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Chr Kidney Dis]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Chr Kidney Dis</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Osteoporosis</remote-name>
+            <remote-type>2</remote-type>
+            <local-name>[Osteoporosis]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>Osteoporosis</remote-alias>
+            <ordinal>12</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>5</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;I2&quot;</attribute>
+            </attributes>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column aggregation='Sum' datatype='integer' name='[Art Hypert]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Diabetes, Opthalmic Manifestations' datatype='integer' name='[Arterial Hypertension (copy 2)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Diab w Ophthalmic]=-1 AND NOT [ICD9Code]=250.5 THEN 1&#13;&#10;ELSEIF [Diab w Ophthalmic]=-1 AND [ICD9Code]=250.5 THEN NULL&#13;&#10;ELSEIF [Diab w Ophthalmic]=0 AND NOT [ICD9Code]=250.5 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Osteoporosis ' datatype='integer' name='[Arterial Hypertension (copy 3)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Osteoporosis]=-1 AND NOT [ICD9Code]=733.00 THEN 1&#13;&#10;ELSEIF [Osteoporosis]=-1 AND [ICD9Code]=733.00 THEN NULL&#13;&#10;ELSEIF [Osteoporosis]=0 AND NOT [ICD9Code]=733.00 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Legal Blindness' datatype='integer' name='[Arterial Hypertension (copy)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Blindness]=-1 AND NOT [ICD9Code]=369.4 THEN 1&#13;&#10;ELSEIF [Blindness]=-1 AND  [ICD9Code]=369.4 THEN NULL&#13;&#10;ELSEIF [Blindness]=0 AND NOT  [ICD9Code]=369.4 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Blindness]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Arterial Hypertension' datatype='integer' name='[Calculation_1530326113328806]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Art Hypert]=-1 AND NOT [ICD9Code]=401.1 THEN 1&#13;&#10;ELSEIF [Art Hypert]=-1 AND [ICD9Code]=401.1 THEN NULL&#13;&#10;ELSEIF [Art Hypert]=0 AND NOT [ICD9Code]=401.1 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Coronary Heart Disease' datatype='integer' name='[Calculation_7090326175416509]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Coron Heart Dis]=-1 AND NOT [ICD9Code]=414.0 THEN 1&#13;&#10;ELSEIF [Coron Heart Dis]=-1 AND [ICD9Code]=414.0 THEN NULL&#13;&#10;ELSEIF[Coron Heart Dis]=0 AND NOT [ICD9Code]=414.0 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Chr Kidney Dis]' role='dimension' type='ordinal'>
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Coron Heart Dis]' role='dimension' type='ordinal'>
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Diab w Ophthalmic]' role='dimension' type='ordinal'>
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Diab w Peri Circ]' role='dimension' type='ordinal'>
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Diab w Renal]' role='dimension' type='ordinal'>
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Diabetes no compl]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Diabetes, no complications' datatype='integer' name='[Diabetes, Opthalmic Manifestations (copy 2)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Diabetes no compl]=-1 AND NOT [ICD9Code]=250.0 THEN 1&#13;&#10;ELSEIF [Diabetes no compl]=-1 AND [ICD9Code]=250.0 THEN NULL&#13;&#10;ELSEIF [Diabetes no compl]=0 AND NOT [ICD9Code]=250.0 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Diabetes, Peripheral Circulatory Disorders' datatype='integer' name='[Diabetes, Opthalmic Manifestations (copy)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Diab w Peri Circ]=-1 AND NOT [ICD9Code]=250.7 THEN 1&#13;&#10;ELSEIF [Diab w Peri Circ]=-1 AND [ICD9Code]=250.7 THEN NULL&#13;&#10;ELSEIF [Diab w Peri Circ]=0 AND NOT [ICD9Code]=250.7 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Diabetes, Renal Manifestations' datatype='integer' name='[Diabetes, Peripheral Circulatory Disorders (copy)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Diab w Renal]=-1 AND NOT [ICD9Code]=250.4 THEN 1&#13;&#10;ELSEIF [Diab w Renal]=-1 AND [ICD9Code]=250.4 THEN NULL&#13;&#10;ELSEIF [Diab w Renal]=0 AND NOT [ICD9Code]=250.4 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column datatype='string' name='[Diagnosis]' role='dimension' type='nominal'>
+        <aliases>
+          <alias key='&quot;BENIGN ESSENTIAL HYPERTENSION&quot;' value='Arterial Hypertension' />
+          <alias key='&quot;CHRONIC KIDNEY DISEASE, STAGE III (MODERATE)&quot;' value='Chronic Kidney Disease' />
+          <alias key='&quot;CORONARY ATHEROSCLEROSIS&quot;' value='Coronary Heart Disease' />
+          <alias key='&quot;DIABETES MELLITUS WITHOUT MENTION OF COMPLICATION, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, no complications' />
+          <alias key='&quot;DIABETES WITH OPHTHALMIC MANIFESTATIONS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, Ophthalmic' />
+          <alias key='&quot;DIABETES WITH PERIPHERAL CIRCULATORY DISORDERS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, Peripheral Circulatory' />
+          <alias key='&quot;DIABETES WITH RENAL MANIFESTATIONS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, Renal' />
+          <alias key='&quot;LEGAL BLINDNESS AS DEFINED IN U.S.A.&quot;' value='Blindness' />
+          <alias key='&quot;OSTEOPOROSIS UNSPECIFIED&quot;' value='Osteoporosis' />
+        </aliases>
+      </column>
+      <column aggregation='Sum' datatype='real' name='[ICD9Code]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Chronic Kidney Disease' datatype='integer' name='[Legal Blindness (copy)]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Chr Kidney Dis]=-1 AND NOT  [ICD9Code]=585.3 THEN 1&#13;&#10;ELSEIF [Chr Kidney Dis]=-1 AND  [ICD9Code]=585.3 THEN NULL&#13;&#10;ELSEIF [Chr Kidney Dis]=0 AND NOT  [ICD9Code]=585.3 THEN 0&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column aggregation='Sum' datatype='real' name='[MRNO]' role='dimension' type='ordinal'>
+      </column>
+      <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <column aggregation='Sum' datatype='integer' name='[Osteoporosis]' role='dimension' type='ordinal'>
+      </column>
+      <layout dim-ordering='alphabetic' dim-percentage='0.5' measure-ordering='alphabetic' measure-percentage='0.4' show-hidden-fields='true' show-structure='true' />
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Patients+ (CCM Mock Data)' name='excel.42088.623973217589' />
+          </datasources>
+          <datasource-dependencies datasource='excel.42088.623973217589'>
+            <column caption='Diabetes, Opthalmic Manifestations' datatype='integer' name='[Arterial Hypertension (copy 2)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Diab w Ophthalmic]=-1 AND NOT [ICD9Code]=250.5 THEN 1&#13;&#10;ELSEIF [Diab w Ophthalmic]=-1 AND [ICD9Code]=250.5 THEN NULL&#13;&#10;ELSEIF [Diab w Ophthalmic]=0 AND NOT [ICD9Code]=250.5 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Osteoporosis ' datatype='integer' name='[Arterial Hypertension (copy 3)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Osteoporosis]=-1 AND NOT [ICD9Code]=733.00 THEN 1&#13;&#10;ELSEIF [Osteoporosis]=-1 AND [ICD9Code]=733.00 THEN NULL&#13;&#10;ELSEIF [Osteoporosis]=0 AND NOT [ICD9Code]=733.00 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Legal Blindness' datatype='integer' name='[Arterial Hypertension (copy)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Blindness]=-1 AND NOT [ICD9Code]=369.4 THEN 1&#13;&#10;ELSEIF [Blindness]=-1 AND  [ICD9Code]=369.4 THEN NULL&#13;&#10;ELSEIF [Blindness]=0 AND NOT  [ICD9Code]=369.4 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Arterial Hypertension' datatype='integer' name='[Calculation_1530326113328806]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Art Hypert]=-1 AND NOT [ICD9Code]=401.1 THEN 1&#13;&#10;ELSEIF [Art Hypert]=-1 AND [ICD9Code]=401.1 THEN NULL&#13;&#10;ELSEIF [Art Hypert]=0 AND NOT [ICD9Code]=401.1 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Coronary Heart Disease' datatype='integer' name='[Calculation_7090326175416509]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Coron Heart Dis]=-1 AND NOT [ICD9Code]=414.0 THEN 1&#13;&#10;ELSEIF [Coron Heart Dis]=-1 AND [ICD9Code]=414.0 THEN NULL&#13;&#10;ELSEIF[Coron Heart Dis]=0 AND NOT [ICD9Code]=414.0 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Diabetes, no complications' datatype='integer' name='[Diabetes, Opthalmic Manifestations (copy 2)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Diabetes no compl]=-1 AND NOT [ICD9Code]=250.0 THEN 1&#13;&#10;ELSEIF [Diabetes no compl]=-1 AND [ICD9Code]=250.0 THEN NULL&#13;&#10;ELSEIF [Diabetes no compl]=0 AND NOT [ICD9Code]=250.0 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Diabetes, Peripheral Circulatory Disorders' datatype='integer' name='[Diabetes, Opthalmic Manifestations (copy)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Diab w Peri Circ]=-1 AND NOT [ICD9Code]=250.7 THEN 1&#13;&#10;ELSEIF [Diab w Peri Circ]=-1 AND [ICD9Code]=250.7 THEN NULL&#13;&#10;ELSEIF [Diab w Peri Circ]=0 AND NOT [ICD9Code]=250.7 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column caption='Diabetes, Renal Manifestations' datatype='integer' name='[Diabetes, Peripheral Circulatory Disorders (copy)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Diab w Renal]=-1 AND NOT [ICD9Code]=250.4 THEN 1&#13;&#10;ELSEIF [Diab w Renal]=-1 AND [ICD9Code]=250.4 THEN NULL&#13;&#10;ELSEIF [Diab w Renal]=0 AND NOT [ICD9Code]=250.4 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column datatype='string' name='[Diagnosis]' role='dimension' type='nominal'>
+              <aliases>
+                <alias key='&quot;BENIGN ESSENTIAL HYPERTENSION&quot;' value='Arterial Hypertension' />
+                <alias key='&quot;CHRONIC KIDNEY DISEASE, STAGE III (MODERATE)&quot;' value='Chronic Kidney Disease' />
+                <alias key='&quot;CORONARY ATHEROSCLEROSIS&quot;' value='Coronary Heart Disease' />
+                <alias key='&quot;DIABETES MELLITUS WITHOUT MENTION OF COMPLICATION, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, no complications' />
+                <alias key='&quot;DIABETES WITH OPHTHALMIC MANIFESTATIONS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, Ophthalmic' />
+                <alias key='&quot;DIABETES WITH PERIPHERAL CIRCULATORY DISORDERS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, Peripheral Circulatory' />
+                <alias key='&quot;DIABETES WITH RENAL MANIFESTATIONS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;' value='Diabetes, Renal' />
+                <alias key='&quot;LEGAL BLINDNESS AS DEFINED IN U.S.A.&quot;' value='Blindness' />
+                <alias key='&quot;OSTEOPOROSIS UNSPECIFIED&quot;' value='Osteoporosis' />
+              </aliases>
+            </column>
+            <column caption='Chronic Kidney Disease' datatype='integer' name='[Legal Blindness (copy)]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Chr Kidney Dis]=-1 AND NOT  [ICD9Code]=585.3 THEN 1&#13;&#10;ELSEIF [Chr Kidney Dis]=-1 AND  [ICD9Code]=585.3 THEN NULL&#13;&#10;ELSEIF [Chr Kidney Dis]=0 AND NOT  [ICD9Code]=585.3 THEN 0&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column-instance column='[Diagnosis]' derivation='None' name='[none:Diagnosis:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Arterial Hypertension (copy 2)]' derivation='Sum' name='[sum:Arterial Hypertension (copy 2):qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Arterial Hypertension (copy 3)]' derivation='Sum' name='[sum:Arterial Hypertension (copy 3):qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Arterial Hypertension (copy)]' derivation='Sum' name='[sum:Arterial Hypertension (copy):qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Calculation_1530326113328806]' derivation='Sum' name='[sum:Calculation_1530326113328806:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Calculation_7090326175416509]' derivation='Sum' name='[sum:Calculation_7090326175416509:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Diabetes, Opthalmic Manifestations (copy 2)]' derivation='Sum' name='[sum:Diabetes, Opthalmic Manifestations (copy 2):qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Diabetes, Opthalmic Manifestations (copy)]' derivation='Sum' name='[sum:Diabetes, Opthalmic Manifestations (copy):qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Diabetes, Peripheral Circulatory Disorders (copy)]' derivation='Sum' name='[sum:Diabetes, Peripheral Circulatory Disorders (copy):qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Legal Blindness (copy)]' derivation='Sum' name='[sum:Legal Blindness (copy):qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[excel.42088.623973217589].[:Measure Names]'>
+            <groupfilter function='union' user:op='manual'>
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Diabetes, Opthalmic Manifestations (copy 2):qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Diabetes, Peripheral Circulatory Disorders (copy):qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Diabetes, Opthalmic Manifestations (copy):qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Arterial Hypertension (copy 2):qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Arterial Hypertension (copy 3):qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Calculation_1530326113328806:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Arterial Hypertension (copy):qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Calculation_7090326175416509:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[excel.42088.623973217589].[sum:Legal Blindness (copy):qk]&quot;' />
+            </groupfilter>
+          </filter>
+          <sort class='manual' column='[excel.42088.623973217589].[:Measure Names]' direction='ASC'>
+            <dictionary>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Diabetes, Opthalmic Manifestations (copy 2):qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Diabetes, Peripheral Circulatory Disorders (copy):qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Diabetes, Opthalmic Manifestations (copy):qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Arterial Hypertension (copy 2):qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Legal Blindness (copy):qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Calculation_7090326175416509:qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Arterial Hypertension (copy):qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Calculation_1530326113328806:qk]&quot;</bucket>
+              <bucket>&quot;[excel.42088.623973217589].[sum:Arterial Hypertension (copy 3):qk]&quot;</bucket>
+            </dictionary>
+          </sort>
+          <sort class='manual' column='[excel.42088.623973217589].[none:Diagnosis:nk]' direction='ASC'>
+            <dictionary>
+              <bucket>&quot;DIABETES MELLITUS WITHOUT MENTION OF COMPLICATION, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;</bucket>
+              <bucket>&quot;DIABETES WITH RENAL MANIFESTATIONS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;</bucket>
+              <bucket>&quot;DIABETES WITH PERIPHERAL CIRCULATORY DISORDERS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;</bucket>
+              <bucket>&quot;DIABETES WITH OPHTHALMIC MANIFESTATIONS, TYPE II OR UNSPECIFIED TYPE, NOT STATED AS UNCONTROLLED&quot;</bucket>
+              <bucket>&quot;CHRONIC KIDNEY DISEASE, STAGE III (MODERATE)&quot;</bucket>
+              <bucket>&quot;CORONARY ATHEROSCLEROSIS&quot;</bucket>
+              <bucket>&quot;LEGAL BLINDNESS AS DEFINED IN U.S.A.&quot;</bucket>
+              <bucket>&quot;BENIGN ESSENTIAL HYPERTENSION&quot;</bucket>
+              <bucket>&quot;OSTEOPOROSIS UNSPECIFIED&quot;</bucket>
+              <bucket>%all%</bucket>
+            </dictionary>
+          </sort>
+          <slices>
+            <column>[excel.42088.623973217589].[:Measure Names]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='height' field='[excel.42088.623973217589].[:Measure Names]' value='54' />
+            <format attr='width' field='[excel.42088.623973217589].[none:Diagnosis:nk]' value='70' />
+          </style-rule>
+          <style-rule element='header'>
+            <format attr='height' field='[excel.42088.623973217589].[none:Diagnosis:nk]' value='92' />
+            <format attr='width' field='[excel.42088.623973217589].[:Measure Names]' value='160' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='color' field='[excel.42088.623973217589].[Multiple Values]' max='17.0' min='0.0' num-steps='6' palette='BuGn 9 Color Seq Palette' type='interpolated' />
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='display-field-labels' scope='cols' value='false' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Square' />
+            <encodings>
+              <color column='[excel.42088.623973217589].[Multiple Values]' />
+              <text column='[excel.42088.623973217589].[Multiple Values]' />
+            </encodings>
+            <customized-tooltip>
+              <formatted-text>
+                <run bold='true'>&lt;[excel.42088.623973217589].[none:Diagnosis:nk]&gt; &amp;</run>
+                <run fontcolor='#787878'>Æ&#9;</run>
+                <run bold='true'>&lt;[excel.42088.623973217589].[:Measure Names]&gt; in &lt;[excel.42088.623973217589].[Multiple Values]&gt; patients</run>
+              </formatted-text>
+            </customized-tooltip>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='minheight' value='-1' />
+                <format attr='maxheight' value='-1' />
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[excel.42088.623973217589].[:Measure Names]</rows>
+        <cols>[excel.42088.623973217589].[none:Diagnosis:nk]</cols>
+      </table>
+    </worksheet>
+  </worksheets>
+  <windows>
+    <window class='schema' source-height='-1' />
+    <window auto-hidden='0' class='worksheet' maximized='1' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='200'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[excel.42088.623973217589].[Multiple Values]' type='color' />
+            <card type='measures' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[excel.42088.623973217589].[:Measure Names]</field>
+          <field>[excel.42088.623973217589].[none:Diagnosis (Custom SQL Query):nk]</field>
+          <field>[excel.42088.623973217589].[none:Diagnosis:nk]</field>
+          <field>[excel.42088.623973217589].[sum:Art Hypert:qk]</field>
+          <field>[excel.42088.623973217589].[sum:Arterial Hypertension (copy):qk]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+        <tuple-selection>
+          <tuple-reference>
+            <tuple-descriptor>
+              <pane-descriptor>
+                <x-fields>
+                  <field>[excel.42088.623973217589].[none:Diagnosis:nk]</field>
+                </x-fields>
+                <y-fields>
+                  <field>[excel.42088.623973217589].[:Measure Names]</field>
+                </y-fields>
+              </pane-descriptor>
+              <columns>
+                <field>[excel.42088.623973217589].[none:Diagnosis:nk]</field>
+                <field>[excel.42088.623973217589].[:Measure Names]</field>
+                <field>[excel.42088.623973217589].[Multiple Values]</field>
+              </columns>
+            </tuple-descriptor>
+            <tuple>
+              <value>&quot;CHRONIC KIDNEY DISEASE, STAGE III (MODERATE)&quot;</value>
+              <value>&quot;[excel.42088.623973217589].[sum:Diabetes, Peripheral Circulatory Disorders (copy):qk]&quot;</value>
+              <value>14.0</value>
+            </tuple>
+          </tuple-reference>
+        </tuple-selection>
+      </selection-collection>
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Sheet 1' width='192'>
+      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
+    </thumbnail>
+  </thumbnails>
+</workbook>
