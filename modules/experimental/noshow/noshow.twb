@@ -1,0 +1,2086 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<workbook source-platform='win' version='8.3' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <!-- build 8200.14.0819.2015                                -->
+  <preferences>
+  </preferences>
+  <datasources>
+    <datasource hasconnection='false' inline='true' name='Parameters' version='8.3'>
+      <aliases enabled='yes' />
+      <column caption='Select Visualization' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Colored Table&quot;'>
+        <calculation class='tableau' formula='&quot;Colored Table&quot;' />
+        <aliases>
+          <alias key='&quot;Colored Bar Chart&quot;' value='Colored Bar Chart' />
+        </aliases>
+        <members>
+          <member alias='Colored Bar Chart' value='&quot;Colored Bar Chart&quot;' />
+          <member value='&quot;Colored Table&quot;' />
+        </members>
+      </column>
+      <column caption='Select Visualization ' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;Colored Bar Chart &quot;'>
+        <calculation class='tableau' formula='&quot;Colored Bar Chart &quot;' />
+        <members>
+          <member value='&quot;Colored Bar Chart &quot;' />
+          <member value='&quot;Treemap&quot;' />
+        </members>
+      </column>
+      <column caption='Select Visualization   ' datatype='string' name='[Parameter 3]' param-domain-type='list' role='measure' type='nominal' value='&quot;Colored Table &quot;'>
+        <calculation class='tableau' formula='&quot;Colored Table &quot;' />
+        <members>
+          <member value='&quot;Bar Chart by Quarter&quot;' />
+          <member value='&quot;Colored Table &quot;' />
+        </members>
+      </column>
+    </datasource>
+    <datasource caption='Appointment+ (DemoStandard)' inline='true' name='sqlserver.42160.434148078704' version='8.3'>
+      <connection authentication='sqlserver' class='sqlserver' dbname='DemoStandard' minimum-driver-version='SQL Server Native Client 10.0' odbc-native-protocol='yes' server='104.197.18.221' username='mimirdemo'>
+        <relation join='inner' type='join'>
+          <clause type='join'>
+            <expression op='='>
+              <expression op='[Appointment].[PatientId]'>
+              </expression>
+              <expression op='[vw_PatientInfo].[PatientId]'>
+              </expression>
+            </expression>
+          </clause>
+          <relation name='Appointment' table='[dbo].[Appointment]' type='table' />
+          <relation name='vw_PatientInfo' table='[dbo].[vw_PatientInfo]' type='table' />
+        </relation>
+        <cols>
+          <map key='[Date]' value='[Appointment].[Date]' />
+          <map key='[DateofBirth]' value='[vw_PatientInfo].[DateofBirth]' />
+          <map key='[EncounterId]' value='[Appointment].[EncounterId]' />
+          <map key='[Id]' value='[Appointment].[Id]' />
+          <map key='[InsurancePlanId (vw_PatientInfo)]' value='[vw_PatientInfo].[InsurancePlanId]' />
+          <map key='[InsurancePlanId]' value='[Appointment].[InsurancePlanId]' />
+          <map key='[Office]' value='[vw_PatientInfo].[Office]' />
+          <map key='[OrgId]' value='[vw_PatientInfo].[OrgId]' />
+          <map key='[OrganizationId]' value='[Appointment].[OrganizationId]' />
+          <map key='[PatientId (vw_PatientInfo)]' value='[vw_PatientInfo].[PatientId]' />
+          <map key='[PatientId]' value='[Appointment].[PatientId]' />
+          <map key='[PatientName]' value='[vw_PatientInfo].[PatientName]' />
+          <map key='[PlanName]' value='[vw_PatientInfo].[PlanName]' />
+          <map key='[ProviderId (vw_PatientInfo)]' value='[vw_PatientInfo].[ProviderId]' />
+          <map key='[ProviderId]' value='[Appointment].[ProviderId]' />
+          <map key='[ProviderName]' value='[vw_PatientInfo].[ProviderName]' />
+          <map key='[Reason]' value='[Appointment].[Reason]' />
+          <map key='[Showed]' value='[Appointment].[Showed]' />
+          <map key='[Time]' value='[Appointment].[Time]' />
+          <map key='[duration]' value='[Appointment].[duration]' />
+        </cols>
+        <metadata-records>
+          <metadata-record class='column'>
+            <remote-name>Id</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[Id]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>Id</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Date</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[Date]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>Date</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>date</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_DATE&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_DATE&quot;</attribute>
+              <attribute datatype='boolean' name='TypeIsDateTime2orDate'>true</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Time</remote-name>
+            <remote-type>134</remote-type>
+            <local-name>[Time]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>Time</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>datetime</local-type>
+            <aggregation>Hour</aggregation>
+            <precision>7</precision>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_TIME&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_TIME&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>duration</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[duration]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>duration</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PatientId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[PatientId]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>PatientId</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProviderId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[ProviderId]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>ProviderId</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>OrganizationId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[OrganizationId]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>OrganizationId</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Reason</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Reason]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>Reason</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>EncounterId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[EncounterId]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>EncounterId</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Showed</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[Showed]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>Showed</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_BIT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_BIT&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>InsurancePlanId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[InsurancePlanId]</local-name>
+            <parent-name>[Appointment]</parent-name>
+            <remote-alias>InsurancePlanId</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PatientId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[PatientId (vw_PatientInfo)]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>PatientId</remote-alias>
+            <ordinal>17</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PatientName</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[PatientName]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>PatientName</remote-alias>
+            <ordinal>18</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>92</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>DateofBirth</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[DateofBirth]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>DateofBirth</remote-alias>
+            <ordinal>19</ordinal>
+            <local-type>date</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_DATE&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_DATE&quot;</attribute>
+              <attribute datatype='boolean' name='TypeIsDateTime2orDate'>true</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>InsurancePlanId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[InsurancePlanId (vw_PatientInfo)]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>InsurancePlanId</remote-alias>
+            <ordinal>20</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PlanName</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[PlanName]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>PlanName</remote-alias>
+            <ordinal>21</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProviderId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[ProviderId (vw_PatientInfo)]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>ProviderId</remote-alias>
+            <ordinal>22</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProviderName</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[ProviderName]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>ProviderName</remote-alias>
+            <ordinal>23</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>152</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>OrgId</remote-name>
+            <remote-type>72</remote-type>
+            <local-name>[OrgId]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>OrgId</remote-alias>
+            <ordinal>24</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>40</width>
+            <contains-null>false</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='0' name='LROOT' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_GUID&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_GUID&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Office</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Office]</local-name>
+            <parent-name>[vw_PatientInfo]</parent-name>
+            <remote-alias>Office</remote-alias>
+            <ordinal>25</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column aggregation='CountD' caption='No-Show' datatype='integer' name='[Calculation_1800605111156696]' role='dimension' type='ordinal'>
+        <calculation class='tableau' formula='IIF([Showed] = False,1,0)' scope-isolation='false' />
+      </column>
+      <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+      </column>
+      <column caption='Display' datatype='string' name='[Calculation_5110605150754255]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1]' scope-isolation='false' />
+      </column>
+      <column caption='ShowNum' datatype='integer' name='[Calculation_6780605112222911]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IIF([Showed] = True,1,0)' scope-isolation='false' />
+      </column>
+      <column caption='Display3' datatype='string' name='[Calculation_6780612131538855]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 3]' scope-isolation='false' />
+      </column>
+      <column caption='ApptTime' datatype='datetime' name='[Calculation_8920605104043983]' role='dimension' type='ordinal'>
+        <calculation class='tableau' formula='DATETIME(RIGHT([Time],7))' scope-isolation='false' />
+      </column>
+      <column caption='Display2' datatype='string' name='[Calculation_9250608114649545]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 2]' scope-isolation='false' />
+      </column>
+      <column caption='Dateof Birth' datatype='date' hidden='true' name='[DateofBirth]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Encounter Id' datatype='string' hidden='true' name='[EncounterId]' role='dimension' type='nominal'>
+      </column>
+      <column datatype='string' hidden='true' name='[Id]' role='dimension' type='nominal'>
+      </column>
+      <column caption='InsurancePlanId (vw PatientInfo)' datatype='string' hidden='true' name='[InsurancePlanId (vw_PatientInfo)]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Insurance Plan Id' datatype='string' hidden='true' name='[InsurancePlanId]' role='dimension' type='nominal'>
+      </column>
+      <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <column datatype='string' hidden='true' name='[Office]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Org Id' datatype='string' hidden='true' name='[OrgId]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Organization Id' datatype='string' hidden='true' name='[OrganizationId]' role='dimension' type='nominal'>
+      </column>
+      <column caption='PatientId (vw PatientInfo)' datatype='string' hidden='true' name='[PatientId (vw_PatientInfo)]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Patient Id' datatype='string' hidden='true' name='[PatientId]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Patient Name' datatype='string' name='[PatientName]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Plan Name' datatype='string' name='[PlanName]' role='dimension' type='nominal'>
+      </column>
+      <column caption='ProviderId (vw PatientInfo)' datatype='string' hidden='true' name='[ProviderId (vw_PatientInfo)]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Provider Id' datatype='string' hidden='true' name='[ProviderId]' role='dimension' type='nominal'>
+      </column>
+      <column caption='Provider Name' datatype='string' name='[ProviderName]' role='dimension' type='nominal'>
+      </column>
+      <column datatype='string' hidden='true' name='[Reason]' role='dimension' type='nominal'>
+      </column>
+      <column datatype='datetime' datatype-customized='true' default-format='*m/d/yyyy h:nn:ss AMPM' name='[Time]' role='dimension' type='ordinal'>
+      </column>
+      <column caption='Duration' datatype='integer' hidden='true' name='[duration]' role='measure' type='quantitative'>
+      </column>
+      <column-instance column='[PlanName]' derivation='None' name='[none:PlanName:nk]' pivot='key' type='nominal' />
+      <column-instance column='[ProviderName]' derivation='None' name='[none:ProviderName:nk]' pivot='key' type='nominal' />
+      <column-instance column='[Number of Records]' derivation='Sum' name='[sum:Number of Records:qk]' pivot='key' type='quantitative' />
+      <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.5' measure-ordering='alphabetic' measure-percentage='0.4' rowDisplayCount='1000' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[:Measure Names]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;[sqlserver.42160.434148078704]&quot;</bucket>
+            </map>
+            <map to='#2ca02c'>
+              <bucket>&quot;[sqlserver.42160.434148078704].[sum:Number of Records:qk]&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]&quot;</bucket>
+            </map>
+          </encoding>
+          <encoding attr='color' field='[none:PlanName:nk]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;Aetna HMO&quot;</bucket>
+            </map>
+            <map to='#2ca02c'>
+              <bucket>&quot;Cigna HMO&quot;</bucket>
+            </map>
+            <map to='#8c564b'>
+              <bucket>&quot;Patient is payer&quot;</bucket>
+            </map>
+            <map to='#9467bd'>
+              <bucket>&quot;Medicaid&quot;</bucket>
+            </map>
+            <map to='#98df8a'>
+              <bucket>&quot;Cigna PPO&quot;</bucket>
+            </map>
+            <map to='#aec7e8'>
+              <bucket>&quot;Aetna PPO&quot;</bucket>
+            </map>
+            <map to='#c49c94'>
+              <bucket>&quot;United Healthcare HMO&quot;</bucket>
+            </map>
+            <map to='#c5b0d5'>
+              <bucket>&quot;Medicare Part B&quot;</bucket>
+            </map>
+            <map to='#d62728'>
+              <bucket>&quot;Humana HMO&quot;</bucket>
+            </map>
+            <map to='#e377c2'>
+              <bucket>&quot;United Healthcare PPO&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;BCBS of TX HMO&quot;</bucket>
+            </map>
+            <map to='#ff9896'>
+              <bucket>&quot;Humana PPO&quot;</bucket>
+            </map>
+            <map to='#ffbb78'>
+              <bucket>&quot;BCBS of TX PPO&quot;</bucket>
+            </map>
+          </encoding>
+          <encoding attr='color' field='[none:ProviderName:nk]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;Elizabeth  Blackwell&quot;</bucket>
+            </map>
+            <map to='#2ca02c'>
+              <bucket>&quot;Susan La Flesche Picotte&quot;</bucket>
+            </map>
+            <map to='#8c564b'>
+              <bucket>&quot;Rebecca Davis Lee Crumpler&quot;</bucket>
+            </map>
+            <map to='#9467bd'>
+              <bucket>&quot;Emma K. Willits&quot;</bucket>
+            </map>
+            <map to='#d62728'>
+              <bucket>&quot;Allen Oldfather Whipple&quot;</bucket>
+            </map>
+            <map to='#e377c2'>
+              <bucket>&quot;Virginia  Apgar&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;George Emory Goodfellow&quot;</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+      <datasource-dependencies datasource='Parameters'>
+        <column caption='Select Visualization' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Colored Table&quot;'>
+          <calculation class='tableau' formula='&quot;Colored Table&quot;' />
+          <aliases>
+            <alias key='&quot;Colored Bar Chart&quot;' value='Colored Bar Chart' />
+          </aliases>
+          <members>
+            <member alias='Colored Bar Chart' value='&quot;Colored Bar Chart&quot;' />
+            <member value='&quot;Colored Table&quot;' />
+          </members>
+        </column>
+        <column caption='Select Visualization ' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;Colored Bar Chart &quot;'>
+          <calculation class='tableau' formula='&quot;Colored Bar Chart &quot;' />
+          <members>
+            <member value='&quot;Colored Bar Chart &quot;' />
+            <member value='&quot;Treemap&quot;' />
+          </members>
+        </column>
+        <column caption='Select Visualization   ' datatype='string' name='[Parameter 3]' param-domain-type='list' role='measure' type='nominal' value='&quot;Colored Table &quot;'>
+          <calculation class='tableau' formula='&quot;Colored Table &quot;' />
+          <members>
+            <member value='&quot;Bar Chart by Quarter&quot;' />
+            <member value='&quot;Colored Table &quot;' />
+          </members>
+        </column>
+      </datasource-dependencies>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Bar Chart by Quarter'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Appointment+ (DemoStandard)' name='sqlserver.42160.434148078704' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42160.434148078704'>
+            <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+            </column>
+            <column caption='Display3' datatype='string' name='[Calculation_6780612131538855]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 3]' scope-isolation='false' />
+            </column>
+            <column datatype='date' name='[Date]' role='dimension' type='ordinal'>
+            </column>
+            <column datatype='datetime' datatype-customized='true' default-format='*m/d/yyyy h:nn:ss AMPM' name='[Time]' role='dimension' type='ordinal'>
+            </column>
+            <column-instance column='[Time]' derivation='Hour' name='[hr:Time:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Time]' derivation='Hour' name='[hr:Time:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Date]' derivation='Month' name='[mn:Date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_6780612131538855]' derivation='None' name='[none:Calculation_6780612131538855:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Date]' derivation='Quarter' name='[qr:Date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[hr:Time:ok]'>
+            <groupfilter function='except' user:ui-domain='relevant' user:ui-enumeration='exclusive' user:ui-marker='enumerate'>
+              <groupfilter function='level-members' level='[hr:Time:ok]' />
+              <groupfilter function='member' level='[hr:Time:ok]' member='18' />
+            </groupfilter>
+          </filter>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[mn:Date:ok]'>
+            <groupfilter function='level-members' level='[mn:Date:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:Calculation_6780612131538855:nk]'>
+            <groupfilter function='member' level='[none:Calculation_6780612131538855:nk]' member='&quot;Bar Chart by Quarter&quot;' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-manual-selection='true' user:ui-manual-selection-all-when-empty='true' user:ui-marker='enumerate' />
+          </filter>
+          <slices>
+            <column>[sqlserver.42160.434148078704].[hr:Time:ok]</column>
+            <column>[sqlserver.42160.434148078704].[mn:Date:ok]</column>
+            <column>[sqlserver.42160.434148078704].[none:Calculation_6780612131538855:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='label'>
+            <format attr='display' field='[sqlserver.42160.434148078704].[hr:Time:ok]' value='true' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[hr:Time:ok]' value='ih a' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0%' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='color' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' palette='tableau-map-temperatur' type='interpolated' />
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='display-field-labels' scope='cols' value='false' />
+          </style-rule>
+          <style-rule element='annotation'>
+            <format attr='rounding' id='annotation_1' value='medium' />
+            <format attr='rounding' id='annotation_2' value='medium' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane id='3'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</rows>
+        <cols>([sqlserver.42160.434148078704].[qr:Date:ok] / [sqlserver.42160.434148078704].[hr:Time:ok])</cols>
+        <annotations>
+          <annotation class='area' id='1' text-pinx='0.5' text-piny='0.5' text-width-delta='-18'>
+            <formatted-text>
+              <run>Morning Rush Hour</run>
+            </formatted-text>
+            <top-left>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='8.1607869742198105'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.041894668234694017'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </top-left>
+            <bottom-right>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='9.9687924016282228'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.0032135114839111851'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </bottom-right>
+            <text x='0.5' y='0.5' />
+          </annotation>
+          <annotation class='area' id='2' text-pinx='0.5' text-piny='0.5' text-width-delta='-18'>
+            <formatted-text>
+              <run>Evening Rush Hour</run>
+            </formatted-text>
+            <top-left>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='15.895522388059701'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.054629695226490214'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </top-left>
+            <bottom-right>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='17.271370420624152'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.010473667058673506'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </bottom-right>
+            <text x='0.5' y='0.5' />
+          </annotation>
+        </annotations>
+      </table>
+    </worksheet>
+    <worksheet name='Colored Bar Chart'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Appointment+ (DemoStandard)' name='sqlserver.42160.434148078704' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42160.434148078704'>
+            <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+            </column>
+            <column caption='Display' datatype='string' name='[Calculation_5110605150754255]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 1]' scope-isolation='false' />
+            </column>
+            <column datatype='date' name='[Date]' role='dimension' type='ordinal'>
+            </column>
+            <column caption='Provider Name' datatype='string' name='[ProviderName]' role='dimension' type='nominal'>
+            </column>
+            <column-instance column='[Date]' derivation='Month' name='[mn:Date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_5110605150754255]' derivation='None' name='[none:Calculation_5110605150754255:nk]' pivot='key' type='nominal' />
+            <column-instance column='[ProviderName]' derivation='None' name='[none:ProviderName:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]'>
+            <groupfilter function='member' level='[none:Calculation_5110605150754255:nk]' member='&quot;Colored Bar Chart&quot;' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-manual-selection='true' user:ui-manual-selection-all-when-empty='true' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:ProviderName:nk]'>
+            <groupfilter function='level-members' level='[none:ProviderName:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <sort class='computed' column='[sqlserver.42160.434148078704].[none:ProviderName:nk]' direction='DESC' using='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]'>
+            <groupfilter function='member' level='[mn:Date:ok]' member='1' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+          </sort>
+          <slices>
+            <column>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</column>
+            <column>[sqlserver.42160.434148078704].[none:ProviderName:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='label'>
+            <format attr='display' field='[sqlserver.42160.434148078704].[none:ProviderName:nk]' value='false' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0%' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='color' center='0.059999999999999998' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='custom-interpolated'>
+              <color-palette custom='true' name='' type='ordered-diverging'>
+                <color>#00ff00</color>
+                <color>#30f430</color>
+                <color>#5de95d</color>
+                <color>#85df85</color>
+                <color>#aad4aa</color>
+                <color>#cacaca</color>
+                <color>#d4aaaa</color>
+                <color>#df8585</color>
+                <color>#e95d5d</color>
+                <color>#f43030</color>
+                <color>#ff0000</color>
+              </color-palette>
+            </encoding>
+            <encoding attr='size-bar' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' field-type='quantitative' max-size='1' min-size='0.005' type='centersize' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[sqlserver.42160.434148078704].[none:ProviderName:nk]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</rows>
+        <cols>([sqlserver.42160.434148078704].[mn:Date:ok] / [sqlserver.42160.434148078704].[none:ProviderName:nk])</cols>
+      </table>
+    </worksheet>
+    <worksheet name='Colored Bar Chart '>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Appointment+ (DemoStandard)' name='sqlserver.42160.434148078704' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42160.434148078704'>
+            <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+            </column>
+            <column caption='Display2' datatype='string' name='[Calculation_9250608114649545]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 2]' scope-isolation='false' />
+            </column>
+            <column caption='Plan Name' datatype='string' name='[PlanName]' role='dimension' type='nominal'>
+            </column>
+            <column-instance column='[Calculation_9250608114649545]' derivation='None' name='[none:Calculation_9250608114649545:nk]' pivot='key' type='nominal' />
+            <column-instance column='[PlanName]' derivation='None' name='[none:PlanName:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:Calculation_9250608114649545:nk]'>
+            <groupfilter function='member' level='[none:Calculation_9250608114649545:nk]' member='&quot;Colored Bar Chart&quot;' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-manual-selection='true' user:ui-manual-selection-all-when-empty='true' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:PlanName:nk]'>
+            <groupfilter function='except' user:ui-domain='relevant' user:ui-enumeration='exclusive' user:ui-marker='enumerate'>
+              <groupfilter function='level-members' level='[none:PlanName:nk]' />
+              <groupfilter function='member' level='[none:PlanName:nk]' member='&quot;Medicaid&quot;' />
+            </groupfilter>
+          </filter>
+          <slices>
+            <column>[sqlserver.42160.434148078704].[none:PlanName:nk]</column>
+            <column>[sqlserver.42160.434148078704].[none:Calculation_9250608114649545:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0%' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0%' />
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='display-field-labels' scope='cols' value='false' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <color column='[sqlserver.42160.434148078704].[none:PlanName:nk]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</rows>
+        <cols>[sqlserver.42160.434148078704].[none:PlanName:nk]</cols>
+      </table>
+    </worksheet>
+    <worksheet name='Colored Table'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Appointment+ (DemoStandard)' name='sqlserver.42160.434148078704' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42160.434148078704'>
+            <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+            </column>
+            <column caption='Display' datatype='string' name='[Calculation_5110605150754255]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 1]' scope-isolation='false' />
+            </column>
+            <column datatype='date' name='[Date]' role='dimension' type='ordinal'>
+            </column>
+            <column caption='Provider Name' datatype='string' name='[ProviderName]' role='dimension' type='nominal'>
+            </column>
+            <column-instance column='[Date]' derivation='Month' name='[mn:Date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_5110605150754255]' derivation='None' name='[none:Calculation_5110605150754255:nk]' pivot='key' type='nominal' />
+            <column-instance column='[ProviderName]' derivation='None' name='[none:ProviderName:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]'>
+            <groupfilter function='member' level='[none:Calculation_5110605150754255:nk]' member='&quot;Colored Table&quot;' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-manual-selection='true' user:ui-manual-selection-all-when-empty='true' user:ui-marker='enumerate' />
+          </filter>
+          <sort class='computed' column='[sqlserver.42160.434148078704].[none:ProviderName:nk]' direction='DESC' using='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]'>
+            <groupfilter function='member' level='[mn:Date:ok]' member='1' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+          </sort>
+          <slices>
+            <column>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0.00%' />
+            <format attr='height' field='[sqlserver.42160.434148078704].[none:ProviderName:nk]' value='40' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0.00%' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='size-bar' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' field-type='quantitative' max-size='1' min-size='0.005' type='centersize' />
+            <encoding attr='color' center='0.059999999999999998' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='custom-interpolated'>
+              <color-palette custom='true' name='' type='ordered-diverging'>
+                <color>#008000</color>
+                <color>#178c17</color>
+                <color>#329832</color>
+                <color>#52a552</color>
+                <color>#76b176</color>
+                <color>#9ebd9e</color>
+                <color>#cacaca</color>
+                <color>#d2afaf</color>
+                <color>#db9292</color>
+                <color>#e47272</color>
+                <color>#ed4f4f</color>
+                <color>#f62929</color>
+                <color>#ff0000</color>
+              </color-palette>
+            </encoding>
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='display-field-labels' scope='cols' value='false' />
+            <format attr='display-field-labels' scope='rows' value='false' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Square' />
+            <encodings>
+              <color column='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-line-first' value='true' />
+                <format attr='mark-labels-line-last' value='true' />
+                <format attr='mark-labels-range-min' value='true' />
+                <format attr='mark-labels-range-max' value='true' />
+                <format attr='mark-labels-mode' value='all' />
+                <format attr='mark-labels-range-scope' value='pane' />
+                <format attr='mark-labels-range-field' value='' />
+                <format attr='mark-labels-show' value='false' />
+                <format attr='has-stroke' value='false' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='minheight' value='-1' />
+                <format attr='maxheight' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[sqlserver.42160.434148078704].[none:ProviderName:nk]</rows>
+        <cols>[sqlserver.42160.434148078704].[mn:Date:ok]</cols>
+      </table>
+    </worksheet>
+    <worksheet name='Colored Table '>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Appointment+ (DemoStandard)' name='sqlserver.42160.434148078704' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42160.434148078704'>
+            <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+            </column>
+            <column caption='Display3' datatype='string' name='[Calculation_6780612131538855]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 3]' scope-isolation='false' />
+            </column>
+            <column datatype='date' name='[Date]' role='dimension' type='ordinal'>
+            </column>
+            <column datatype='datetime' datatype-customized='true' default-format='*m/d/yyyy h:nn:ss AMPM' name='[Time]' role='dimension' type='ordinal'>
+            </column>
+            <column-instance column='[Time]' derivation='Hour' name='[hr:Time:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Time]' derivation='Hour' name='[hr:Time:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Calculation_6780612131538855]' derivation='None' name='[none:Calculation_6780612131538855:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Date]' derivation='Month-Trunc' name='[tmn:Date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[hr:Time:ok]'>
+            <groupfilter function='except' user:ui-domain='relevant' user:ui-enumeration='exclusive' user:ui-marker='enumerate'>
+              <groupfilter function='level-members' level='[hr:Time:ok]' />
+              <groupfilter function='member' level='[hr:Time:ok]' member='18' />
+            </groupfilter>
+          </filter>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:Calculation_6780612131538855:nk]'>
+            <groupfilter function='member' level='[none:Calculation_6780612131538855:nk]' member='&quot;Colored Table&quot;' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-manual-selection='true' user:ui-manual-selection-all-when-empty='true' user:ui-marker='enumerate' />
+          </filter>
+          <slices>
+            <column>[sqlserver.42160.434148078704].[hr:Time:ok]</column>
+            <column>[sqlserver.42160.434148078704].[none:Calculation_6780612131538855:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='width' field='[sqlserver.42160.434148078704].[tmn:Date:ok]' value='71' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0.00%' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='display' field='[sqlserver.42160.434148078704].[hr:Time:ok]' value='true' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[hr:Time:ok]' value='ih a' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0.0000%' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[tmn:Date:ok]' value='' />
+            <format attr='font-size' field='[sqlserver.42160.434148078704].[tmn:Date:ok]' value='8' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='color' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' num-steps='5' palette='tableau-blue' type='interpolated' />
+            <encoding attr='size-bar' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' field-type='quantitative' max-size='1' min-size='0.005' type='centersize' />
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='display-field-labels' scope='rows' value='false' />
+            <format attr='display-field-labels' scope='cols' value='false' />
+          </style-rule>
+          <style-rule element='annotation'>
+            <format attr='rounding' id='annotation_1' value='medium' />
+            <format attr='rounding' id='annotation_2' value='medium' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Square' />
+            <encodings>
+              <color column='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-line-first' value='true' />
+                <format attr='mark-labels-line-last' value='true' />
+                <format attr='mark-labels-range-min' value='true' />
+                <format attr='mark-labels-range-max' value='true' />
+                <format attr='mark-labels-mode' value='all' />
+                <format attr='mark-labels-range-scope' value='pane' />
+                <format attr='mark-labels-range-field' value='' />
+                <format attr='mark-labels-show' value='false' />
+                <format attr='has-stroke' value='false' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[sqlserver.42160.434148078704].[hr:Time:ok]</rows>
+        <cols>[sqlserver.42160.434148078704].[tmn:Date:ok]</cols>
+        <annotations>
+          <annotation class='area' id='1' text-pinx='0.5' text-piny='0.5' text-width-delta='-18'>
+            <formatted-text>
+              <run>Morning Rush Hour</run>
+            </formatted-text>
+            <top-left>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='8.1607869742198105'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.041894668234694017'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </top-left>
+            <bottom-right>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='9.9687924016282228'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.0032135114839111851'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </bottom-right>
+            <text x='0.5' y='0.5' />
+          </annotation>
+          <annotation class='area' id='2' text-pinx='0.5' text-piny='0.5' text-width-delta='-18'>
+            <formatted-text>
+              <run>Evening Rush Hour</run>
+            </formatted-text>
+            <top-left>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='15.895522388059701'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.054629695226490214'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </top-left>
+            <bottom-right>
+              <visual-coordinate class='axis'>
+                <x-coord axis-value='17.271370420624152'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[hr:Time:qk]</axis>
+                  </node-reference>
+                </x-coord>
+                <y-coord axis-value='0.010473667058673506'>
+                  <node-reference>
+                    <axis>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</axis>
+                  </node-reference>
+                </y-coord>
+                <page-reference>
+                </page-reference>
+              </visual-coordinate>
+            </bottom-right>
+            <text x='0.5' y='0.5' />
+          </annotation>
+        </annotations>
+      </table>
+    </worksheet>
+    <worksheet name='Treemap'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Appointment+ (DemoStandard)' name='sqlserver.42160.434148078704' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42160.434148078704'>
+            <column caption='Proportion No-Show' datatype='real' name='[Calculation_3490605112826286]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_1800605111156696]) / (SUM([Calculation_1800605111156696]) + SUM([Calculation_6780605112222911]) )' scope-isolation='false' />
+            </column>
+            <column caption='Display2' datatype='string' name='[Calculation_9250608114649545]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 2]' scope-isolation='false' />
+            </column>
+            <column caption='Plan Name' datatype='string' name='[PlanName]' role='dimension' type='nominal'>
+            </column>
+            <column-instance column='[Calculation_9250608114649545]' derivation='None' name='[none:Calculation_9250608114649545:nk]' pivot='key' type='nominal' />
+            <column-instance column='[PlanName]' derivation='None' name='[none:PlanName:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_3490605112826286]' derivation='User' name='[usr:Calculation_3490605112826286:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:Calculation_9250608114649545:nk]'>
+            <groupfilter function='member' level='[none:Calculation_9250608114649545:nk]' member='&quot;Treemap&quot;' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-manual-selection='true' user:ui-manual-selection-all-when-empty='true' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[sqlserver.42160.434148078704].[none:PlanName:nk]'>
+            <groupfilter function='except' user:ui-domain='relevant' user:ui-enumeration='exclusive' user:ui-marker='enumerate'>
+              <groupfilter function='level-members' level='[none:PlanName:nk]' />
+              <groupfilter function='member' level='[none:PlanName:nk]' member='&quot;Medicaid&quot;' />
+            </groupfilter>
+          </filter>
+          <slices>
+            <column>[sqlserver.42160.434148078704].[none:PlanName:nk]</column>
+            <column>[sqlserver.42160.434148078704].[none:Calculation_9250608114649545:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='height' value='760' />
+            <format attr='text-format' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' value='p0.00%' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='size-bar' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' field-type='quantitative' max-size='1' min-size='0.005' type='centersize' />
+            <encoding attr='color' field='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='custom-interpolated'>
+              <color-palette custom='true' name='' type='ordered-diverging'>
+                <color>#00ff00</color>
+                <color>#29f629</color>
+                <color>#4fed4f</color>
+                <color>#72e472</color>
+                <color>#92db92</color>
+                <color>#afd2af</color>
+                <color>#cacaca</color>
+                <color>#d2afaf</color>
+                <color>#db9292</color>
+                <color>#e47272</color>
+                <color>#ed4f4f</color>
+                <color>#f62929</color>
+                <color>#ff0000</color>
+              </color-palette>
+            </encoding>
+          </style-rule>
+        </style>
+        <panes>
+          <pane>
+            <view>
+              <breakdown value='on' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <size column='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' />
+              <color column='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' />
+              <text column='[sqlserver.42160.434148078704].[none:PlanName:nk]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-line-first' value='true' />
+                <format attr='mark-labels-line-last' value='true' />
+                <format attr='mark-labels-range-min' value='true' />
+                <format attr='mark-labels-range-max' value='true' />
+                <format attr='mark-labels-mode' value='all' />
+                <format attr='mark-labels-range-scope' value='pane' />
+                <format attr='mark-labels-range-field' value='' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='minheight' value='-1' />
+                <format attr='maxheight' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows></rows>
+        <cols></cols>
+      </table>
+    </worksheet>
+  </worksheets>
+  <dashboards>
+    <dashboard name='Proportion of No-Shows by Doctor'>
+      <style>
+      </style>
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
+      <zones>
+        <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
+          <zone h='88250' id='6' param='horz' type='layout-flow' w='100000' x='0' y='11750'>
+            <zone fixed-size='818' h='88250' id='1' is-fixed='true' param='vert' type='layout-flow' w='81800' x='0' y='11750'>
+              <zone h='87750' id='3' param='vert' type='layout-flow' w='81800' x='0' y='11750'>
+                <zone h='1125' id='4' name='Colored Bar Chart' w='81800' x='0' y='11750'>
+                  <layout-cache has-max-size-h='true' maxheight='1' minheight='1' type-h='scalable' type-w='fixed' />
+                </zone>
+                <zone fixed-size='379' h='48375' id='9' is-fixed='true' name='Colored Table' w='81800' x='0' y='12875'>
+                  <layout-cache type-h='fixed' type-w='fixed' />
+                </zone>
+              </zone>
+            </zone>
+            <zone fixed-size='160' h='88250' id='5' is-fixed='true' param='vert' type='layout-flow' w='16000' x='81800' y='11750'>
+              <zone h='6375' id='8' mode='compact' param='[Parameters].[Parameter 1]' type='paramctrl' w='16000' x='81800' y='11750'>
+              </zone>
+              <zone h='3000' id='7' name='Colored Bar Chart' pane-specification-id='0' param='[sqlserver.42160.434148078704].[none:ProviderName:nk]' type='color' w='16000' x='81800' y='18125'>
+              </zone>
+              <zone fixed-size='309' h='39625' id='10' is-fixed='true' name='Colored Bar Chart' param='[sqlserver.42160.434148078704].[none:ProviderName:nk]' type='filter' w='16000' x='81800' y='21125'>
+              </zone>
+            </zone>
+          </zone>
+          <zone forceUpdate='true' h='11750' id='11' is-centered='0' is-scaled='1' param='C:\Users\Mahitha\Google Drive\Mimir Shared Drive\Graphic Design\Mimir Logos\Mimir Logo resize.jpg' type='bitmap' w='100000' x='0' y='0'>
+          </zone>
+        </zone>
+      </zones>
+    </dashboard>
+    <dashboard name='Proportion of No-Shows by Insurance Plan'>
+      <style>
+      </style>
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
+      <zones>
+        <zone h='100000' id='8' type='layout-basic' w='100000' x='0' y='0'>
+          <zone h='85125' id='11' param='horz' type='layout-flow' w='100000' x='0' y='14875'>
+            <zone h='85125' id='9' type='layout-basic' w='84000' x='0' y='14875'>
+              <zone h='85125' id='16' param='vert' type='layout-flow' w='84000' x='0' y='14875'>
+                <zone h='4750' id='7' name='Treemap' w='84000' x='0' y='14875'>
+                  <layout-cache cell-count-h='1' type-h='cell' type-w='fixed' />
+                </zone>
+                <zone h='79875' id='14' name='Colored Bar Chart ' w='84000' x='0' y='19625'>
+                  <layout-cache minheight='141' type-h='scalable' type-w='fixed' />
+                </zone>
+              </zone>
+            </zone>
+            <zone fixed-size='160' h='85125' id='10' is-fixed='true' param='vert' type='layout-flow' w='16000' x='84000' y='14875'>
+              <zone h='6375' id='13' mode='compact' param='[Parameters].[Parameter 2]' type='paramctrl' w='16000' x='84000' y='14875'>
+              </zone>
+            </zone>
+          </zone>
+          <zone forceUpdate='true' h='14875' id='17' is-centered='0' is-scaled='1' param='C:\Users\Mahitha\Google Drive\Mimir Shared Drive\Graphic Design\Mimir Logos\Mimir Logo resize.jpg' type='bitmap' w='100000' x='0' y='0'>
+          </zone>
+        </zone>
+      </zones>
+    </dashboard>
+    <dashboard name='Proportion of No-Shows by Time of Day'>
+      <style>
+      </style>
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
+      <zones>
+        <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
+          <zone h='82125' id='5' param='horz' type='layout-flow' w='100000' x='0' y='17875'>
+            <zone fixed-size='812' h='82125' id='1' is-fixed='true' param='vert' type='layout-flow' w='80400' x='0' y='17875'>
+              <zone h='1125' id='3' name='Bar Chart by Quarter' w='80400' x='0' y='17875'>
+                <layout-cache has-max-size-h='true' maxheight='1' minheight='1' type-h='scalable' type-w='fixed' />
+              </zone>
+              <zone fixed-size='289' h='37125' id='8' is-fixed='true' name='Colored Table ' w='80400' x='0' y='19000'>
+                <layout-cache type-h='cell' type-w='fixed' />
+              </zone>
+            </zone>
+            <zone fixed-size='196' h='82125' id='4' is-fixed='true' param='vert' type='layout-flow' w='19600' x='80400' y='17875'>
+              <zone h='6375' id='7' mode='compact' param='[Parameters].[Parameter 3]' type='paramctrl' w='19600' x='80400' y='17875'>
+              </zone>
+            </zone>
+          </zone>
+          <zone forceUpdate='true' h='17875' id='9' is-centered='0' is-scaled='1' param='C:\Users\Mahitha\Google Drive\Mimir Shared Drive\Graphic Design\Mimir Logos\Mimir Logo resize.jpg' type='bitmap' w='100000' x='0' y='0'>
+          </zone>
+        </zone>
+      </zones>
+    </dashboard>
+  </dashboards>
+  <windows>
+    <window class='schema' source-height='-1' />
+    <window auto-hidden='0' class='dashboard' maximized='0' name='Proportion of No-Shows by Doctor'>
+      <active id='11' />
+      <zones>
+        <zone name='Colored Bar Chart'>
+          <viewpoint>
+            <zoom type='entire-view' />
+          </viewpoint>
+          <highlight>
+            <color-one-way>
+              <field>[sqlserver.42160.434148078704].[none:ProviderName:nk]</field>
+            </color-one-way>
+          </highlight>
+        </zone>
+        <zone mode='compact' name='' param='[Parameters].[Parameter 1]' type='paramctrl' />
+        <zone name='Colored Bar Chart' pane-specification-id='0' param='[sqlserver.42160.434148078704].[none:ProviderName:nk]' type='color' />
+        <zone forceUpdate='true' is-centered='0' is-scaled='1' name='' type='bitmap' />
+      </zones>
+    </window>
+    <window auto-hidden='0' class='dashboard' maximized='0' name='Proportion of No-Shows by Insurance Plan'>
+      <active id='17' />
+      <zones>
+        <zone name='Treemap'>
+          <viewpoint>
+            <zoom type='entire-view' />
+          </viewpoint>
+        </zone>
+        <zone name='Colored Bar Chart '>
+          <viewpoint>
+            <zoom type='entire-view' />
+          </viewpoint>
+          <highlight>
+            <color-one-way>
+              <field>[sqlserver.42160.434148078704].[none:PlanName:nk]</field>
+            </color-one-way>
+          </highlight>
+        </zone>
+        <zone mode='compact' name='' param='[Parameters].[Parameter 2]' type='paramctrl' />
+        <zone forceUpdate='true' is-centered='0' is-scaled='1' name='' type='bitmap' />
+      </zones>
+    </window>
+    <window auto-hidden='0' class='dashboard' maximized='1' name='Proportion of No-Shows by Time of Day'>
+      <active id='9' />
+      <zones>
+        <zone name='Bar Chart by Quarter'>
+          <viewpoint>
+            <zoom type='entire-view' />
+          </viewpoint>
+        </zone>
+        <zone name='Colored Table '>
+          <viewpoint>
+            <zoom type='entire-view' />
+          </viewpoint>
+          <selection-collection>
+            <tuple-selection>
+              <tuple-reference>
+                <tuple-descriptor>
+                  <pane-descriptor>
+                    <x-fields>
+                      <field>[sqlserver.42160.434148078704].[tmn:Date:ok]</field>
+                    </x-fields>
+                    <y-fields>
+                      <field>[sqlserver.42160.434148078704].[hr:Time:ok]</field>
+                    </y-fields>
+                  </pane-descriptor>
+                  <columns>
+                    <field>[sqlserver.42160.434148078704].[hr:Time:ok]</field>
+                    <field>[sqlserver.42160.434148078704].[tmn:Date:ok]</field>
+                    <field>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</field>
+                  </columns>
+                </tuple-descriptor>
+                <tuple>
+                  <value>14</value>
+                  <value>#2012-08-01 00:00:00#</value>
+                  <value>0.060869565217391307</value>
+                </tuple>
+              </tuple-reference>
+            </tuple-selection>
+          </selection-collection>
+        </zone>
+        <zone mode='compact' name='' param='[Parameters].[Parameter 3]' type='paramctrl' />
+        <zone forceUpdate='true' is-centered='0' is-scaled='1' name='' type='bitmap' />
+      </zones>
+    </window>
+    <window class='hidden-worksheet' name='Bar Chart by Quarter'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='3' param='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 3]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42160.434148078704].[hr:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[io:Morning Rush:nk]</field>
+          <field>[sqlserver.42160.434148078704].[mi:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_1800605111156696:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_1800605111156696:ok]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_6780612131538855:nk]</field>
+          <field>[sqlserver.42160.434148078704].[thr:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[tmn:Date:ok]</field>
+          <field>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</field>
+          <field>[sqlserver.42160.434148078704].[yr:Date:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+    <window class='hidden-worksheet' name='Colored Bar Chart'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42160.434148078704].[none:ProviderName:nk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 1]' type='parameter' />
+            <card param='[sqlserver.42160.434148078704].[none:ProviderName:nk]' type='filter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42160.434148078704].[hr:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[mn:Date:ok]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_8920605104043983:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:PlanName:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:ProviderName:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Showed:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</field>
+          <field>[sqlserver.42160.434148078704].[yr:Date:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+    <window class='hidden-worksheet' name='Colored Bar Chart '>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42160.434148078704].[none:PlanName:nk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 2]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_3230605153639291:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_3300608113138950:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_7340608112839022:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_9250608114649545:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:PlanName:nk]</field>
+          <field>[sqlserver.42160.434148078704].[wd:Date:ok]</field>
+          <field>[sqlserver.42160.434148078704].[yr:Date:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+    <window class='hidden-worksheet' name='Colored Table'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 1]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:ProviderName:nk]</field>
+          <field>[sqlserver.42160.434148078704].[yr:Date:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+    <window class='hidden-worksheet' name='Colored Table '>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 3]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42160.434148078704].[hr:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[io:Morning Rush:nk]</field>
+          <field>[sqlserver.42160.434148078704].[mi:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_1800605111156696:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_1800605111156696:ok]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_6780612131538855:nk]</field>
+          <field>[sqlserver.42160.434148078704].[thr:Time:ok]</field>
+          <field>[sqlserver.42160.434148078704].[tmn:Date:ok]</field>
+          <field>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</field>
+          <field>[sqlserver.42160.434148078704].[yr:Date:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+    <window class='hidden-worksheet' name='Treemap'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 2]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_3230605153639291:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_3300608113138950:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_5110605150754255:nk]</field>
+          <field>[sqlserver.42160.434148078704].[none:Calculation_9250608114649545:nk]</field>
+          <field>[sqlserver.42160.434148078704].[usr:Calculation_3490605112826286:qk]</field>
+          <field>[sqlserver.42160.434148078704].[yr:Date:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Proportion of No-Shows by Doctor' width='192'>
+      iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAAA7EAAAOxAGVKw4b
+      AAAaEElEQVR4nO3deZgc9X3n8XdV9X1Nz9FzX5oZ3UIXQoAVFIwhNo8XzIIdHHCW2ODHZLN+
+      Qvx4vX7WNtkjiXOtvU+8eZLNE+IYZ20/Nk5szIJYbLCMECCB0DU6ZiTNSJp7pu+7u7pq/xgh
+      6IyEhhqJYVTf118zo/52/7pVn6rq+h2lmKZpIoRNqYvdACEWk+PNH+RAsHCKoix2E8S75Hj7
+      L/IfKOzGcemHXNibRwwFQIIjlihL3wFM0ySXyfHPj/+QRCwxGwY5gxJLkPLmVSDTNC95CmQC
+      RqXCM0/8jAN73iAVT9LQHKGzp4u7H7gXp8N57pAgxNIw7yOAicmhvfv57498jbpIPV/6+ldw
+      OB383lf+gNXr1/LHX3iU3S/swpRDgVhC5nUESMYT/N2f/zUdPZ3c88AneXXnbn7x5A5+/fYP
+      seu5nWz5teu59WMf4ZknfsahvQd48AsP09jaRLZQJJUr0FJXg6IomKZJPJOjYhjUhwKMziSI
+      1PipGAaJTJ7W+jAKs0eaZDZHSa8QqQkyNpOgLuTH43KSLRRJZHI4NI3GcPD88+qVCsa591As
+      6XjdTkzA6dAolsq4XU6yuQKGOfs3t8tJuazjcjlQ5LBlW/MKwKu/3E2pVGLZyh4e/9Y/sPH6
+      zXzknn9z/vG/evYFdu54nk9+9rcxTZOj+w/zsU/dw892H+R//PgXPPaFT9HbFsEwTH77z/6R
+      joYwf/Tpj3Hbl/+Kb3zubqYSGf7k+zv4m9//JGu6WjFNk8/85XcJB7x84+FP8OEv/xVfu/92
+      1na3cv/Xv02hrGOaJmu6mvjmw79JpWIwPD5NvljC63ahqCqdTXW8fmyYjcs7GRyZZMuqZRwd
+      HiORzuF0aKzrbWfwzCTr+tokADY271MgTXOw8+nnyaTS1Dc2nNv4ZzecptZmMEye+eGTOByz
+      F5YUQFUUNE3juz9/FUx4/o3jjMdSqKqKAmiaiqIoKAo4HBrffW4PmPDS4ZOcnoqjqrPNc6iz
+      j5uIp8iXyvzoqw/y40c/y/BEnN1HToICU4kMyUweFBXFNHGoCoZhMjw+c66tJi31NURqg6iq
+      wuCZCbl4Jd7dVSCjYvLIf/0Sk6MT/MkX/wuHXtvP/3z0z9nzq5f54te/gqrNfTqvy8Huo6cY
+      mpjhn55/lYDXdcHndjk09p08y8DIJN/9+cUfhwKxTJ7hyRjlSgW/241DU1nV2cTyjiaa64IU
+      9QqjMwnW93UQ8nupDwXoPzWGy+kg5PfQEA6yelkrtSE/mLNHP3P2h3M/gzn7K7Pffs7927v5
+      sMSS8K76ARQFVFXljvvu5kN3fphHf/c/8eW/eJRIcwRdr1ywJuhzs35ZD49+5ynSuTzbr1lO
+      LJWd8zi308n2a3r5o+89QzSV5bZr13B2OjbncSoqX/jbJ8gWSnx061q2ruqiYpg4HBp6pYKm
+      qjTUBEhl8xTLOrlikaDPS12NH6/HRSqbp6OxjologpDPw9HhMbpbGhganybo9YACkXCQQlFn
+      Mp4kEg4ST+fQ9Qoru1uQy1xXl3d1BDCZ7S1WAF/AT/uyThqaI7P/eP58ono/aZpw/y1bGYsm
+      ueemzTgd2kWe3OS3Pngd49Ekd21bj9d14WwaGPzoqw+xrruFTKEEKOgVg8lYmn3HzzA0NoPX
+      7aJQKlPj9xBN5AgHfIxNJ8CE8WgSgNHpBEdPj9PSECaWyjKTyFIT8HH89ASDZ6cYODtBwOul
+      VK4wNpMgHPS9m49KLBHzDsCu537J8YNHePxbj5GIxd88PwATspksj/3l3zB6eoSnf/jkuSsz
+      56JgmnQ21vGnD93JvTdfi/L2PrO3jT8ygZb6Gv70obv41IduqIqR8faGnKt/6PZt7DwwSP/p
+      Md58xrbGWqYSKdRzYVRVFVUxKes6JV0nmsygVypMJ9IAaKrK+EyCVDaPqkBZr1BXEyCdK+DQ
+      NJLZPLFUFlWZDZmcA1195nUV6OSxE3zzq1/nP3/jv6FpGt/5X39Pd18PZ04Os3rjOva/8jqf
+      +ve/QzAc4o//4A+573cfYPONW5hMpBidSbC5r/P8cw1NzFAs66zsaOLVo8Os6WqmVNYZmoyx
+      dUXX+W3szFSUTKHEms4W9hwbpq8tgsuhcXhojOtWdaOpKq8PnqE24KO7uZ5CsUTFMNE0FbfT
+      QaFQwu/zEEtlUFUVp6aRL5Xwe9ykcwW8bhdet5NYKnv+NEdVFTRVxe1yYJom6WyBkN9LsaxT
+      KJaJ1AZlvNRVZl4BME1IJ5J851t/jy/g476HH2Dg8DG++bU/47P/8ffYuv1Gnvj2Dxg5fZYH
+      Pv8QkeaIbChiSXh3QyFMk1PHT/D9//04W266gWMH+rnupht47qc7uOd37mXd5vWAIpcXxZLx
+      rgJwnmmy89kXeOIffsBHPv5Rbr/njgteAhXi/c5SAExMlNlLQrMjQRWkN1UsSZbmAyizW/zs
+      z3K+I5YwOW8RtiYBELZ2PgByKiPsSI4AwtYkAMLWJADC1iQAwtYsrws0H3v27KGlsR5voJZM
+      PkfI7wNMErEEwZCPdKFCbdDP3gPHeW7nKwD8xR8+AkApMcoL+8+weU0vhlpm/6tH2XTdetKZ
+      NH5/DW6XSalkkEonqa9rQHP5qAl4ql5/YP9uZooKI5MZtqzpIRD0UDFUTE3h6P7DXL/91wl4
+      nBdtv1FK8ZMdL3Pztk3kChWMYpa8aZBPl9m4ce0l3n2W//NP/w+/mmfzrTejlkx8Ph+Bmlpc
+      FxkRXvXZvfIS3ct6MUyFTKFEQ8CF4QpQF/JfunbPHvr6eiAb48B4iY3L26itrb14ganzxD8/
+      xe23bidTBIdSIq+beFQFxeEknSsyMnSCD2zffn6PefzA62ScQVpDbpweH4lMkejoKdq7e3G7
+      3cSTadwuF0OD/azddAOZRBS/z4XDW0ttaHZo+WuvvkS+4mRNbzv5fJbJtEnY72Z6fJiO3rVQ
+      yuD0+EFz0Fg/2/6p4X4OnhinqXslPg3qwgHAJJFIEQp4SCQzOM0CA1Mlrr+mh0xRJ5dM0tPX
+      S25qmN39p+noWIbbqRLyqFcuALFYjER8glMH9pBR6qnpiBBCpxgfY3Q6hSOygmu7ggwUFd5s
+      xpsbP4BRypPMlnn5ld34Qy7y+Rzfe+wxNtxwA8On47T01FI4ewJX52Z2Pv00H3vwP8xpQyaR
+      5qX9A7RFAjz7TD9aZAV9DS46e9owCnH2vjHIB29cc9H30L/vNaYmJ/j5Cy/hCfhxGDpen4pC
+      zTw+AZ2Rk8dQVAdq037K0zOMJDU+/7n75/fZRc/w/LEBypoTjydCUUvS2dzN9g9sfcfaRCxG
+      LJFg755dVJIZZooaY5MT3H/HrRetmRg8wNTUJDt3vchU0kGk0Y1ajlOczpD3BBlPlNi8vKWq
+      r98X9NN/5ASD08OUKhrecAumP8joSy+g6SViRReexhZ8ep6Xn/keZ1MOXKEID/7WnW+9z2QW
+      l6ry2uEjdAag//gkDZE6hmZyJLMvMz18lnTJxb0PP3i+pphNcejQIYaGx2lrr6domHiKWYan
+      c4SbWgk5ypSjQ+i+Zv76tX1sXt+Fnlfp7etFL2apbWln11M/hMhK2pq9bw2FuNyS0SlKqodc
+      bALNHcITcGPkcxiag3QigTdUB6kx8oFOhgaO09vdTm93+/l6o5QnXVbQ9Cw5HVIzM9TU1eL3
+      Bzh7doxw2Ee5bODzBzh4qJ+bt2+b04Z0IkauAk6zTDQ2+5oNARfRTBG/SwXNS7jm4nvUWCxG
+      0OvixVdfZ8Xylfi8LmanKWuEw5cKgc7E6CSG4sAwixgVg9HJODdet+mSn118egLDFSATHcft
+      C+JweDAp4HCFzu89L6aQSTKTKaFVCjidTrLpGLGij01rui9ak4jFCIb8RKNJ4qkMickh0maQ
+      lR11+EP1JNJZfC6NxpaW80eAXDrOTLqMo5IjFZ0k72ujK6yRLxt4PB7K5Qqqy0k5E8cdipCO
+      zRAK11BfV/fW+5yZIFdx4lGKqG4/+WyOfLFEjc9BCTdmIY3LF6I2Un9+T13IJimUTVBUYvEk
+      zfUBFHeQ8ZERamvDmKaBUcoTTRVoba4jWzRwaRp1dWH0Qpbjp87Q27uM8YkoIa/yVgByudwl
+      /2OEuNpcsSNAfuVKy7XegQHLtdkNGyzX5letslxbbGuzXBvbNvfoNV/ekRFLdYbLRSkSsVSb
+      1Mr0B1KWar2ql3Zv+6UfeAGeWIKW1w9ZqkXXcVxgJy9XgYStVX0JPtv/Mk/vHSYSidDTFqaQ
+      zBBubUfNTPJi/zgfuG4jZaPM8OApiulJtt5yF10tdRd7biHe9+ZcBVq2fDXF1BSJ2AxHjpyi
+      PTZDPh0H3cGzzz1PS9cygg6FYFs9Q8eHJQBiSasKQMfaG+l42+833/Iet0aI91hVAKaG+zl8
+      agpVhY6+dQS8TvLJGBMzM/R2tGKoTkwc6OUMheQMQwmN27ZtXKy2C7FgVQEoZlOU9DLjZ88y
+      lQE1PoA7soL45BliyQwnDr2G6amnyVtEcfgoh7oXqdlCXB5VAYh0r6GDUbZeey2FYhFDXYee
+      S+G/bgOaAls3rUdBoZhP4/WHKBpyEUksbVUB8PhrWLv2X/dwXuhacf2Va5EQ76ErNhao2Npq
+      vbhctlw63WutkwXAXTOfMT4XlmuwfjVMLRYt12b8F1lF+xJMlwvzIuuvXoquGhimcekHXuh1
+      MVEtdj+VHSrjAWv9tm5dpZ65w0iqPoFyPsWhIwM0tvfS3vQOowfnYebuuy3Xaum05dpdN3Zc
+      +kEXcf3xuatWz9fZ9cst13a91m+59thGaz3QDsVByBGyVJvVs5Tz1nZShmng1tyWaqN+B3tW
+      WAteY9nDh5Itc/5eFYBj+/ZS03sNJ/f/ip+cTtPb1YCp5IlOmtQEysyMT1L0tPDQZz7BxQcR
+      C7F0VAVg1ebrONh/nMbOFWwM5WiJ+CmbsKLHz6u/+gmN3asINzRe2UkEQryHqrblimHi8fro
+      XLac1Z7qzbyv7/PvacOEeC9UbeXTw0cYTXhJvbGXeDxGOOQnly1Q1g00lxdvOMyvXbdJFkEU
+      V42qr+NufwivU0FHo6Ehgsfx5qausenaFZw+PS0bv7iqVB0BGrtWky4N0tK1Fp+7+hTo7NBx
+      rt0wO8Y/kUgAEA6H36NmCnFlVF8F2ruLSkMH/fv3Eo2ncfsDqKqG08gxMTxAWqvj5Zf30NEZ
+      oRgdweFvRPWFIDNJU+daNqzrW6z3IYQlVQFo6e7myNA4xczs9fC3n+40t3dRY7rBU0udD7KV
+      DJkyhFw6Z9NF1rRa74ASYrFUBaCmsZMbGzsv9th/5a1RoDfcMPdfDZe1HkoAI2StgwagYl74
+      dq3zUQ4EFuV1Jzwly7Ulw2LtAr7MKYpiuTfXxCStW+vozFfyluoAyopJ1DW38676RL9SZNeu
+      V9j0gZvwOy/8BpNTZ6n4W6jzv3NvQKne+nihhdTm9WOWazMrNluuLRQnLde+2JK0XNtStnb7
+      Vr/mp1FptFTrVJz4HNZet2JWGMham/NtOexAyqmzpz4z5+/VW7FpkEol+emT/5d6v5PEyDGC
+      7Ws5MjzGqmY/zkADa1rcFIlw5JVniVeC3PEb2y03SojFVhUAwzCoCdexrKGBVK5IR2s9esWJ
+      L1RLV2s9iqkQ8msMjg0SqG+j1mv9lEGI94OqAJTKOuG6euqbmlldV32JM59OoHjDeBywpdH6
+      gDMh3k/m9gRnwkwdfJ2XRs8QaGwnr/hp9OQppJKMFUK0N5joWi23bNuyWG0W4rKZ0xO8dmUv
+      4XAN4fomOtrbKRUygIrHH6KrqQHF46ezrXmRmivE5VV1BAhF2jl1eoj2zl42bZzdw69avZp8
+      fvbyk9frfe9bKMQVNOcU6GD/KOrpRnpqVTweDyMTMSajMdyqQm3IQ6Cpl21b1i1We4W4rKoC
+      4PaHuOk3rmV6uB+9kAVmp5+1t7fjUk0Mo0Jbc8NitFOIK6J6MFz37E0f2ja+tYS31X39QnqC
+      zQXcsdKlWH/domF9bu5CXtfq1ESARDlhqa5iVMhVrK0IXjbKlt9vmTIZY26H1Hzoho5u6pZq
+      VVQcytzO2zl/2bdvH90tdYwkYf2qbksvBlBeQG/uQparbtCsH6FmSjOWazu81i8Nr1Osn1I+
+      fvZxS3VhZ9hyb65LcdHottaLnNJTnMmfsVRbNsqWQ6tqKmHn3NHLVQHITJ3gJz/dwUdvu57B
+      qMbh3U/h8oSIF/zc95l7uPTNeYRYWqoCkMjAl774MAMDQ1yzsh5HwYepunG6a5jHba2EWHKq
+      AtC+bBknBk+yatUKKqqbSjFMOZ8hFGnHqReZiWcJR+pkUry4alRtywOvv4Szcz3P/sv3yfu7
+      McoZvOhEGnzMTCVI5DTCna10BjWcKmScjWzbuGKx2i7EglUFoHvNBg4ePs6mbbcST+XIFUu0
+      NtaRnB6lpraNfFGhtrkGskkMU6Wn1fptgYR4P6gKwPj4DAGfg3zRxBMMsOmaVhLpMsu6u88/
+      Znh4mO61siS6uDpUD4dOj7Nr/yDTCYNrloU5fWQPJwdGCDR2gAPCwSBmfJgnn3Hx6Yc+Q1CW
+      hxNLXFUAOlesZau3HSOfmL0Prp6jkiuhNvdRiJ6kr7cPl9lCfbSIR74Ji6vAFbtN6osvvWC5
+      tmbG2i04AV7xW5+amNWtL47rVK0fDs0FdP0NZYcs1TlUB0FH0FKtV/Va7vjLVXKMFKzd2lU3
+      dTK6tV5kt+qmyd005+9XbD+ew/r8zcYZ6z2ykw7rAYiWopZrY6WY5dpal/WVuK1uiPlKnvHC
+      uKVav+Yn6LQWnrJRRlOs9SqZpmm51jAN4uX4nL9XzQcoZJP09/eTLVx8vEUhmySZTBJLWd9b
+      CvF+8Y5rg9b5nAyNx3F6ali5PEI0rdAbKvLtHQf40u9/brHaLMRl885rgzqhvr6WkD/IRCyJ
+      ZlZw+0Pctm0T+9/YR7KwWM0W4vKYMxy6sfvSRfN5jBBLQVUAXtv5cwbPDpFXIqxe3czUkcOk
+      PJ3UeAp0tjXT0LqC9iZZEFdcPapOgZb3tFBwNZGJT1NMzU60SCWSqA4Hg/37GR6dWpRGCnGl
+      VK8N2rGWT3esXay2CPGekztdC1u7Yh1hC+lU0sLW5wQvZAHVhWhxz70F53yZivWe4FqntU40
+      t+omUbI2n1hTNMsdfyWjRFK3thiwaZqWe81N07zg6tJVAZga7ufo6SiNnb34nCpDxw6yfsuN
+      JONx6sM+irjJxmcI1wYpGk6a6i/+hThath6AUq21XkaAcsb6TbZVxfoBsdVr/cbgC/ms6l3W
+      5l67dJflOcGGaRArWw+A1Yn8KipezdraVBWzcukAFLMphs+MMj05TdEbJGDk2fGDvyXlaCPS
+      1sw1jSrHpwGjTKVS4a47brfUGCHeL6oCEOlewyeWbSCTzpDXDbRyBt/Nt5CIxWkI+yiYLq6p
+      ncHn91IyZSy0WPrmHAGODk+ycu16Gv2z674Uskm8bR14XSqu5BSVcDONdbI+hLg6VAUgNT1C
+      Q1MrT/3ox8QrFVbUGWQKDnSXH8Xp5yObWhgvwuHdO6hoLgYGTvPxf/cgrbWyZqhYmuYsjnts
+      eJKtN2xiKpWjOeCipq6G8WgWl8uFOxSgPDhGW89qnC4XNcFaQn7rK6IJsdiqAuANhNAYp66l
+      i5Wr3tqrN75tNfSmhhzd5+YIL++T26KKpa0qAMff2EfXlg8yte9ZfjmSolB0466DUjSBXykS
+      K7koOIM0734el8uDq20DH75Reo7F0lUVgJWbNnPw4F68wVZuumkDR46cpLWnDYeukx0/Tm5K
+      ZcuaPjxGFsNUCbd2L1Kzhbg8rtic4Ef+5RHLtRdaxXe+FjI1cSH3znUrbsu1qbL1OdA9/h5L
+      dQWjwFTB2uBGwzQomQvocbf4OZumiWEa1moxL3gv5ys2FOJU9pTl2rJhvTd3IeFxada/0MeL
+      c+ebzldet34DaMvLo5sVihVry8EbpmF5yIlTdVLrtjZ8QzesT4qHC28bVX3/iWiUcinH8Mjb
+      J0sbJBKzYzcSCWsfthDvV1WRSE8MsuP5CWqaWhg6dgCH24+OgZKKEy2q1Ld2EqxMo9QuZ/Oa
+      7kVqshCXT9URoGPVRgzDoCXkwh+qo5hNkTy3129uqqdUgWQmR6Uok4HF1aH6pEjzcN+9d5//
+      NTo1Rlnx0hx5+zmbrAsqrh5VATD1HN/81re57+Mf5sRoikith3wpxtiJI6i+IE3tnbS8wxBo
+      IZaa6vsD7H+Nvp5mfrHzFXTFw3jQh7OSYWRwADPcx2c3rF+sdgpxRVR3hG3ZzsotMHX2BO5I
+      3+ztUjUfd/3b31ys9glxRV3wonljx+wYn5pVMsxBXN3OByCbvbxrfd7Ze6flWqu9fbCwaY1W
+      F14FLjjdbr50w9q9bwHLUwRNTMuve7Fe1fnQFA2P5rFUa2BQqljsgVZmp1TO+fOVGgohxFIg
+      y6IIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MA
+      CFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhb
+      kwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MA
+      CFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhb
+      kwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MA
+      CFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFuTAAhb
+      kwAIW5MACFuTAAhbkwAIW5MACFuTAAhbkwAIW5MACFv7/7vwyyYuJ/yLAAAAAElFTkSuQmCC
+    </thumbnail>
+    <thumbnail height='192' name='Proportion of No-Shows by Insurance Plan' width='192'>
+      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
+      kgAAAABJRU5ErkJggg==
+    </thumbnail>
+    <thumbnail height='192' name='Proportion of No-Shows by Time of Day' width='192'>
+      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
+    </thumbnail>
+  </thumbnails>
+</workbook>
