@@ -5,9 +5,35 @@
   <preferences>
   </preferences>
   <datasources>
+    <datasource hasconnection='false' inline='true' name='Parameters' version='8.3'>
+      <aliases enabled='yes' />
+      <column caption='Deadline paper filing (45 days)' datatype='integer' default-format='N' name='[Deadline electronic filing (30 days) (copy)]' param-domain-type='any' role='measure' type='quantitative' value='45'>
+        <calculation class='tableau' formula='45' />
+      </column>
+      <column alias='electronically' caption='Claims filed ' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;elect&quot;'>
+        <calculation class='tableau' formula='&quot;elect&quot;' />
+        <aliases>
+          <alias key='&quot;elect&quot;' value='electronically' />
+          <alias key='&quot;paper&quot;' value='on paper' />
+        </aliases>
+        <members>
+          <member alias='electronically' value='&quot;elect&quot;' />
+          <member alias='on paper' value='&quot;paper&quot;' />
+        </members>
+      </column>
+      <column caption='Deadline electronic filing (30 days)' datatype='integer' default-format='N' name='[Parameter 2]' param-domain-type='any' role='measure' type='quantitative' value='-75'>
+        <calculation class='tableau' formula='-75' />
+      </column>
+      <column caption='TOP n Plans' datatype='integer' name='[Parameter 3]' param-domain-type='range' role='measure' type='quantitative' value='4'>
+        <calculation class='tableau' formula='4' />
+        <range max='10' min='3' />
+      </column>
+    </datasource>
     <datasource caption='PromptPayReport' inline='true' name='sqlserver.42179.482573715279' version='8.3'>
       <connection authentication='sqlserver' class='sqlserver' dbname='DemoStandard' minimum-driver-version='SQL Server Native Client 10.0' odbc-native-protocol='yes' server='104.197.18.221' username='mimirdemo'>
         <relation name='vw_PromptPayReport' table='[dbo].[vw_PromptPayReport]' type='table' />
+        <refresh increment-key='' incremental-updates='false'>
+        </refresh>
         <metadata-records>
           <metadata-record class='column'>
             <remote-name>Patient Name</remote-name>
@@ -235,51 +261,1046 @@
         </metadata-records>
       </connection>
       <aliases enabled='yes' />
+      <column caption='Insurance Plans aggregated' datatype='string' name='[Calculation_0060624155441189]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='IF [Top n Insurance Plans] THEN [Insurance Plan]&#13;&#10;ELSE &apos;other insurances&apos;&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Penalty' datatype='real' name='[Calculation_2260624170129874]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Calculation_3120624143000341]=&apos;0&apos; THEN&#13;&#10;    0&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;1&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649])/2 &gt; 100000 THEN &#13;&#10;            100000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649])/2 &lt; 100000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])/2&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;2&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;3&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        END&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column caption='Deadline' datatype='boolean' name='[Calculation_2700624142122150]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1]=&apos;elect&apos; AND [Days until Payment]&gt;[Parameters].[Parameter 2]&#13;&#10;OR&#13;&#10;[Parameters].[Parameter 1]=&apos;paper&apos; AND [Days until Payment]&gt;[Parameters].[Deadline electronic filing (30 days) (copy)]' scope-isolation='false' />
+      </column>
+      <column aggregation='Max' caption='Severity of Lateness' datatype='string' name='[Calculation_3120624143000341]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Parameter 2] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;END' scope-isolation='false' />
+        <aliases>
+          <alias key='&quot;0&quot;' value='not late' />
+          <alias key='&quot;1&quot;' value='1-45 days late' />
+          <alias key='&quot;2&quot;' value='46-91 days late' />
+          <alias key='&quot;3&quot;' value='more than 91 days' />
+        </aliases>
+      </column>
+      <column caption='Paid by Insurance' datatype='real' name='[Calculation_4840624133427649]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='-[Payment by Insurance]' scope-isolation='false' />
+      </column>
+      <column caption='Days Late' datatype='integer' name='[Calculation_8960624171850690]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    MAX([Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)],0)&#13;&#10;&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    MAX([Days until Payment]-[Parameters].[Parameter 2],0)&#13;&#10;&#13;&#10;END' scope-isolation='false' />
+      </column>
+      <column datatype='date' name='[Date of Birth]' role='dimension' type='ordinal'>
+      </column>
+      <column aggregation='Avg' datatype='integer' name='[Days until Payment]' role='measure' type='quantitative'>
+      </column>
       <column caption='Encounter Date' datatype='date' name='[EncounterDate]' role='dimension' type='ordinal'>
       </column>
       <column caption='Encounter Id' datatype='string' name='[EncounterId]' role='dimension' type='nominal'>
       </column>
+      <column datatype='string' name='[Insurance Plan]' role='dimension' type='nominal'>
+      </column>
       <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
         <calculation class='tableau' formula='1' />
       </column>
-      <layout dim-ordering='alphabetic' dim-percentage='0.5' measure-ordering='alphabetic' measure-percentage='0.4' show-structure='true' />
+      <column datatype='string' name='[Patient Name]' role='dimension' type='nominal'>
+      </column>
+      <column-instance column='[Calculation_3120624143000341]' derivation='Min' name='[min:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
+      <column-instance column='[Calculation_0060624155441189]' derivation='None' name='[none:Calculation_0060624155441189:nk]' pivot='key' type='nominal' />
+      <column-instance column='[Calculation_3120624143000341]' derivation='None' name='[none:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
+      <column-instance column='[Insurance Plan]' derivation='None' name='[none:Insurance Plan:nk]' pivot='key' type='nominal' />
+      <group caption='Action (Insurance Plan)' hidden='true' name='[Action (Insurance Plan)]' name-style='unqualified' user:auto-column='sheet_link'>
+        <groupfilter function='crossjoin'>
+          <groupfilter function='level-members' level='[Insurance Plan]' />
+        </groupfilter>
+      </group>
+      <group caption='Action (Insurance Plans aggregated)' hidden='true' name='[Action (Insurance Plans aggregated)]' name-style='unqualified' user:auto-column='sheet_link'>
+        <groupfilter function='crossjoin'>
+          <groupfilter function='level-members' level='[Calculation_0060624155441189]' />
+        </groupfilter>
+      </group>
+      <group caption='Action (Insurance Plans aggregated,Insurance Plan)' hidden='true' name='[Action (Insurance Plans aggregated,Insurance Plan)]' name-style='unqualified' user:auto-column='sheet_link'>
+        <groupfilter function='crossjoin'>
+          <groupfilter function='level-members' level='[Calculation_0060624155441189]' />
+          <groupfilter function='level-members' level='[Insurance Plan]' />
+        </groupfilter>
+      </group>
+      <group caption=' Patient Name, DoB' delimiter=', * ' name='[Date of Birth &amp; Patient Name (Combined)]' name-style='unqualified' user:ui-builder='nest-group'>
+        <groupfilter function='crossjoin'>
+          <groupfilter function='level-members' level='[Patient Name]' />
+          <groupfilter function='level-members' level='[Date of Birth]' />
+        </groupfilter>
+      </group>
+      <group name='[Top n Insurance Plans]' name-style='unqualified' user:ui-builder='filter-group'>
+        <groupfilter count='[Parameters].[Parameter 3]' end='top' function='end' units='records' user:ui-marker='end' user:ui-top-by-field='true'>
+          <groupfilter direction='DESC' expression='SUM([Number of Records])' function='order' user:ui-marker='order'>
+            <groupfilter function='level-members' level='[Insurance Plan]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </groupfilter>
+        </groupfilter>
+      </group>
+      <extract count='-1' enabled='true' units='records'>
+        <connection class='dataengine' dbname='C:\mimir_analytics\modules\experimental\PromptPayment\PromptPayReport.tde' schema='Extract' tablename='Extract' update-time='06/24/2015 06:01:32 PM'>
+          <relation name='Extract' table='[Extract].[Extract]' type='table' />
+          <calculations>
+            <calculation column='[Number of Records]' formula='1' />
+          </calculations>
+          <refresh increment-key='' incremental-updates='false'>
+            <refresh-event add-from-file-path='' increment-value='%null%' refresh-type='create' rows-inserted='14701' timestamp-start='2015-06-24 18:01:32.326' />
+          </refresh>
+          <metadata-records>
+            <metadata-record class='column'>
+              <remote-name>Adjustment Percent</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[Adjustment Percent]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Adjustment Percent</remote-alias>
+              <ordinal>0</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>13</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='real'>-60.0</statistic>
+                <statistic aggregation='Max' datatype='real'>-20.699999999999999</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>8</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;double&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Adjustment by Insurance</remote-name>
+              <remote-type>4</remote-type>
+              <local-name>[Adjustment by Insurance]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Adjustment by Insurance</remote-alias>
+              <ordinal>1</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>7</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='real'>-58.5</statistic>
+                <statistic aggregation='Max' datatype='real'>-6.0</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;float&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Charged by Provider</remote-name>
+              <remote-type>4</remote-type>
+              <local-name>[Charged by Provider]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Charged by Provider</remote-alias>
+              <ordinal>2</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>14</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='real'>10.0</statistic>
+                <statistic aggregation='Max' datatype='real'>282.5</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;float&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Date Charged</remote-name>
+              <remote-type>133</remote-type>
+              <local-name>[Date Charged]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Date Charged</remote-alias>
+              <ordinal>3</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>date</local-type>
+              <aggregation>Year</aggregation>
+              <approx-count>854</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='date'>#2012-01-01#</statistic>
+                <statistic aggregation='Max' datatype='date'>#2014-12-31#</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;date&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Date Paid</remote-name>
+              <remote-type>133</remote-type>
+              <local-name>[Date Paid]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Date Paid</remote-alias>
+              <ordinal>4</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>date</local-type>
+              <aggregation>Year</aggregation>
+              <approx-count>853</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='date'>#2012-01-16#</statistic>
+                <statistic aggregation='Max' datatype='date'>#2015-01-27#</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (ordered)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>0</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;date&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Date of Birth</remote-name>
+              <remote-type>133</remote-type>
+              <local-name>[Date of Birth]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Date of Birth</remote-alias>
+              <ordinal>5</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>date</local-type>
+              <aggregation>Year</aggregation>
+              <approx-count>2732</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='date'>#1950-04-12#</statistic>
+                <statistic aggregation='Max' datatype='date'>#2004-12-21#</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>3</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;date&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Days until Payment</remote-name>
+              <remote-type>16</remote-type>
+              <local-name>[Days until Payment]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Days until Payment</remote-alias>
+              <ordinal>6</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>integer</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>20</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='integer'>14</statistic>
+                <statistic aggregation='Max' datatype='integer'>34</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;sint8&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>EncounterDate</remote-name>
+              <remote-type>133</remote-type>
+              <local-name>[EncounterDate]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>EncounterDate</remote-alias>
+              <ordinal>7</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>date</local-type>
+              <aggregation>Year</aggregation>
+              <approx-count>854</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='date'>#2012-01-01#</statistic>
+                <statistic aggregation='Max' datatype='date'>#2014-12-31#</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>2</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;date&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>EncounterId</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[EncounterId]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>EncounterId</remote-alias>
+              <ordinal>8</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>14701</approx-count>
+              <scale>1</scale>
+              <width>40</width>
+              <contains-null>false</contains-null>
+              <collation flag='0' name='LROOT' />
+              <statistics>
+                <statistic aggregation='Min' datatype='string'>&quot;0007BE07-A736-4F34-BF8C-105218571212&quot;</statistic>
+                <statistic aggregation='Max' datatype='string'>&quot;FFF68711-7D58-479B-A733-3E5A2E147DE9&quot;</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='string' name='DebugRemoteCollation'>&quot;root&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>160</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>4</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (unique)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Health Insurance Policy No</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[Health Insurance Policy No]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Health Insurance Policy No</remote-alias>
+              <ordinal>9</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>1</approx-count>
+              <scale>1</scale>
+              <width>15</width>
+              <contains-null>true</contains-null>
+              <collation flag='1' name='LEN_RUS_S2' />
+              <attributes>
+                <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US_CI&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (ordered)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>60</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Insurance Plan</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[Insurance Plan]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Insurance Plan</remote-alias>
+              <ordinal>10</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>10</approx-count>
+              <scale>1</scale>
+              <width>50</width>
+              <contains-null>false</contains-null>
+              <collation flag='1' name='LEN_RUS_S2' />
+              <statistics>
+                <statistic aggregation='Min' datatype='string'>&quot;Aetna HMO&quot;</statistic>
+                <statistic aggregation='Max' datatype='string'>&quot;United Healthcare PPO&quot;</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US_CI&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>200</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>4</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Number of Records</remote-name>
+              <remote-type>16</remote-type>
+              <local-name>[Number of Records]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Number of Records</remote-alias>
+              <ordinal>11</ordinal>
+              <local-type>integer</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>1</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='integer'>1</statistic>
+                <statistic aggregation='Max' datatype='integer'>1</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='string' name='DebugRemoteMetadata (ordered)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;sint8&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Patient Name</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[Patient Name]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Patient Name</remote-alias>
+              <ordinal>12</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>2932</approx-count>
+              <scale>1</scale>
+              <width>92</width>
+              <contains-null>false</contains-null>
+              <collation flag='1' name='LEN_RUS_S2' />
+              <statistics>
+                <statistic aggregation='Min' datatype='string'>&quot;Aarón A Hernádez&quot;</statistic>
+                <statistic aggregation='Max' datatype='string'>&quot;Zuria R Mejía&quot;</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US_CI&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>368</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>5</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
+              </attributes>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>Payment by Insurance</remote-name>
+              <remote-type>4</remote-type>
+              <local-name>[Payment by Insurance]</local-name>
+              <parent-name>[Extract]</parent-name>
+              <remote-alias>Payment by Insurance</remote-alias>
+              <ordinal>13</ordinal>
+              <family>vw_PromptPayReport</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>14</approx-count>
+              <contains-null>false</contains-null>
+              <statistics>
+                <statistic aggregation='Min' datatype='real'>-224.0</statistic>
+                <statistic aggregation='Max' datatype='real'>-4.0</statistic>
+              </statistics>
+              <attributes>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
+                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
+                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
+                <attribute datatype='string' name='DebugRemoteType'>&quot;float&quot;</attribute>
+              </attributes>
+            </metadata-record>
+          </metadata-records>
+        </connection>
+      </extract>
+      <layout dim-ordering='alphabetic' dim-percentage='0.484553' measure-ordering='alphabetic' measure-percentage='0.308943' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[none:Calculation_3120624143000341:nk]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;0&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;1&quot;</bucket>
+            </map>
+          </encoding>
+          <encoding attr='color' field='[none:Insurance Plan:nk]' type='palette'>
+            <map to='#17becf'>
+              <bucket>&quot;United Healthcare PPO&quot;</bucket>
+            </map>
+            <map to='#1f77b4'>
+              <bucket>&quot;Aetna HMO&quot;</bucket>
+            </map>
+            <map to='#2ca02c'>
+              <bucket>&quot;BCBS of TX HMO&quot;</bucket>
+            </map>
+            <map to='#7f7f7f'>
+              <bucket>&quot;Humana PPO&quot;</bucket>
+            </map>
+            <map to='#8c564b'>
+              <bucket>&quot;Cigna PPO&quot;</bucket>
+            </map>
+            <map to='#9467bd'>
+              <bucket>&quot;Cigna HMO&quot;</bucket>
+            </map>
+            <map to='#bcbd22'>
+              <bucket>&quot;United Healthcare HMO&quot;</bucket>
+            </map>
+            <map to='#d62728'>
+              <bucket>&quot;BCBS of TX PPO&quot;</bucket>
+            </map>
+            <map to='#e377c2'>
+              <bucket>&quot;Humana HMO&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;Aetna PPO&quot;</bucket>
+            </map>
+          </encoding>
+          <encoding attr='color' field='[none:Calculation_0060624155441189:nk]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;BCBS of TX PPO&quot;</bucket>
+            </map>
+            <map to='#2ca02c'>
+              <bucket>&quot;BCBS of TX HMO&quot;</bucket>
+            </map>
+            <map to='#7f7f7f'>
+              <bucket>&quot;Cigna PPO&quot;</bucket>
+            </map>
+            <map to='#8c564b'>
+              <bucket>&quot;Humana PPO&quot;</bucket>
+            </map>
+            <map to='#9467bd'>
+              <bucket>&quot;Humana HMO&quot;</bucket>
+            </map>
+            <map to='#bcbd22'>
+              <bucket>&quot;United Healthcare HMO&quot;</bucket>
+            </map>
+            <map to='#d62728'>
+              <bucket>&quot;United Healthcare PPO&quot;</bucket>
+            </map>
+            <map to='#e377c2'>
+              <bucket>&quot;Aetna PPO&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;other insurances&quot;</bucket>
+            </map>
+          </encoding>
+          <encoding attr='color' field='[min:Calculation_3120624143000341:nk]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;0&quot;</bucket>
+            </map>
+            <map to='#d62728'>
+              <bucket>&quot;3&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>%null%</bucket>
+            </map>
+            <map to='#ff810e'>
+              <bucket>&quot;2&quot;</bucket>
+            </map>
+            <map to='#ffd94a'>
+              <bucket>&quot;1&quot;</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
       <semantic-values>
         <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
       </semantic-values>
+      <datasource-dependencies datasource='Parameters'>
+        <column caption='Deadline paper filing (45 days)' datatype='integer' default-format='N' name='[Deadline electronic filing (30 days) (copy)]' param-domain-type='any' role='measure' type='quantitative' value='45'>
+          <calculation class='tableau' formula='45' />
+        </column>
+        <column alias='electronically' caption='Claims filed ' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;elect&quot;'>
+          <calculation class='tableau' formula='&quot;elect&quot;' />
+          <aliases>
+            <alias key='&quot;elect&quot;' value='electronically' />
+            <alias key='&quot;paper&quot;' value='on paper' />
+          </aliases>
+          <members>
+            <member alias='electronically' value='&quot;elect&quot;' />
+            <member alias='on paper' value='&quot;paper&quot;' />
+          </members>
+        </column>
+        <column caption='Deadline electronic filing (30 days)' datatype='integer' default-format='N' name='[Parameter 2]' param-domain-type='any' role='measure' type='quantitative' value='-75'>
+          <calculation class='tableau' formula='-75' />
+        </column>
+        <column caption='TOP n Plans' datatype='integer' name='[Parameter 3]' param-domain-type='range' role='measure' type='quantitative' value='4'>
+          <calculation class='tableau' formula='4' />
+          <range max='10' min='3' />
+        </column>
+      </datasource-dependencies>
     </datasource>
   </datasources>
+  <shared-views>
+    <shared-view name='sqlserver.42179.482573715279'>
+      <datasources>
+        <datasource caption='PromptPayReport' name='sqlserver.42179.482573715279' />
+      </datasources>
+      <datasource-dependencies datasource='sqlserver.42179.482573715279'>
+        <column caption='Encounter Date' datatype='date' name='[EncounterDate]' role='dimension' type='ordinal'>
+        </column>
+        <column-instance column='[EncounterDate]' derivation='Quarter-Trunc' name='[tqr:EncounterDate:ok]' pivot='key' type='ordinal' />
+      </datasource-dependencies>
+      <filter class='categorical' column='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]'>
+        <groupfilter function='member' level='[tqr:EncounterDate:ok]' member='#2012-01-01 00:00:00#' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+      </filter>
+    </shared-view>
+  </shared-views>
+  <actions>
+    <action caption='Filter1' name='[Action1]'>
+      <activation auto-clear='true' type='on-select' />
+      <source type='sheet' worksheet='Scatter' />
+      <command command='tsc:tsl-filter'>
+        <param name='on-empty' value='none' />
+        <param name='special-fields' value='all' />
+        <param name='target' value='Patient List' />
+      </command>
+    </action>
+    <action caption='Filter2' name='[Action2]'>
+      <activation auto-clear='true' type='on-select' />
+      <source dashboard='Prompt Pay Reporting' type='sheet' worksheet='Scatter' />
+      <command command='tsc:tsl-filter'>
+        <param name='exclude' value='Scatter' />
+        <param name='on-empty' value='none' />
+        <param name='special-fields' value='all' />
+        <param name='target' value='Prompt Pay Reporting' />
+      </command>
+    </action>
+  </actions>
   <worksheets>
-    <worksheet name='Sheet 1'>
+    <worksheet name='Patient List'>
       <table>
         <view>
           <datasources>
+            <datasource caption='PromptPayReport' name='sqlserver.42179.482573715279' />
+            <datasource name='Parameters' />
           </datasources>
+          <datasource-dependencies datasource='sqlserver.42179.482573715279'>
+            <column datatype='real' name='[Adjustment by Insurance]' role='measure' type='quantitative'>
+            </column>
+            <column caption='Penalty' datatype='real' name='[Calculation_2260624170129874]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Calculation_3120624143000341]=&apos;0&apos; THEN&#13;&#10;    0&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;1&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649])/2 &gt; 100000 THEN &#13;&#10;            100000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649])/2 &lt; 100000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])/2&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;2&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;3&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        END&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column aggregation='Max' caption='Severity of Lateness' datatype='string' name='[Calculation_3120624143000341]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Parameter 2] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;END' scope-isolation='false' />
+              <aliases>
+                <alias key='&quot;0&quot;' value='not late' />
+                <alias key='&quot;1&quot;' value='1-45 days late' />
+                <alias key='&quot;2&quot;' value='46-91 days late' />
+                <alias key='&quot;3&quot;' value='more than 91 days' />
+              </aliases>
+            </column>
+            <column caption='Paid by Insurance' datatype='real' name='[Calculation_4840624133427649]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='-[Payment by Insurance]' scope-isolation='false' />
+            </column>
+            <column caption='Days Late' datatype='integer' name='[Calculation_8960624171850690]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    MAX([Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)],0)&#13;&#10;&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    MAX([Days until Payment]-[Parameters].[Parameter 2],0)&#13;&#10;&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column datatype='real' name='[Charged by Provider]' role='measure' type='quantitative'>
+            </column>
+            <column datatype='date' name='[Date Charged]' role='dimension' type='ordinal'>
+            </column>
+            <column datatype='date' name='[Date Paid]' role='dimension' type='ordinal'>
+            </column>
+            <column aggregation='Avg' datatype='integer' name='[Days until Payment]' role='measure' type='quantitative'>
+            </column>
+            <column caption='Encounter Date' datatype='date' name='[EncounterDate]' role='dimension' type='ordinal'>
+            </column>
+            <column datatype='string' name='[Insurance Plan]' role='dimension' type='nominal'>
+            </column>
+            <column-instance column='[Days until Payment]' derivation='Avg' name='[avg:Days until Payment:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_3120624143000341]' derivation='Min' name='[min:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_3120624143000341]' derivation='None' name='[none:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Date Charged]' derivation='None' name='[none:Date Charged:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Date Paid]' derivation='None' name='[none:Date Paid:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Insurance Plan]' derivation='None' name='[none:Insurance Plan:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Adjustment by Insurance]' derivation='Sum' name='[sum:Adjustment by Insurance:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_2260624170129874]' derivation='Sum' name='[sum:Calculation_2260624170129874:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_4840624133427649]' derivation='Sum' name='[sum:Calculation_4840624133427649:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_8960624171850690]' derivation='Sum' name='[sum:Calculation_8960624171850690:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Charged by Provider]' derivation='Sum' name='[sum:Charged by Provider:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[EncounterDate]' derivation='Quarter-Trunc' name='[tqr:EncounterDate:ok]' pivot='key' type='ordinal' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[sqlserver.42179.482573715279].[Action (Insurance Plan)]'>
+            <groupfilter function='level-members' level='[Insurance Plan]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated)]'>
+            <groupfilter function='union' user:ui-action-filter='[Action2]' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='member' level='[Calculation_0060624155441189]' member='&quot;Humana HMO&quot;' />
+              <groupfilter function='member' level='[Calculation_0060624155441189]' member='&quot;United Healthcare PPO&quot;' />
+            </groupfilter>
+          </filter>
+          <filter class='categorical' column='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]'>
+            <groupfilter function='union' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='member' level='[none:Calculation_3120624143000341:nk]' member='&quot;2&quot;' />
+              <groupfilter function='member' level='[none:Calculation_3120624143000341:nk]' member='&quot;3&quot;' />
+            </groupfilter>
+          </filter>
+          <slices>
+            <column>[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]</column>
+            <column>[sqlserver.42179.482573715279].[Action (Insurance Plan)]</column>
+            <column>[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]</column>
+            <column>[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated)]</column>
+          </slices>
+          <aggregation value='false' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <format attr='border-color' value='#b0b0b0' />
+            <format attr='border-width' value='1' />
+            <format attr='hnaxis' value='true' />
+          </style-rule>
+          <style-rule element='cell'>
+            <format attr='width' value='41' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]' value='c&quot;$&quot;#,##0.00;(&quot;$&quot;#,##0.00)' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]' value='c&quot;$&quot;#,##0.00;(&quot;$&quot;#,##0.00)' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='C1033%' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Calculation_2260624170129874:ok]' value='C1033%' />
+            <format attr='color' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='#000000' />
+          </style-rule>
+          <style-rule element='header'>
+            <format attr='width' field='[sqlserver.42179.482573715279].[avg:Days until Payment:ok]' value='44' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]' value='60' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Date Paid:ok]' value='64' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]' value='44' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='68' />
+            <format attr='width-header' value='60' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' value='128' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Date Charged:ok]' value='88' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_8960624171850690:ok]' value='64' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_2260624170129874:ok]' value='88' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Insurance Plan:nk]' value='128' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='160' />
+            <format attr='background-color' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='#ffffff' />
+            <format attr='background-color' value='#00000000' />
+          </style-rule>
+          <style-rule element='field-labels-spanner'>
+            <format attr='background-color' scope='rows' value='#00000000' />
+            <format attr='background-color' scope='cols' value='#00000000' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[none:Date Charged:ok]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[none:Date Paid:ok]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[avg:Days until Payment:ok]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[none:Insurance Plan:nk]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' value='0' />
+            <format attr='text-orientation' field='[sqlserver.42179.482573715279].[sum:Calculation_8960624171850690:ok]' value='0' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Calculation_2260624170129874:ok]' value='C1033%' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]' value='C1033%' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='c&quot;$&quot;#,##0.00;-&quot;$&quot;#,##0.00' />
+            <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]' value='C1033%' />
+          </style-rule>
+          <style-rule element='pane'>
+            <format attr='background-color' value='#00000000' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='col-levels' value='12' />
+            <format attr='row-horiz-levels' value='1' />
+            <format attr='row-levels' value='12' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane id='2'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Circle' />
+            <encodings>
+              <color column='[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]' />
+            </encodings>
+            <customized-tooltip>
+              <formatted-text>
+                <run fontcolor='#787878'> Patient Name, DoB:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]&gt;</run>
+                <run fontcolor='#787878'>&#10;Severity of Lateness:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Date Charged:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Date Charged:ok]&gt;</run>
+                <run fontcolor='#787878'>&#10;Date Paid:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Date Paid:ok]&gt;</run>
+                <run fontcolor='#787878'>&#10;Insurance Plan:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Insurance Plan:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Days until Payment:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[avg:Days until Payment:ok]&gt;</run>
+                <run fontcolor='#787878'>&#10;Severity of Lateness:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Adjustment by Insurance:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]&gt;</run>
+                <run fontcolor='#787878'>&#10;Paid by Insurance:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]&gt;</run>
+                <run fontcolor='#787878'>&#10;Days Late:&#9;</run>
+                <run fontcolor='#787878'>&#10;Charged by Provider:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]&gt;</run>
+              </formatted-text>
+            </customized-tooltip>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-show' value='false' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='aspect' value='0' />
+                <format attr='aspect' value='1' />
+                <format attr='aspect' value='1' />
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>([sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)] / ([sqlserver.42179.482573715279].[none:Date Charged:ok] / ([sqlserver.42179.482573715279].[sum:Charged by Provider:ok] / ([sqlserver.42179.482573715279].[none:Date Paid:ok] / ([sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok] / ([sqlserver.42179.482573715279].[none:Insurance Plan:nk] / ([sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok] / ([sqlserver.42179.482573715279].[avg:Days until Payment:ok] / ([sqlserver.42179.482573715279].[sum:Calculation_8960624171850690:ok] / ([sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk] / [sqlserver.42179.482573715279].[sum:Calculation_2260624170129874:ok]))))))))))</rows>
+        <cols></cols>
+      </table>
+    </worksheet>
+    <worksheet name='Scatter'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run>Selection</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='PromptPayReport' name='sqlserver.42179.482573715279' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='sqlserver.42179.482573715279'>
+            <column caption='Insurance Plans aggregated' datatype='string' name='[Calculation_0060624155441189]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='IF [Top n Insurance Plans] THEN [Insurance Plan]&#13;&#10;ELSE &apos;other insurances&apos;&#13;&#10;END' scope-isolation='false' />
+            </column>
+            <column aggregation='Avg' datatype='integer' name='[Days until Payment]' role='measure' type='quantitative'>
+            </column>
+            <column caption='Encounter Date' datatype='date' name='[EncounterDate]' role='dimension' type='ordinal'>
+            </column>
+            <column datatype='string' name='[Insurance Plan]' role='dimension' type='nominal'>
+            </column>
+            <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+              <calculation class='tableau' formula='1' />
+            </column>
+            <column-instance column='[Insurance Plan]' derivation='Attribute' name='[attr:Insurance Plan:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Days until Payment]' derivation='Avg' name='[avg:Days until Payment:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Calculation_0060624155441189]' derivation='None' name='[none:Calculation_0060624155441189:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Number of Records]' derivation='Sum' name='[sum:Number of Records:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[EncounterDate]' derivation='Quarter-Trunc' name='[tqr:EncounterDate:ok]' pivot='key' type='ordinal' />
+          </datasource-dependencies>
+          <sort class='manual' column='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' direction='ASC'>
+            <dictionary>
+              <bucket>&quot;Aetna PPO&quot;</bucket>
+              <bucket>&quot;BCBS of TX HMO&quot;</bucket>
+              <bucket>&quot;BCBS of TX PPO&quot;</bucket>
+              <bucket>&quot;Cigna PPO&quot;</bucket>
+              <bucket>&quot;Humana HMO&quot;</bucket>
+              <bucket>&quot;Humana PPO&quot;</bucket>
+              <bucket>&quot;United Healthcare HMO&quot;</bucket>
+              <bucket>&quot;United Healthcare PPO&quot;</bucket>
+              <bucket>&quot;other insurances&quot;</bucket>
+              <bucket>%all%</bucket>
+            </dictionary>
+          </sort>
+          <slices>
+            <column>[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]</column>
+          </slices>
           <aggregation value='true' />
         </view>
         <style>
+          <style-rule element='axis'>
+            <format attr='title' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='cols' value='Number of Claims' />
+            <format attr='subtitle' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='cols' value='' />
+            <format attr='auto-subtitle' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='cols' value='true' />
+          </style-rule>
+          <style-rule element='quick-filter'>
+            <format attr='title' field='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' value='Encounter Date'>
+              <formatted-text>
+                <run>Encounter Date</run>
+              </formatted-text>
+            </format>
+          </style-rule>
         </style>
         <panes>
           <pane>
             <view>
               <breakdown value='auto' />
             </view>
-            <mark class='Automatic' />
+            <mark class='Circle' />
+            <encodings>
+              <color column='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' />
+              <tooltip column='[sqlserver.42179.482573715279].[attr:Insurance Plan:nk]' />
+            </encodings>
+            <customized-tooltip>
+              <formatted-text>
+                <run fontcolor='#787878'>Insurance Plans aggregated:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Days until Payment:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[avg:Days until Payment:qk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Number of Records:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Number of Records:qk]&gt;</run>
+              </formatted-text>
+            </customized-tooltip>
           </pane>
         </panes>
-        <rows></rows>
-        <cols></cols>
+        <rows>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</rows>
+        <cols>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</cols>
       </table>
     </worksheet>
   </worksheets>
+  <dashboards>
+    <dashboard name='Prompt Pay Reporting'>
+      <style>
+      </style>
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
+      <zones>
+        <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
+          <zone h='42250' id='5' param='horz' type='layout-flow' w='100000' x='0' y='0'>
+            <zone h='42250' id='3' type='layout-basic' w='84000' x='0' y='0'>
+              <zone h='42250' id='1' name='Scatter' show-title='true' w='84000' x='0' y='0'>
+              </zone>
+            </zone>
+            <zone fixed-size='160' h='42250' id='4' is-fixed='true' param='vert' type='layout-flow' w='16000' x='84000' y='0'>
+              <zone h='7000' id='6' mode='dropdown' name='Scatter' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' w='16000' x='84000' y='0'>
+              </zone>
+              <zone custom-title='true' h='8875' id='17' mode='slider' param='[Parameters].[Parameter 3]' type='paramctrl' w='16000' x='84000' y='7000'>
+                <formatted-text>
+                  <run>Display how many plans:</run>
+                </formatted-text>
+              </zone>
+              <zone h='15375' id='7' name='Scatter' pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' type='color' w='16000' x='84000' y='15875'>
+              </zone>
+            </zone>
+          </zone>
+          <zone h='38625' id='8' name='Patient List' show-title='true' w='100000' x='0' y='56125'>
+          </zone>
+          <zone h='6125' id='10' mode='compact' param='[Parameters].[Parameter 1]' type='paramctrl' w='25000' x='0' y='50000'>
+          </zone>
+          <zone h='6125' id='11' mode='type_in' param='[Parameters].[Parameter 2]' type='paramctrl' w='23200' x='25000' y='50000'>
+          </zone>
+          <zone h='6125' id='12' mode='type_in' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='paramctrl' w='21600' x='48200' y='50000'>
+          </zone>
+          <zone h='6125' id='13' mode='checkdropdown' name='Patient List' param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='filter' w='30200' x='69800' y='50000'>
+          </zone>
+          <zone h='5250' id='14' param='horz' type='layout-flow' w='100000' x='0' y='94750'>
+            <zone fixed-size='219' h='5250' id='15' is-centered='0' is-fixed='true' is-scaled='1' param='C:\Users\Thorsten\Google Drive\_Mimir Shared Drive\Graphic Design\Mimir Logos\Mimir Logo resize.jpg' type='bitmap' w='23100' x='0' y='94750'>
+            </zone>
+            <zone forceUpdate='true' h='5250' id='16' type='text' w='76500' x='23100' y='94750'>
+              <formatted-text>
+                <run fontalignment='2'>Mimir Health Intelligence 2015</run>
+              </formatted-text>
+            </zone>
+          </zone>
+          <zone forceUpdate='true' h='7750' id='18' type='text' w='100000' x='0' y='42250'>
+            <formatted-text>
+              <run fontalignment='2'>Based on information published by the Texas Medical Association &#10; </run>
+              <run auto-url='true' fontalignment='2' hyperlink='tabdoc:load-url url=&amp;quot;http://www.texmed.org/Template.aspx?id=1514&amp;quot;'>http://www.texmed.org/Template.aspx?id=1514</run>
+            </formatted-text>
+          </zone>
+        </zone>
+      </zones>
+    </dashboard>
+  </dashboards>
   <windows>
     <window class='schema' source-height='-1' />
-    <window auto-hidden='0' class='worksheet' maximized='1' name='Sheet 1'>
+    <window auto-hidden='0' class='dashboard' maximized='1' name='Prompt Pay Reporting'>
+      <zones>
+        <zone name='Scatter'>
+          <viewpoint>
+            <zoom type='entire-view' />
+          </viewpoint>
+          <highlight>
+            <color-one-way>
+              <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+            </color-one-way>
+          </highlight>
+          <selection-collection>
+            <tuple-selection>
+              <tuple-reference>
+                <tuple-descriptor>
+                  <pane-descriptor>
+                    <x-fields>
+                      <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    </x-fields>
+                    <y-fields>
+                      <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    </y-fields>
+                  </pane-descriptor>
+                  <columns>
+                    <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+                    <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[attr:Insurance Plan:nk]</field>
+                  </columns>
+                </tuple-descriptor>
+                <tuple>
+                  <value>17.346613545816734</value>
+                  <value>&quot;United Healthcare PPO&quot;</value>
+                  <value>251</value>
+                  <value>&quot;United Healthcare PPO&quot;</value>
+                </tuple>
+              </tuple-reference>
+              <tuple-reference>
+                <tuple-descriptor>
+                  <pane-descriptor>
+                    <x-fields>
+                      <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    </x-fields>
+                    <y-fields>
+                      <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    </y-fields>
+                  </pane-descriptor>
+                  <columns>
+                    <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+                    <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[attr:Insurance Plan:nk]</field>
+                  </columns>
+                </tuple-descriptor>
+                <tuple>
+                  <value>19.526548672566371</value>
+                  <value>&quot;Humana HMO&quot;</value>
+                  <value>226</value>
+                  <value>&quot;Humana HMO&quot;</value>
+                </tuple>
+              </tuple-reference>
+            </tuple-selection>
+          </selection-collection>
+        </zone>
+        <zone mode='dropdown' name='Scatter' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' />
+        <zone custom-title='true' mode='slider' name='' param='[Parameters].[Parameter 3]' type='paramctrl' />
+        <zone name='Scatter' pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' type='color' />
+        <zone name='Patient List'>
+          <viewpoint>
+            <zoom type='fit-width' />
+          </viewpoint>
+          <highlight>
+            <color-one-way>
+              <field>[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]</field>
+            </color-one-way>
+          </highlight>
+        </zone>
+        <zone mode='compact' name='' param='[Parameters].[Parameter 1]' type='paramctrl' />
+        <zone mode='type_in' name='' param='[Parameters].[Parameter 2]' type='paramctrl' />
+        <zone mode='type_in' name='' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='paramctrl' />
+        <zone mode='checkdropdown' name='Patient List' param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='filter' />
+        <zone is-centered='0' is-scaled='1' name='' type='bitmap' />
+        <zone forceUpdate='true' name='' type='text' />
+        <zone forceUpdate='true' name='' type='text' />
+      </zones>
+    </window>
+    <window class='hidden-worksheet' name='Patient List'>
       <cards>
         <edge name='left'>
           <strip size='160'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
+            <card pane-specification-id='2' param='[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]' type='color' />
           </strip>
         </edge>
         <edge name='top'>
@@ -290,21 +1311,416 @@
             <card type='rows' />
           </strip>
         </edge>
+        <edge name='right'>
+          <strip size='213'>
+            <card mode='compact' param='[Parameters].[Parameter 1]' type='parameter' />
+            <card mode='type_in' param='[Parameters].[Parameter 2]' type='parameter' />
+            <card mode='type_in' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='parameter' />
+            <card param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='filter' values='relevant' />
+          </strip>
+        </edge>
       </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]</field>
+          <field>[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Calculation_2700624142122150:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Date Charged:qk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Health Insurance Policy No:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Insurance Plan:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Patient Name:nk]</field>
+          <field>[sqlserver.42179.482573715279].[yr:Date Charged:ok]</field>
+          <field>[sqlserver.42179.482573715279].[yr:Date Paid:ok]</field>
+          <field>[sqlserver.42179.482573715279].[yr:Date of Birth:ok]</field>
+          <field>[sqlserver.42179.482573715279].[yr:EncounterDate:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
+    <window class='hidden-worksheet' name='Scatter'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='radiolist' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' />
+            <card mode='slider' param='[Parameters].[Parameter 3]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Insurance Plan:nk]</field>
+          <field>[sqlserver.42179.482573715279].[qr:EncounterDate:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
     </window>
   </windows>
   <thumbnails>
-    <thumbnail height='144' name='Sheet 1' width='174'>
-      iVBORw0KGgoAAAANSUhEUgAAAK4AAACQCAYAAACRfFAzAAAACXBIWXMAAA7DAAAOwwHHb6hk
-      AAABmUlEQVR4nO3SQQ0AIBDAMMC/58MDH7KkVbDH9szMgpjzOwBeGJck45JkXJKMS5JxSTIu
-      ScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45Jk
-      XJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYl
-      ybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKM
-      S5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgk
-      GZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5Jx
-      STIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuScYlybgkGZck
-      45JkXJKMS5JxSTIuScYlybgkGZck45JkXJKMS5JxSTIuSRePYgUc7kJNEQAAAABJRU5ErkJg
-      gg==
+    <thumbnail height='192' name='Prompt Pay Reporting' width='192'>
+      iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAAA7EAAAOxAGVKw4b
+      AAAgAElEQVR4nOy9WZAdV5rf98vl5nr3e2uvAqqwLyQBcG92k93Ti2Zay4wkSyPJshy2wxF6
+      8INiXv00j/Kj5XDIDocVmrBmpLE0CitmUWu6Z5rNJtk93AkSIKoKta93X3Pf/FAEGkWgsJAg
+      QbLy91IVVZnn+865+d08//zO+VJIkiQhJeWQIj5qB1JSHiVpAKQcam4GwJV3fsFPX3/n5j82
+      5t9ltWHfdkKn08EfNlnarH8xHqakfI4INzTAH/zr/5MTT34bepssbbaYncgjluZYvfY+R06c
+      obF8ldzIBH/5F3/B97/zLTKFUVavXWHkyEnaa5dxxBL/5B//PaRH3aOUlAdAvvHLU888x5/8
+      xV8iD7fpC3lGi6doNz/kjbffRzUMtjo+37s0y9HpCWYnSrx++RqxXmFrbQVZNJjIgAXkH2Fn
+      UlIelJt3gN3NNQStQDYTs7rT5sTMKHYs0dnZID8yRex0CWUTObQQMhqSamC1dsiNTOFZfTKC
+      SH505FcRlZLyFUBIH4OmHGYe6AvbsqzPy4+UlEfCA89YTNN8qA6EYYgsP7yJ08Nu76vS5lfB
+      xy9jm2keIOVQc2DY2N0ml5c2yWcS5GyZU8eOfpF+PVKiOMKPfPSM/qhdSfmcOfi+IWsIkU+i
+      5wgcC8uyCMOQMAwfqgNRFH3p2ltsLuJFHjOFGQpa4aH7CF/Ofh/GNg8MAE2VGZ+cQRdDlHwV
+      09SxLOuhz9+Ah97mZ25P2PshSdLNtg5Fvw9hmweeJWY0jk5PfGqHvsqcGjmVToEOCWne6g5I
+      ooQuphf/YSB9CpTytWXg+Fzf6TBw/AOPSe8AKV9bal2Lnr138ed05Y7HpAGQ8rVlrGju+3kn
+      0gBI+dqS05UDv/lvkGqAlENNGgAph5o0AFIONWkApBxq0gBIOdSkAZByqEkDIOVQkwZAyqEm
+      DYCUQ82+TPDie2+z6zocm3uCqbG0wk/K1599d4BiTqXd81HUtL5byuFg3x3AKI0yVuwTRRD5
+      Nuu1Llk5JpOrUMym6+NTvn7sCwBJEnE9H1kS8fwIa9DFAZJWH+XY7FdyT3Cv1+N3/un/TGfb
+      4R/9Tz/kt//B3//MbT4M0j3BX4429wWAZw1IJA1BSPCsNh0rpKKGKNkRDMP4Su4J/r3f+z3O
+      Z3+D7BMF/u3//q/5r//xP/rMbT4s0j3Bj77NfWeFvkuj0cAPIybGjvDi2JGH4tyj5MKFC/yb
+      P/spZ6aepDxlPGp3Ur5k7AsAszrBiekhjmMDuUfk0sPle9/7HoIg8P777/Mv/of/5VG7k/Il
+      Y99ToMh3WN+uI0tfr/TAd7/7XX7nd36HQqFw82/z8/P883/+z1lYWHiEnqU8avZd6YHjUygq
+      BOHXe6NYs9nkf/vhX+f7/+pf8S9++EOazeajdinlEbEvAGrdHjMzZzg+U3pU/nwhrK+vc8Jz
+      MUWJE67L+vr6o3Yp5RGxLwAsy2JzdYm+5T0qf74QLl26xODv/zb/YtBn+Nv/gEuXLj1ql1Ie
+      EftekLGzucbA9piYPkrOUG872LKstDz6l7TNr4KPX8Y2952VzxXIlmWI05fGpBwO9k2BdtYW
+      +dM//c/03eBR+ZOS8oWy7w5QKVc4ftq4Zy2VlJSvC/vuAEapip5Y1Fvpu8BSDge3ZbxE2WQi
+      3QuQckjYFwC+PaTZbdDp2I/Kn5SUL5R9ASCKkMtWKRTTRWMph4N9ASBrWQadBisrq4/InZSU
+      L5Z9AWC32/TsHka2/Kj8SUn5Qtm/GlSMiQOZcjn7qPxJSflC2RcAu22bv/XD59ndbD0qf1JS
+      vlD2JcIKWY1r12tMHjlO6Fm8dXkeOXKQzTIXHz/7qHxMSfnc2BcAM3Mn9v2zYGoM+zYIwqF6
+      UfZXsc2vgo9fxjb3rQa9F+lq0C9vm18FH7+MbX699j6mpDwgaQCkHGrSAEg51KQBkHKoSQMg
+      5VCTBkDKoSYNgJRDTRoAKYeaNABSDjVpAKQcatIASDnUpAGQcqhJAyDlUJMGQMqhJg2AlEPN
+      PQOgsbNJd+h8Eb6kpHzh3DsAOn22Vle+CF9SUr5w7j0FCl0U4+vxwryUlE9y31siLcvC8zxU
+      9fYXZ3wW0q2BX872Dkub933Wjb3AD3tP8MPeZ2zbNobxcEs7fh57odN+fznafKBN8SkpXzce
+      7L7hdfjJy7/k2MVvc2zss3zbxLz2819SyGsMHAtvYDF95nlOzBQ/dYvdVo13ry5hyhG9dp9I
+      zfK973+bzGfwcmv5I5a3ani2gy8XKJgK33z+6c/QIqx9+BoftVTE2KGoiyifsebS9vxl3t11
+      GFH8h9bvt1//KaGsMeh0H1q/L//yp2xbMqLIQ+k3kc0f/D//gbnHH4Pg019DD5YHEIAEBOGz
+      3jREyuXSjcbgIdyEQtcCSSFJEgQAQeAze6no6JoECSQkCILwmf0c9AdY1vDjtj7u/2cgOzpJ
+      QRUfar8zmokkhA+131JulHNHRx5avyN3wPjMFH3L/0zXUDoFSjnUpJngLxG9Xg/L+sTrqWKf
+      4QHvbW60+8Shx/XlNQaDIQCD4fDzdvNrRXoH+BLxFz/6E8zKESpFg+3160hajpwes7o+pFTO
+      4iGQVw2OHRnh+kaT6sw4fqPB0aPTXL62SmJtY8njlBUHx3LwZZOpI0c5Mzf9qLv2peXhPpBN
+      +UwcP/M4jXodq+8SxApTU1PIYY9CPkY1ckxW8xD86qZdrVTwIo+lpWUymo7vqcS+R2FigpFC
+      hy1bpd/tAmkAHER6B0g51KQaIOVQkwZAyqEmDYCUQ00aACmHmjQAUh4p81cuc23xoP0mIY1G
+      +7a/OpZF/PHvS0tLB7Y9bLbofDKv8gnSx6Apj5Rmo4knDnDaG+zU2+wO4GhZwCZDXtUpVI/Q
+      3F2j3vfA7ZOtTlPMCGx26siCTK++yeb2Jt1hSE4VCIIAI18g6W+zU0uonpnFDIYI/oDdochT
+      L/6A9Q9fQ1A1imY+DYCUR4thGGhqFqffYGR0nHwhIlfOkzVNOo0apqmhJBFmKFGdmgAgA0ya
+      R8kAowWVRs9nemaSajZDgkDg99m08szMqMi6iZaJkXSFC8cmEEhIkph8rsSwW0/zACmHj1v3
+      D6QBkPK1ZnO1z8udBMUL8YDprMhERaMkJ/zlkpcGQMrXm83VAesebPoJ0yq0nYicKqGJAp6Q
+      PgVK+ZrjqTLDMEb0QlZ6IQvbDpYfs2HHuH6c3gFSDjfpHSDlUJMGQMqhJg2AlENNGgAph5o0
+      AFIONWkApBxqbgbAsNtidXOHdntv9V3sO3QHdyiLnkSsLV9nZ2cHx49v/vnGeV8lPKvPlasf
+      4fjRbf9rt5s0azt3HgPAGXT39Z8kwXHcex63vr5CY2eHnZ0dvPD2dvv9HmvLS3iey9rmzi3+
+      3GF844D+wL5LD/f4LP28Fzf6U6vV9o/Hx/T7Pex+h+FwwJX567fY/fT9uZW15ev40Z2f5Me+
+      Q6fXx/VvH+j19XUIvV8thnvtr97i6aee4s233mK8qNAdxnQHAyJkZEWnmoXc6CwnihEv/+Jt
+      cnJCpjpLKZtB9IfUuhZ/52/9jQdy/lHTWL1KYh7jJ3/yR4hKltnjx1hYWmesoFDrtlFcD8Es
+      4PgJR45M4ngBLz13gZd//BMc1yXOT5PTBHQ8DDnmg7U2hcoopuCRMzSWNnYYHx3FFzXKxRyP
+      nRjn5VdeZTqrUQ8y5IsV5ExCSRXpOjE/+PZTvPXOhxTo89ov3sMo5RibnuCtV/6SVs/CiF18
+      pUKxnCd2OlSmT7K7vsJ3v/trD7+f37jIj/74R5THJ9lcXqQwMkWcRORzOoIs09pq8Gs/+MbN
+      /nQxkBQd3ZA/0Z+rNBZfp3rsErZc4OxpeP0z9ucmYZ//9J/+M9/93ous7/Ypl03kxGPY7kBG
+      QzVMtlaW8OUiM9OjPPfcM1x+41UiUeGj+ev8d7/10q8CQJESVjd2SIBrC4sIsUDTCpiZOY4f
+      hiCKvHf5Ko//+kUMVabb6xP763ilMno0APHhVo3+olhdvo4kwMLKGn3LwvYilEgBEeLAobHj
+      UB0bYWllEyQZQpcrHy1y5MgkrZ0NBoZJMeNTmptGDDYxDJ1OrU0wbKMqCmtr68R6iWI+i6zq
+      lPI67WYPKxGwBYPpPLQtl64TQ+QTxgIhCbIMA9tHBjrtNrFvc327yckLI1xZ3ObCjML7H1yj
+      YkqfTz9JaHe6WL0667UeOVemlJNoNbcpjE4iqQaa9qv+eIpPX0g4Liv7+uPaAyS9SCZXxV9f
+      weeph9IfgDiRmZvM8+77VxgGEmWjjCMVbn4+oxMTbIgZpqdH+ODaGi9+4xnanQ6oBSrFLJAu
+      hvtSsHjtQyLJ5MzJOTY2NpiZmTnw2H57h46T4ehUFWKfje02M9Pjn4NXIUtLmxw/PgvA6tIS
+      08eP39f6+S9bf4bdBo1BzNzM2G3/uxkAkW+zut3GGbZRtSwFI0O32SYws2RlGV03qDc7ZHMG
+      YhKTNxTsfofX5hv88MULgEo2qz1Ux78YYt58+c/pCgWmpiY4d2L2UTv0ubB7/T1WWiDnsjxz
+      7sSjdueh8frrr1NWPMSJp5jQu/znn1zmwpOniYOEIAwpmgpjR46zvbGKJibYMYTdLurMcaqq
+      +KuAfu+tN1jrhUSbV3Hyc8zN5pFaAp3ckBFNJmmvsO2oOFqeki9RrIq0N+bZsCq8+fKPOfvt
+      3yL7KEfiU7KwcB0pP8rZaoHFlc2vbQBc+/A9atopSnYPvkYB0NxYZsPtk9QNjufrtIYh7a0P
+      cNwsCzWXstjkjKdQ0WIadkRrY4HVa0uULriU2gu33wGqRYNas0vRyKBlc3T6HgUtxo9lJEkk
+      FDK4gw6GIhIgEZGhubvJpUuXHvVYfGoGgz4ZIWa36zL7uUwnvgSELp2hS6s75MTs16dS3KDX
+      Ymi5SLKMH8aIcYQgely+0uDZZ87Rb9cYO3IcTYrpD326zV0yqkqcxGT0fKoBUg43aSIs5VCT
+      BkDKoSYNgJRDTRoAKYeaNABSDjU3A2BrfZmV9e3bDmg2m9y+xOlWQmq15t6xjcZDdi8l5fPl
+      ZiLsL37yYwwppvbES2yvr3JsVOPH7+9ybETjuy89x8uvvcNzT13gzXfe49jZc/zoD/8dv/lP
+      /kdOz5r85Mev84//m7/Oz372KsdnKsSZLH/6p3/Kf/9P/xnTo/lH2b+UlLty8w4Quhbq6Cmy
+      yZDN6+/TGMY8fuECcZLw4z/9Y/q9Fr/85esolVk+eOcdJmbnOD07cUtTMkkSgijjhAKzc3Pp
+      xZ/ypUf63d/93d8FkFSTl771DQJngBPJnD57nu3lJU6eOcmF8+fY2m3xwre+Ra5QoFrMMVbU
+      aDkiI+U8q9euML/Z4PTxWUJ3gGhUKCkBkVqmmNMfcRdTUg4mzQSnHGrSp0Aph5o0AFIONWkA
+      pBxq0gBIOdSkAZByqLmZCLPtBytHkZLydeC+HoPeOEQQhM/doZSUL5J9m/yTJOQ//sc/5skz
+      U3SkcWYrGa5e3yAn+VSOnMZ1XI7PTvMHf/D7TBUVTn7zb7P87itEssnj504SeS5WKCAGNtli
+      hb7lYMgRemGMvKnyzhuvc/bi87z3yp8wd/EFlucXUIujbC3N88Kl8yysXidbmmRlvcb540XW
+      t7r0hwG/8Td/gCYK9Nt1PlrZZbxSoNVqUswZyGYZq7lF244oZjOIioFte4wUVIaBxLnTx+85
+      CLsbKyzXepiCj5krst3u8+Jzj/Pmz18nNirIsshTFx7jTvGfJBFvvfUeo9UCuxtbjM7MMnAs
+      vF6XYSJzelzH18bYWVniieeex5SFO9quGjGem6EXR3zzqbN3tL21ukblSIWlK3WOHBul36rj
+      xzKlgokTxtjtHpWxMrYXUxAHDPWjtK69ijByht7OMlk9gy9oXHr83Kf+MttYWaTWcxHigLnp
+      cRY36jz72Bw/f/0dtNIIWibDE+dPH3i+7wyZX94m8ftUJo8yNTZy8OeytcZOx2Y6mzA0jjI3
+      aj6Qr5Y1oNNsIek5fKtPNqvjBTGqkWdY32CzO9gfALXFyzQaTT5UwPVrLGg6BTpYoskbv/x9
+      SpPnGJ2dxm2s886OxPSzMb1eDyexeeutGr2NbUZPPU6v1WR5p8fZuUlcv42Zm+a555/lxMnT
+      yLJA3lC5vlLn7NkZPpzvoCoq9YHNTMlgN4ba+ip5c4656RKvvrmKE4EmgqQYJJGDZcvouo6i
+      KGzvrKIpJpWRLLFrEQcBmiphmFkU8f6y0LphUNud58zsOFfnrzM7e4QwtDGKZRaW25w6cfCH
+      VF9fYrXWxtQlyuUs1zYaPHlilM3+kLJhYOR0rEijXBlBu0PJmxu2Zy+cZnVzEVnLER9g2x32
+      mL/WYOGDXYZxH8EfEHd6vE+JrNIjH2R4+/omBV3gG6eqXFu7RlLfYdD0CAWVY5qOyB3K0d0n
+      /XYdN0jY3d1l7ug0um4yUq0S2l2K5TIrHY/jBw8VAIqeRSLEjyNqtfpdA0CIY7Z3dvGFDsJM
+      6YEDYHV+nj4S2XgJOzRZfNfmaClCK4xR1jLEgrB/CtTrdMjmDXZ3GvixQMmQsSIJwR9iZAtE
+      sUihnGfQquEGCcXqGO3tVeKMSUYIEQUBzTD48z/5Yy586weoUoIhJyRxQKCMMFkxAHCGPdxY
+      pphV6A99iANkRUERYnxkWq0OhaxOvpBna2uHqalJBEEg8h22mz0qxSIQkwQuQzcgo2So1fc2
+      9Mt6EUWGbrOGoOaZHKvcc6AC12Jtp0VOFTDzJRrtHmPVIo3dHUrVKgM7ZGq8euD5lj1EQKbZ
+      qFEZGaFV20Ix8liOz9xUlYHts729y4nTp8iI+795b7WdK1VptrpUy/k72nZsG1VXGHYHdCyX
+      StGEKMJyfZAkTDnD0HNIBIWRgkokGXiDJl6cQVVlYs/GR2G0UnygC+lWXKvPTmvAaLVE6A6p
+      dR2mxyrs7tQol/P4icJopXDXNmzLZtBrUxydRJUPfg4T+Q61jsVEJYcdSZjqg73V1xoOSQQB
+      QYB2o0mhXEEIXQJRJ5uJaVvhrwIgFcEph5F0LVDKoeY2Efzv//1/4u/85q9zfWWHSsUkiqDT
+      HaIqMltbG8zNzZIrjrK5cJntVp9vfu/7zL//HhefOMfKRg1NCvEjkSDwKVeqtDs9Th6fJXD6
+      vHttjWcvnObP/vwVzp2eZWNxAV8rkTV1qqbEtbUG4yUNKSNRqweUyxKxZPL8UxeAvTno1eVt
+      xssmuxubzJw5g21FBIMabTummJURMwa24zFa0Bj4IufP3LsI1O76Mku1LhUhoTA9xsJ6nZmi
+      ji/q6IJHIGl0t1YYPXaJIxP7b+9JEvHGm+8yNlql1WpSyWcZhCKSP7gvn261PfPUJa68+TbV
+      YhZf1DnziSJdWyurjMyOsPDBNrmizrC+hFw5SVZXSIIWflAiYYAcg140kWSDTqOB7/fZWdlh
+      5OxjjOsiZqFIrdlDESIEIaY0Ns3q/If0rBBZCBDVHCoenqDy5BPn9wnm9eUFal2XquLQk6q4
+      wz7PPXWOV195k8poiSCRuHD+zIFj7TtDri1vgdejMHqUo9O3lyu8wc7mKjsdG1O0UYvHmJ0q
+      3/OzvJXhsE+72UTW8/hWHzOr498igjc6/f0BsLvwPt1uhz/70cvEsYBSlOktz5PJj9Mcihyb
+      q3Dt8i+IzZMUkj65ygiqCN1uh6XLv+Tlqz3GKhlMRcHzXJxf/ITNoUH2HxYYzxucOXWC1YWP
+      2G60OXpkjN1Gi6OnR9nYXMecO4amioiCwNL8NYaeiBWNktWCm/6JGZ0k8rBtKJdzBKJGYG0S
+      olKu6CSeTRyG6KqMputksvcnmjTTpF6b5+jcLB3HIXI9VL2EaRSJnR4721uYRoFhrw+fCID6
+      +jLrjQ65rIGhG9iui+O6aEr2vny61XZje4WV7TZTE1VMo0gUxwiAKO7Nk2Pfodvr8dGVeWYf
+      O4K9u0m7AeW8RE5KkPMm3rDGsOcRiB5ZMWFzZ0jh2AyCPaTW7oEwwNnYYbvZYmZ0hMbuMkfP
+      CDi2jZmr0K9vMjYygdUPEZP9grnfruOFUKtt03frDAsCsyM6se+iKTGbXZ+JfOauY63oWWQi
+      Bp5HxrHueqxIwvZujUunj9KzusCDBcDawiJ9JHLxCsPAYOl9hyPFELUwTkWTSSRp/xSo3+1i
+      5gzWF6/xi8trfOfbTxP2Gqx2RS6cPkLouzh+gJnNIwsJZi6HKAhsri2T0XP4QUTO1BBFkTiO
+      SSKPTs8hEeHY7Cw3vkf6/T6yGLO5XadSrYIgoOtZQt8hCTxEzaTT7lDKqYSiTim/d9FEvkOt
+      PaBUyNNqNpicnsIZ9AliqDc7lAs6spZHkaDXbiCoOcZH7j1ooWezvttmaqSCqEjU6x2SwEJW
+      DUzTxPZCQrvHyORRFPn2x4e2bSEIEiQxxAFDxyeTydyXT7falnQN33FpN3aQVQMtm0cRwTD2
+      Hh4kccja2ibVkREEUSAJXBwvJBYzENrk8lUgQkTA8yyQVAbdDkaxQjDsohdKhPYAVTdo923K
+      hSzWoEu+MkEceOiGjmPbGIZBv93AQ2GkvD/gPXvAbnvI9GgBx4/pDvbaabVaFHIGfpKhWrr7
+      RijbtrEHXczSGLpycDXoyHdodG2k2CVXGUfL3H/laADbsvZEMHsVtvPFEkLkEggaZiaha98i
+      gi3r7tGYkvJ1JBXBKYeaT4jggD/8w/+Pv/tbv8Hi8jbVkRwkIs1Wl+mpMZpdCymwGDs6yx/+
+      /r+npES89Pf+W1bf+HP0I88g2XUSARJRQoojytUKja5FVo7JViYpZDVee+UVnnvxm/zo//19
+      jj3+DMubO4xUqyh+n5qTUBCH2K6CrxnM5kLCwkkeP75XsLbfrvPh9U0mygadZhNHNCmXS8TD
+      5m2Cc6yoP4AIXmJxp0tVSlDHR2g1+5QNmUDU0HDxRY3e9iqjxy5xdHL/M/QkCfmrN/ZEcLvV
+      omCqiNkqTmvrvny61XZpusJKPWBMi/BFjTMn5vbZ2lxeJj9RYOVam9kT4/Sau/iRTKmUxQ1j
+      rFaHylgVx08oSQPa0gSd679AHD1Hd3uJgqnioX6cWf50meD1pXl2ui4jN0Sw1ef5p87zs5/+
+      FSMTZYJY4uJjZw88v9uscXV5E0MKMMtTnJw7+N0B2xsr7HRssDvMnn2SSsF4IF8Hgy7tRgvZ
+      yOMNe5hZgyCMUc08Vm2D9U+K4O359xkOB/zZf/kZUQTuNYsxBXqezGtvf8T0iEmcRBw9Pkt/
+      d4OmIPFCHLO01SDTextVDEgQ0ASHxYU1pLFTjOUEZLdOmD3Br337Gzx24QISIdZgyAcrdSoZ
+      l/bmVSqTZ+gP6ii6w8KHq4w9cYZsscpKrQ4fB4CY0RASH9vNoGULOP0+vZaDruYoljSEwCGJ
+      Igwtg6KqFM37K9iumVka9Xnmjs0RiQI7OzVGz85iZoskbp/d7S0MI489GAD7A6C+scJms0s+
+      Z2IYBrqhsbW7hpox78unW237ok4wqCHnqxjZImEUIQCStDf39WyLre0h169tYCUDMpFN3O3x
+      wVIeU+lTilTeW94mp0t883SVzfY2frtBr/0BsayRNSREbn9P2P3Sa9fxIoF6bQfLqzMsihyp
+      aESeS9aAzY7PREG5axuqolAqlQicPp4zvOuxsgDbuzVOTlWo12tUCnN3Pf6TrC8uMRAksu01
+      Br7GygcuM8UQpTBOVZNJJHn/FGjQ72OYGptLC/zygzW+/73nkQWZJEmQJBnL8dBVmUIhR6fZ
+      JEwkiuUCju1BErLXkoAoJPS6XTrtButNm6cfO0FoDzHGj1My9j7M2s4WRr5MEtiEkYgkQXfg
+      kNNljGye3tAmk/johSq6shenUeDS6A4p6Co79QalUok4jpFlmVa7RzGvIas5MhIMui1QsveV
+      9Qw9h616h4lqCSEj0u5YxN4ASdExDAPHjwidPpXxaRTp9m9Ox7ERBIkkiUkiH8cL79unT9pu
+      tvoQ2EiKjmbmyIig63tLOjzHIaMp2AOLvu1RyOsIUYzt7WWCDVnG9jwSMUM5qxBJGr7VxY9l
+      VEUi9h18FCrF3ANdSLfiOUPqHYvJah43iOkPHYp5g067Sy6r4SeZu7Zv9TvUuzZZVcAsjmCo
+      Bz81igKXVs9Bil3M0ugDi2DHtm+K4F6nQ7ZQRIj2loUYmYSeE6UiOOVwk4rglEPNbSL4D/7t
+      f+Tv/e0fsrC0RXm0jExCt9XC6fcZqlmOFnUks4Q02OLDjS4zx8/RXb9CrTngqeefRBRVuo06
+      Pcvi2aefpre7xGpfwQxbdIMMRTVkfn6dubPHGVohemKx3Q0x6OD7KgNRZ0T1OPH4s4x/YlFV
+      t1njytIGE2WTbqtJkh1FiEOUyL4pOKWMgeV4jJcM+p7AY2dP3nMQdtaWWNjpkBM9ZEGknynx
+      zSdm+eUrrxEqRVRV5pknL9xxOXS/XefywgaToybr88uMHz+NH3pYzSa2oHB6QsfXJ9hZWuTi
+      Cy/cthz6hm0Th4m5c6wvX+f55y7c0fbG8gqjcyN89O4G+bKJVVtEqp4mZygkXgM/qhJHXQhj
+      8tUCsqzTqjfw/QE7K1uMnH2CCUPAyBept/tkkghRjCmPzbA6/wHdWzPBgoeHytMXH98nmNeW
+      rrHTcSgoAYJaxQ8DHjs+yiuvvUOmUMFQFS49fu7AsfadIVevbxAMGsydf4pq4eBk5fb6Mttt
+      CykcYpanOHXsyD0/y1tJ4oBfvPEuKh4Txx4jtlvU+x6a53Dk6acIWrX9AbB17T081+bP/ssr
+      RFGMsJ1BDV225xcpz5xHKjv47QSEDU6N6ZSrZRqNDr7tIMcWP/rJzzlS0bj20XWKx5/iWLNB
+      vjzNmTK8/fo8DTtAm6zS6PS5aGZZ++g1jj7xfbTBFaQIBpZFrd+hcqzE/LXrjH/zqX0dUjIy
+      xWIR17PJ6DmKBZ0g8Bj0YwpFBSF0ieMYU1eQZZmifn+V6fRslmZ9Hq2awxMkYskgAEAAACAA
+      SURBVL9LENio2Ty72wPmjhycTBMzKqIQ4PbbkFFY2elwfiaHL6vkFJVcIUvNlzELRdQ7LYf+
+      2DamxPLVd9ntRwfaFkKPRqPF0uIKR87NYDdrtFoipbxEXkrIFAoEdhdn6LO6vYIpiWxsdSmd
+      mAPXptUbIPb6eNsN1mt15ibG2N1c5Nh5Gdd1KZRH6O6sMzExQ7/dRBT2C+Zeu44fidTrNUpH
+      JxmfnmJzbZnA7pPN59geBGTv1MlbP0M9iyImaIUijUad6l2ErSyK7NQaHBkv4rsPPkWvb66x
+      3e4xosVsrC5iaCq7tQ5PTI4RAxtbO/unQNZggG5obC4v8MaVDX7tO89CIhF5NtlcjoHjY2p7
+      Kl+VRXYabaamprD7HbqWTzmvEQkyw14XzSxgDbo3X5EZ+g49y0WTJJqdHsViljgWyBUKuLaF
+      79qYuQL9oY1MiJYtoX9i+as97NHq2YwUc9SaLVRVJQGypkm726eQVZHULBkRhr0OgmJSuUdW
+      cs83l91mF1OV0Iwc/aFFIWfSa7fIFgo4Xki1fGcxHQUerb5FwczS63XIFQr0O00ymonrBYxX
+      985vNttMzUwjf2I59A3bWVVCz5dJor2lH3eynSQR29s1SqXSXiY49HD9iETce3+xkS0isLd8
+      wvcdkBTsQR89WyRwBqjZPJFroagaPculkDVwrAHZYpU49FE1Dc910TSNYb9DkGQoFfY/tfJd
+      i2Z3SOy7FEfGkYUESGi3OuRzBgEypfzdn765rosz7GMUKqh3EbZR4NEZuIiRi56v3HY93A+u
+      6+JaA/R8GSkJ6Fk+eV1BVFU8q5+K4JTDTSqCUw41+0Vw7PNvfv+PeOmpE9j6NFnZodkYkNFN
+      xsoGoaAxMVrmtdde44UXnuHVn79FQkC1XCWbN1lbWKRwZIacUWJueow3Xn2Z88++xJs/+xFn
+      Hn+M1fUG7Z7F7IjO4naP0ZxEImns7uzyxPk51tvw3RcuHuhsv13nvfk1pkbLtFstTp+YYbsV
+      EA52aTsJBVNCUgxs22e8bNBz4fFzp+45CDtr17m21aagxGSSiI5U4sWLx/jFK68SZvaE6LNP
+      XbzznuA44PW/epeJ0QqtVosjY1VqlsuwUccRVE5P6vjaJDvLB4ngPdvjekBSmKWzu8ELz1+8
+      o+2N69fRqgbr1/scOzVBr7GDF0qUSjn8KGbQ7FAeq+KFUJYG7EZVBitvII0/TmdzkWJOw0fj
+      6UuPf+pM8Nr1q2y1XUpqCGoVP/R5/MQYr7z6DlK+TFZTufTEwSK426px5foGJSHhyDNPk72L
+      H1trS2y3LRK7zdTJC0yNlh7I1163TbPZQjFyeIMeetYgipK9THB9g7X2JzLBm9feI4p9rqzs
+      Moi7yO4OvcaQ4vgpPhDajI8eReUo3aEFJHTbHSKvweW33kSbOs+T4zrN7RW8MuRyOR67+BSK
+      LCBJET/98V9x6eJRihOnCbo9coaFLEPbcSmWKljtLhcufeuuHRJlFUmI8DyfbDZLrlQm3rhG
+      KGhkcxmE2COJEkxDQRQEisX72/qnZ3O0m/PkRgu0/QRB6uP7FqqRpV4bcnT64IGvb66z2+lR
+      KuTIZrO0LJdcBryMjihnyBVy7HoSWjZ3gAjesz127Cijqs/VZo/gANu+5xAMQtavL2EnQzTB
+      g16PKysmRmZABZ0PVncxNZEXz47SHQ5wBl06vQ9AMcknEoLw6TPB/XYdP9nb+lmcHmdyeoqt
+      9WV8u4eRNdm1AnLa3efpGUkkl8+Tj6N7vHgFFFlip9agoET0uu0HDoDN5RUsUcbobdJ1Mmxe
+      C5jMeijFCUb1DIKs7J8C2cMhmqHS6w5AEEgEEBOQZGVv4EQFVYwZuBHloolluSRxiGVZZPQs
+      WVWk1ekjExBmykxU98RQt91EVA1UEaRMhigRCX2XJPSRdZM4iECI0XXjrt9McejTGVhkDRNI
+      UJQMnm0TJtDtD8mbCqJikhHBGnQRMgalwr2znlHgUWv1MFUJ3czRH1jksgb9bgczl8P1I8rF
+      g8W057ns1RjbG8pBt42sGnhByEgph+uHtNtdxicnbhPBN2yXSwVUVcX3PIA72vY9D1mR8WyX
+      oeuTNTWEKMINQpAkNFHCDXwSQSZvZIhFhdAdEMQSmYxEHHiEyBRyD7a5/FYCz6bVs0gCj3x5
+      FFncE8HdTo9sVidMZAq5g9fsOFafzsBlpFRAVBSke3ze3aGLlARouSKq/GCZYM91b2aCB/0+
+      RjaHEPtEgoImJQy9NBOccsi5TQQ7jkNGEvGiBEPTbs57Q99DkBUkUSD0PcJEIAwCTF0liAWU
+      jx9nhWFIFEWoqnpHg1EQIsgSoecSCRISEX6YoCoZ4jhGJCFMwLVtzFyeOArRNO3zHYWUQ8u+
+      CVvs9fmX/8e/4a+/dJ6fXWvz5Nk5gu4usZIliTzk/DilnEmmv8ar13aotVz+2T98kXfqCuPK
+      kObQZWt1g9BtMDF1ErNUYXe3yXjVJBI0nrr4GNevvEVm7DTrH7yOJxu42+s0lBLfODPJ629d
+      48zcOD0nRIkcpo6d5OrSNn//N/8asJcJ/vD6OhPVEs2dXSaOTNC1PPq1Gq6kcmZSx9Om2Fla
+      4OI3v0n2Dru37sTO6iJXN9uMZwSOPPMk7/3iTfK6hGyWMYSAWn8Idp+xY5eYm96fFLvpU9mg
+      12pRnDlFs9FET/ay0wVTRlL0PWFeMek58MT5U3e0PXXxPEsfrSDHNrJZ5vzp/Uu51xcXUcoa
+      G0tDjp+eoFffwQ1FSuU8QRQzaLQpj43gRVCRBmwGZazVN5EnnqC9uUgpp+MLKs9ceuJTi+DV
+      xStstj2yUQdbqRKHAS9cOMbPXnsHKbcngp+8cP7A82+MlyH6mOVpTp84euCxm6vX2WpbRP0G
+      Jy9+g5Hig03dup0WjUYT1czjDXpopkEcJ3s5qvoGq63u/gBY+ugqTzw+x+JWD1NXabVq9Ld3
+      MItVJqarbDbblLIGkqLiODHnz82CKFPfWsVXItwQ8oUs+oTO+gcLnHr2Webnl1HNM2iCy/Xr
+      K5y++DwAtSUTt1njxNPfwJ1fIaMVePzccUaLJl7dRpdymFoGVUpIEhAEkEUBM5vDs3usbWwT
+      GDkmTBFP1RHFDLlCHssTUQwT7QHK/uq5PJ3WPKdPHKe1u0mtNSA7UyV0bSxRICPGoOi4tnPb
+      uTd98j0SWWfQqjFo11DKYximhIBPEkPWVBGSmEKxfKBtUTEwMiK+LxO6Nq4XIImQyeytmAx8
+      j8QX2Fxexk4GGFIAvR4frZno8oARQeeD9RqmKvHSuVEc18e2+rTnP0TQTAqICMlnE8EBGVqN
+      dSZPzbB5fZuxsSqe3Uc3DOp2SE6/uwi+MV74A4Lg9vG8FTUjs1tvcubIKM1mnZHigy2H3lpd
+      2xPBg2t0bJmt+YjJrEOmMMmYISMq6heZB4jp923y98gS3g3XHtKzXEqFAgIJMWD1u8iKhhdE
+      VItZXD+k1+szMjqKJN7ft1wUeDQ6A6rFPEImQxQEeI6FKCsIgoAfxsSBQ75YRf7EcugbPhWz
+      Jp1ej1JlBEKXMIHBwMbUM0iKgSSCM+wjZPR9IvSutqUMspigKHvTycD3kTIyvuNiewGGoSLE
+      MV4QgiiiShJeEJAIEjk9QyxkCD2LIJHIyCJJ6BMmErnsg20suZXAc+kMbBRpr6qd5fhkdZV+
+      v49haETI5MyDK/LtjZeHJoOWLd41ExyHPn3bR4wDtGwB5S5FtO6E73kfi+AEa2ihGSZCHBAJ
+      e1+slh9/dRJhqUhP+Tz4ygRASsrnwYOvLnqE9Nt13r6yxMxonn6rSZwbh8j/1XJoU96rDu14
+      TFaydJ3krpWKb7C9usDVjTZFNUaKAtpiie8+c5LXX34VX86j6QrPP33pzpngyOfnv3iHybLC
+      TmNItlBBUgR6uzu4kr4nzPUpdq/Pc/Fb37pNmN+wPWmGUJilub3Oi9+8dEfbawvzSEWVrWWL
+      E2cm6da38QJpTwQnMYNai9L4KH4EVWnAmlfEXn8beeIJOhsLlPMGnqDy7JMXPr0IXviQjbZL
+      VY9JlApe6HPhxCgvv/oOYq5MTt/bc3wQvjPkw4U1wkGNypFzHD8yfuCxG6uLbLUssqKFVjnD
+      iSP3rvN6K912k3qjiWrmcAd9dFMnjrkpglc+KYK/7AhShkwGPD8kEFWqhkgQijiWhmYIQAAJ
+      5EyNKArJFw4uaHsrRq5Ap7VAfiSHk2TIxDaeZ5PRdJpth5x58D7XxvYmrcGAanGEYNhiO9E5
+      OZLBVU0EUSJfzLPjCsiacUdhfsP2ZGmWUT3ko+7wQNthECChsLO2is2QXCaEXp9r6zpaZsCo
+      aPLhRgNDFfn2+TGieK+Oz/bCh4h6jiIiQnKv/OvB7IlghVZzjdxYlaPHp9heX8GzB2i6TssJ
+      yev3LoylyQIDUcb37l6PVlcy7NabXDo9g+X2gAcLgK21dWxRRh8u0rZEdhZjJsxfiWBJ0b5a
+      U6A4ChjYLnomQ28wQM5kIEn2lu9aDoaWQcyoSAK4toUgq/cl+KLQp90doqsyqqZjOS6GpmJb
+      Q3TdwAsj8nepMuf7PoIgYNs2umFgD/vIGRU/jCjlDLwgYjAYUq5Wbst83rBdyGfJKAqBHwDJ
+      HW0HQYAsS/iuh+OH6LqCEMf4YQSiiCKK+GFIIoiYqkwsZog8mzCRkG+IYGSyxqfPq4S+R3do
+      IUQRZr7I3nOGBGs4RNdVwkS6Z/u+7xN4DoqeI3MXYRtHe0XGxCRENXJkpAcUwb5/83fHttF0
+      A+KQSJBRpQT7VhGcVodOOYx8pe4AKSkPm08sh/b4v//Vv+N7z53i9es9nnniDFIwIJF1Wtsr
+      NG2dE2cmECOJxO0zfuwseT3mZz97h6MV2GgHZPJjezurBJeF5Q3OnD6Joio0durMnXuCkinx
+      4x+/zPe/9xJ/8kd/xMnHn2RpdZ5jx8/S2tzAkRTC2jJepkyoaswoNqWzL3FqskC/XefND69z
+      ZGJkrwhVzsBNFAS3S+dm1nVvT/BkNUfXjrnw2MGVim+wvTLPh+ttSlqMFPq0xBLff+40r738
+      czwxj2EoPP/Mk3cUwXHk8crr7zBVzrDTsDALZTKqRGd7G1/WOTN1Izs9z6VvvXi7CP7Y9nQ2
+      JCnO0dha49vfevKOtlfnryHkM+ysOJw4uyeCXV+kVCkQJjH93RaliVGCSGBEHrBs5XA23yEz
+      eYH2+gKVooGHynNPXfzUInhl/gPW2y6jRkysVPECj4snx3j55+9ArkRe39tHfBDdZo3LC2uU
+      hZijzz9H7i5+rK8sstUaEvZrHD33LEfGH6w4bqdVp1ZvomXzuP29THCS3EUEr374LqYp8+FK
+      jYENC/OXqS8vo+QqPPbEKTrrNa6tBORji8UPl/jOfzVNx98lSgQif28V4wcffMB4wSBWRPKq
+      zOLCIlJiEfoSu8OEX3vpaV588QVIYvI5naVaHzmK+OiN13n2b/w219//Jciw3upSGS1TGMvT
+      arZgsoAgZVAzAkEQks/nyQghW7ublApVFB0gJEEgn9UJfY9cYfS+BsrIF+m1FyiM5PBEDTX2
+      cF0LWdFodV3y2TuvawJo7mzRGQ4ZLe2J4F0MjldEdD2LgEChWGDbERAVHfVOIvhj21OVY4zp
+      EfM960DbURhhKAa1jWvYDMmrMfR6/NWmhioPGZdMXttqoCsS33lsDCmjEHoWO4tXkIwccSIi
+      CJ9eBPfadUJBpd1cIztS5tixKbY3VnCtAYqm0nFDCvrdC2OJxOiGSTEjcq+ph6lm2K23qBoS
+      w34HHjAAttc3caQMUf06zaFAbTlhXLeRi1NMGDKyqu+fAnmuS0bJ4Dju3toDBIhCpEwGWZaw
+      bQ9FzSCwl5Y3sjk820JS9t49lbBXFdoPQjLyXrXkOAFRkiBJ6LVbFMYm0SQBSBj0B6i6ThIG
+      RIjomorv+4SBj6qquEGEEIeoRhZZFIijENv10BSVhASSiDBK9gTox0W7BFlBEsBzHQRJwbwP
+      wReHAd2BhabIKKqG43poqoJr26i6hh/GZI2Ds5tBECAg4LoOqqbhOhaSrBCEMXlTww8jLMum
+      UCreJoJv2M5lTeRMhjDY2xN8J9thECDJEoEf4AUhqppBiGOCKAZBICOKBFFEIojoikQiyESB
+      S5SISKJAEodEiYShHxzQ9yIMfAaWjZDE6GYeUdi7fGzbRlMVIkQM7eD2fc/BcgPyho4gy4h3
+      Ww4dhdhegJREyJrxwCI4CH5VWt91XVRVgyQkRiYjJbhBKoJTDjm3ieB+v4+mSAgZg8zH616G
+      wyGmaSII0KjVKFRGkYWIWqPD+NgIgpDQ73ZRzcJtazs8z0NVFRqNFqV8jr41RM8WiAMPWZaJ
+      whBZFrHciCSwyZWq+K6DaX76TRspKffLvgCI3A7/67/8A37jxcfYsDVMKSTwQtq9FrPHzjBt
+      emwGRY6OVbl+9R2mjs7h2ja1bpfdK+9QPvcCQujg1Nd57tf/LhVT5M///C/57jce4//6vT/i
+      +IUXmKtGXFtq03Ncnjx/kjdfe5WT506zVu8jNhepnnuRXqfL3/2bP7jNWd8ZcvnaCnlTvV0E
+      OwkFQ7opgqdG8nSsmIuP358IvrzWpKIlCIFHUyzx6984w6s/fRVPyGGYCt949qk7iuA9UbfK
+      eNVk8f2rHD33BLEQ097axJeNPRGsT7NzfZ4nX7yzCL681mQmG0FpjvrmGt958ck72l699hGx
+      KbK77nHq7DSd+iaOL1KqFImSmP5uk+L4GGG8J4IXBwbe1nsoUxdprc9TLZp4aDz/9GcRwZdZ
+      a7qMZRPiTOWmCP7pq++QmCUKxt5y64O4MV666GOWpzh36tiBx64tL7DVHOJ1tjn7zHcYLz/Y
+      Qsp2s8ZuvYn+sQhWDQMEAc3MY9c2WG512TepWpm/ztNPnmatbuHaFroi4vgBumbi2EOyxRGs
+      dh0/iqiWS+zWmmxubdHr98kXy7Tru3R7fQLX5oO338dJRP7aX/sBslHm6PQkpVKWq5ev8fjT
+      z3B6dhJVUbl46RJHZmYol0tURqcYnTjCzNid9/IqehZDEQnDiEKhgCJBu7lFLOrIisbetkRx
+      700lrk2ucH97go1ckX6nRRQE+LKJQYDj2EgZBdvx7r6qNA5RNJ3QHmCWymw0h8j+EN3Io8gy
+      xVKRMAZk5c4i+GPbaGXG9b03rjjunW1HUUw2n6W5ucl7H83Ts4cErU3eeH+BD6++R9Dv8Yu3
+      r3D56kckcYhh5okDh43Fq/iySZKICPfciXsw/XadUNDotGoMBj4TM9OoGRHXHpJRFFw/QriX
+      tI1DFM1AECSiKLjroVlNYbfZYuroLN1244H93dnYwo5i7MYytWaTt69ssLl0lZW1TSQpg6wZ
+      n18ewBoO0U3zriLn0xCGIbAnoklionhPBLuuh6LIiFIGUdhbtouUQb+LILtBHIX0hzaaIiMr
+      Cp4XoCoZPNdFURWCMDlQOAa+h+MFGLqO77koqornOohyhiiKMXWVMIpxHIfsx6+UupPtrGkg
+      fTwlBO5oOwpDREkkDEL8MEJRZIQ4Ifz/2zuz30iu6w5/t5bed3Y3yWGTnOEsmhFnRrNosSJB
+      cqAkNpL3/AP+kwIYAfJm5MUJDBgIYNhZbEUObO1DzkJyhutMc+l936q66t48VJMiKZGaEazY
+      ivl7IdBdVef2KVbd+91z7rnSg2BdCFwpUQj8po4SOtKxcZUYQbCLRCPgP32m5jS5zpBOr48G
+      +IPhAwgeDAb4fAZSnX59z18Opg6GP3gq2CrpeA+VcjF8AYwXhGDH+WKPM9uyMH0+b2IGHVNT
+      WK767gTCztKhz/Rt6DvzAJzpTN+GvlPZoK1aiQ8XVpg9l+LR/WVuvnKTnutSzeexzRDXckEG
+      gWkKayvceeed514TvLOxwuJWhemAzuwbd/nkg49Ihg1vTbA2pNhqQ69Ndu42l2czX92miQSd
+      epViH3K5WdxWwQPzQ2uCc9kYta7LrRvXvtJ27u5NVh+uYrh9jHDqS6ncm8tLDINQyg95aT5H
+      vbBN3xYkx5K4SJp7ZZKT47hSI2O2WWkEGO4u4svdpvp0hXQygi0Co/TqbzY03VhZZKtiEXUr
+      9Pzj4Dq8fXuO3/x2H4IDvH7nFAiuFllc2RxBcI75l06B4PXH5CttrOoOL7/xHpNjLwbB1XKB
+      QrFCMBpl0GziC4fQhIY/HKNXyrNervNig6o/soSmEwiYuI7Lpbkp1gptRL9JMBzDNHQSySSu
+      Uri68ZXAeZLCsSTtRpVkPEGtVKDdG+AicKwePVuiC4XQDK9+0QltchxJ2xZcnZtl0NxFakF0
+      w483RNaJx0aFaGOJE23rvhDRgA81st3q9ukPvlg3KxWk0ynqezssLD2mPejh1nf55METHi4v
+      IrttPvx8mcWlZZR0iafSIG3ya0s4/igKzdvK9RuqVSvhakEa1RKJ7BTdWgVdFwy6HQzDxBq6
+      CHH6gEI5NoY/CEJDSufUY6MhP8VKnZm5izTrLw7Bhe09Bgr61S2KlSoLyzvk15fYeraDofvw
+      BSPfrSGQki7W0ME0DIa2PUofthC6gXQlAb+JKxWWZRMMBZ8bwKV06Xb7hENBxGiPY9dxEJqG
+      YASW0sUXCHzpmgdt0nUGlnWwgF0IgT0cYho6QjPQhBdFRTPw+8znso3Q0MQXe4S5roumabiO
+      g+NKDEMHFFIqFKBrGlK6KDR8hoYSGtIZIvGu4wGgwGeenrN/qq9ch27fwmfoGKbB0HExDQPb
+      tjENHYmGzzx5YOEMh9hDB10T6KbvVLBV0sUeuggkuul/7jXe+3JdLzVGsJ9KboCSKKGjC8Xw
+      MASfQeaZ/hz1neoBznSmP7SOpkO7fX78j//MD966RtOfI+F3KRUqTEymcYVBr1xAjyZxXJeg
+      cNjY3CQ7fRG33+XG3dd4/Nn7NESat+Yn+OCzVZxeh3hmAqvXZDwRBl+YRtdmPCooN/uEYxki
+      AYXbqfK4JBlPx7g1f5VKfoWtlp/Xrh+tA9OoFFlc2WBiLMz9hSVu3b5NX7qUnz3FMcNcmw4x
+      CEyzt7rC3XdfBIKXubdZYTagY0ykKRUbTKWj9Bwdc9igrfzYtSLjc7e4fP5ohulBm1IhOvUa
+      KpKlN7CJ0qM2UMRDhyB4PE6t4xypnnzYdmwqyf2tNvPnonQcnZvHKltvLD3E8knKOy5Xr09T
+      K+TpW4JkOoVE0twtkZicQCqNrNnmUdXEKTzAN32H6tYK2VQUS/h587U73xyClxfYrFhMmk1q
+      vhxOr8W7b97gpz/9JVeunceRBq/ffeXE8+1+h8WlDQb1POOX7nDl/OSJx26trZCvtIlpHQLj
+      N3hp9vmWuO6rUtpjr1gmFI3RbzbxhUJomkYgHB9BcO1YYaz7nzMxEefBRpFqb5eZiSSLH3/K
+      zVdvU2/3aGw9wclcZX4mzqDbxm4WqUXGWPz9b8i+dJet7RK21kZ/7To7j37C/Pe+zy///QPu
+      vHGF3/76E5KTMxixMbbX8kTCUT66t8HkmEsyFGK30GPpyZCxWJhc7gopYDefx0JxfnoGAUjH
+      QjP9uK7i6uUZ1ottJkMDwpEEHUeSSCbZ7kqGQntBCE7RbTwhefUKIhriwcN1oqZNPHueoBGm
+      tbuNEALpfhkg99vkOJJGX3JxKkKht4U0owhtiFAKhEEibtJrNwnHp062Hc8QN1s0m1Vi2fM0
+      O32v/s5om1SFxrncOOuff8I90SMd0RCtFp/tVTCNHjlfjI8XljFNnb+6OUlmMkepcI+dtWV8
+      scQog/abd/itWglXD9GoPcNv9mkE48T9gn7X4urFLHtNm7HY12+RFA4YyHAUxz69MFYsHKC0
+      8oypKzkGVgt4sQeguFNgaJoMas8oNRxq200yvhZ6fJqpiIkvFD2WC+S6aJrAcVzvDSEE0nXR
+      dQ2pPCgRQkfTBEpKECCEB2WG6UNKiRB4oOa66JrmAY+ho1wXTddRygM/IQRSKgzdywtXCqSS
+      tJpNMpnMQXsUHgQKPKhxHIlpGjiOM4qcDg/26DVNAykVw6GD3+977reckpLeYEAwEBhlgEuU
+      chFCQ9M0pFIoKTFM80sQfNAmQ8feB62RHNfF0DWE0BHCi+SiaZiHjjlu23FcUHJkWz/wJzDy
+      r/BAWUr0Q58jBNroO4TA0DSU8KK/Sgkvj0kpFGIEz99MUroMBjbBgB+pFK6UGLru3Q9dQ6mv
+      v76UEum6aLqBdgrYKiVxHIlAehH+F4Rgb0LAg2Aviu5NGigEugBHnkHwmf7M9YeDYDmk2R0i
+      lIXPFyEQ+OZTbWc60/+VvgTB//Djn/C3b1+j7p8m6Xcp7pWYmMwiNY1WscRQ6Ny+e5f3f/Vv
+      aMEU7755i5/9y78yfe0VEtEorcI6/nCSvvSDBrmUHxHMMDuV4YP/+AW33/khv/7ZP5G+cJNu
+      p40vNsHm4od87623yG89IpycYelxnnOTISImrGx2+NGP/h5DCBrVIgvLHnAufP6QO6/eZSAl
+      pa0tHH/EiwQHZyisLnP33XefH4LXl/h8o8JsUCd7/SU+/WiRiURwVB3apthqI3odsnO3uXLh
+      GATvtykZpFuvsdtxmZq+AJ3iQYr2frGumfEElbbDnVde/krbxrkMO0+LJII6ZiTFrWPrmTeW
+      Vzh39RyfvL9MYiJJb/cR2vhNUhEfbm8XmykG3TztpsWFl2YxhEGpVMN22uw92WJs/i4zEYkZ
+      HqPe6mBIG8MQpCZm2Fp5QL1jY2oOwhchqA2xhJ+/eP3ukaHk+tI9NioWUadMPzABrsM7dy7y
+      699+jhtMkIwEeOPuydtc7fsrICwiYzmuX7104rGbq8vkK216pafcfOuHnEt//WYnh1Uu7rBb
+      qBCOxeg3GpihMIb+BQSvlmtHI8Fri58xkxvj/kaZxc8+ZmNri9998D7rG2t8en+JtUf32Nne
+      odiymZuIcX7+VTq1Ak4gRa2ww9LSErYIUnm2xMKDJTa3Nnl0/3M+++h3ST0T3AAABzpJREFU
+      FOo93n7vB0R8AjMU4vGTPd59+xbC7pOMBnlS6HDrpYuEUxlv39mQn07fJewb0hx47XOtPugm
+      Ugrmr15go9TBaZUJx5IIIUilUriuiyXB9yIQHB+j26qRSqZQCCLhoDe+tXr0hwpNgBLwVZ3l
+      fptcV1HpusxfuYjT2UNqQSTeWFgIg2Q8QrtRI3w8EnzItutKhKah8Gw32r0jK/UiQYPlh0+o
+      Nds4ysayBmyuPeHx2irlcguAQCjKufE0yw8XWV9dYeGTj6k7PkwUEkWlXKFc2OHTe4v0+haL
+      n/6eUrWJUpLZCxfQlGJu7gJexu1RNWslpBGmVSuTHM/Rb9TQNEGv20WMMlG/Tp6/fIDwoPwU
+      JSIhSpUGl66+TKtR+dprH1dpt4TUDax6nlKtxqO1Ajsby2zldzF9Pvyh2NEh0GHI2n/qlfLS
+      jRWeS6RSHnzt1ywfgdD+8d5fRWn7KZvlDq/fmse12vRUiMSoypnrehAshEApdWBDCFB4gC0A
+      hIZSEk3TDtolpUTTPOj1zpcjZ3qRUKUUUkoPnJ8XgpViYFkERpt6yAP7X/gA1AhKj6UzH7TJ
+      i+Jq+7465Ecx2qZHKs+L+qHo53HbrpTeW+mQnX0IVkodRIMPn7+fHi40bTTrdMgvI6De9zEH
+      36sD/2ua5n2secdrQjsASF07+iZRSmJZNqZpHpwvNG+GTNO0g/twkjx/KYQAoWmnRuu9e6kO
+      ftuLptYrKQ8esYPfP5IQICVnEHymP299CYLvLSwwO55kr2kzPT1DLPzFQpD19XXmZnMsPnjE
+      2MQM05NH52VbjQbhePyg8sHus6dE0uPQrdBSUdqVXTLZNMXtTXzhJPXekAvnMpQrZWIhP5by
+      0SlvE8tO0elZXL92+UhH3KwWeVZqMplO0uv38evQlyaa3aLSk4yFdUQgjnIshGOh/DFmp8a/
+      1gntepnV7TLnYhH88TDbhTpRw8WIpAgKm1LLgl6N8bkbpKJHF8a0a2XylTbZZJRev086GmKj
+      UCZsGlS6NlenEvQJkH+2y81b1zGPTeUdth1IhNnIl0gFNIxIitzE0czTWrlCLB2lXrHIZGLU
+      Ck8xkzNE/QKwKJctwEJHEEuPYYzuw15hF7vZJn3xype2ad3Xs81V6j2XADYiEMePhSX8XL4w
+      e2QpaL28x3a5jel2CCWytDp95q/McO+z+ySyGZQwuDibO9HXSjrkd4o4/TpaKMv53Mmla9r1
+      Cnv1LsJqEsvMMp6On3jsi6pZq9G27aMQ3Cmt8/Of/4K/++vvsbDZIHnvQ8LhEH0bXn7jL8mv
+      rxFx6xjpy6wt/Ccf/s7P+FiIQqNLYXmB3PwbhIIuQgvyN+99H0NXuFKjtr3OnjPGdn6LmyiU
+      1aHrT7Ox+pCIYXHv3ho35y+wur5MtwUysMOF89McjLtGiqWy+KtNSuUyg36f2zfn+WjxIbFQ
+      lKhfpztwEb0C3aHg5rU5tovN53KGlIp6vU7UGhCcmab/eBUtlkBUK3SEANVGmDGKz/ZIzZ8/
+      cm4kmab1ZB2cAYN+n24nyNzMFB9/uMDEZJZWr04/eIl01I+r4Pjc2GHbz/o9Yhq0bYVercCx
+      B6BRLhNM+/jvX/0XsekMVJ7Q8k0RDvmIakMS4y/Ta23RbAxQokc4kmD5wSrnb1yi/ngTtVXk
+      QtglnEzz6aMNcqkI9UqeG2/+kHapjI2fZq9BJKVh6wKEzeGb0KqVqTY71Os1rs+N8z/3V7k0
+      k8Vp7BKKR7m/VeXy+MnlY8BLhms0mkR9Guns6YGtTrfDxuYWb796g2bfPvXYr9KjhU/Jl+vE
+      /NCzBdWmTcxvE5u4SFL0Wa82jvYA25trxMeSrK4+xYikCNNF6T7KpQrX77xGcXuLi+dz3Ft8
+      yFh2kvL2FiIQQTc0nHYTXzxLwHRROvRaGrdve/nsTrfGXlfH7dUJhUKsrTxkLJ2mbhnM5dL0
+      uj0MXCx8tEt5ImMT9GyHG1evHHn7VHY2ybcccumkl9k4HNDt99B0P6XGgExMQw8mCZiCamGH
+      WCbH1MTXRw8blSLLmzu8PDuN4xPsFRuEtSGaL4Sh67T7NrJbYfziK4wd6wFatTLb1SaZRMJL
+      NRaCws5T4vEkxZbFrUsTVNo2T5/tcefuLXzHdpg5bFuasLlTJelXaL4Q0WQav85BhQy712Tp
+      ySbh2BiRqJ9hs0zTNvD7/chBjXjmIrrw3mrNTgOkolZvE81MMKzsET43C+0SrhGm1e0xMZak
+      1SgxNjmHHA7IZDNUSmUy2QxP158wwMeVudkjPFgt7rK5WyEWEPiDUTqWw4WpNCtLayQyadDN
+      U3sAgHKpjFSKbDb7lYUG9tWuldip9xnU98hdnCedfLFZoNLeHq6uo6she9sFQmPjBIWFq4dJ
+      +GGvbX9LyXBKHYDgmc70p6xvZ0XYaNbjTGf6U9fBA/DHyoo+6yXO9MfUkR7g8D/j0B6ilMR3
+      wobXZzrT/wf9LxbtvEsbNUNDAAAAAElFTkSuQmCC
     </thumbnail>
   </thumbnails>
 </workbook>
