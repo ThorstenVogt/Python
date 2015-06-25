@@ -21,11 +21,11 @@
           <member alias='on paper' value='&quot;paper&quot;' />
         </members>
       </column>
-      <column caption='Deadline electronic filing (30 days)' datatype='integer' default-format='N' name='[Parameter 2]' param-domain-type='any' role='measure' type='quantitative' value='30'>
-        <calculation class='tableau' formula='30' />
+      <column caption='Deadline electronic filing (30 days)' datatype='integer' default-format='N' name='[Parameter 2]' param-domain-type='any' role='measure' type='quantitative' value='-75'>
+        <calculation class='tableau' formula='-75' />
       </column>
-      <column caption='TOP n Plans' datatype='integer' name='[Parameter 3]' param-domain-type='range' role='measure' type='quantitative' value='6'>
-        <calculation class='tableau' formula='6' />
+      <column caption='TOP n Plans' datatype='integer' name='[Parameter 3]' param-domain-type='range' role='measure' type='quantitative' value='4'>
+        <calculation class='tableau' formula='4' />
         <range max='10' min='3' />
       </column>
     </datasource>
@@ -258,30 +258,11 @@
               <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
             </attributes>
           </metadata-record>
-          <metadata-record class='column'>
-            <remote-name>Insurance Carrier</remote-name>
-            <remote-type>129</remote-type>
-            <local-name>[Insurance Carrier]</local-name>
-            <parent-name>[vw_PromptPayReport]</parent-name>
-            <remote-alias>Insurance Carrier</remote-alias>
-            <ordinal>14</ordinal>
-            <local-type>string</local-type>
-            <aggregation>Count</aggregation>
-            <width>50</width>
-            <contains-null>true</contains-null>
-            <padded-semantics>true</padded-semantics>
-            <collation flag='2147483649' name='LEN_RUS_S2_VWIN' />
-            <attributes>
-              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_VARCHAR&quot;</attribute>
-              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_CHAR&quot;</attribute>
-              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
-            </attributes>
-          </metadata-record>
         </metadata-records>
       </connection>
       <aliases enabled='yes' />
       <column caption='Insurance Plans aggregated' datatype='string' name='[Calculation_0060624155441189]' role='dimension' type='nominal'>
-        <calculation class='tableau' formula='IF [Top n Insurance Plans] THEN [Insurance Plan]&#13;&#10;ELSE &apos;other plans&apos;&#13;&#10;END' scope-isolation='false' />
+        <calculation class='tableau' formula='IF [Top n Insurance Plans] THEN [Insurance Plan]&#13;&#10;ELSE &apos;other insurances&apos;&#13;&#10;END' scope-isolation='false' />
       </column>
       <column caption='Penalty' datatype='real' name='[Calculation_2260624170129874]' role='measure' type='quantitative'>
         <calculation class='tableau' formula='IF [Calculation_3120624143000341]=&apos;0&apos; THEN&#13;&#10;    0&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;1&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649])/2 &gt; 100000 THEN &#13;&#10;            100000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649])/2 &lt; 100000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])/2&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;2&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;3&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        END&#13;&#10;END' scope-isolation='false' />
@@ -289,20 +270,17 @@
       <column caption='Deadline' datatype='boolean' name='[Calculation_2700624142122150]' role='dimension' type='nominal'>
         <calculation class='tableau' formula='[Parameters].[Parameter 1]=&apos;elect&apos; AND [Days until Payment]&gt;[Parameters].[Parameter 2]&#13;&#10;OR&#13;&#10;[Parameters].[Parameter 1]=&apos;paper&apos; AND [Days until Payment]&gt;[Parameters].[Deadline electronic filing (30 days) (copy)]' scope-isolation='false' />
       </column>
-      <column caption='Severity of Lateness' datatype='string' name='[Calculation_3120624143000341]' role='dimension' type='nominal'>
-        <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Parameter 2] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt;= 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and t=he applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt;= 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;END' scope-isolation='false' />
+      <column aggregation='Max' caption='Severity of Lateness' datatype='string' name='[Calculation_3120624143000341]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Parameter 2] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;END' scope-isolation='false' />
         <aliases>
           <alias key='&quot;0&quot;' value='not late' />
-          <alias key='&quot;1&quot;' value='1d - 45d' />
-          <alias key='&quot;2&quot;' value='46d - 91d' />
-          <alias key='&quot;3&quot;' value='&gt; 91d' />
+          <alias key='&quot;1&quot;' value='1-45 days late' />
+          <alias key='&quot;2&quot;' value='46-91 days late' />
+          <alias key='&quot;3&quot;' value='more than 91 days' />
         </aliases>
       </column>
       <column caption='Paid by Insurance' datatype='real' name='[Calculation_4840624133427649]' role='measure' type='quantitative'>
         <calculation class='tableau' formula='-[Payment by Insurance]' scope-isolation='false' />
-      </column>
-      <column caption='Insurance Carrier aggregated' datatype='string' name='[Calculation_5140625160113917]' role='dimension' type='nominal'>
-        <calculation class='tableau' formula='IF [Calculation_0060624155441189]=[Insurance Plan] THEN&#13;&#10;[Insurance Carrier]&#13;&#10;ELSE &apos;other carrier&apos;&#13;&#10;END' scope-isolation='false' />
       </column>
       <column caption='Days Late' datatype='integer' name='[Calculation_8960624171850690]' role='measure' type='quantitative'>
         <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    MAX([Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)],0)&#13;&#10;&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    MAX([Days until Payment]-[Parameters].[Parameter 2],0)&#13;&#10;&#13;&#10;END' scope-isolation='false' />
@@ -315,8 +293,6 @@
       </column>
       <column caption='Encounter Id' datatype='string' name='[EncounterId]' role='dimension' type='nominal'>
       </column>
-      <column datatype='string' name='[Insurance Carrier]' role='dimension' type='nominal'>
-      </column>
       <column datatype='string' name='[Insurance Plan]' role='dimension' type='nominal'>
       </column>
       <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
@@ -324,33 +300,18 @@
       </column>
       <column datatype='string' name='[Patient Name]' role='dimension' type='nominal'>
       </column>
-      <column-instance column='[Calculation_0060624155441189]' derivation='Attribute' name='[attr:Calculation_0060624155441189:nk]' pivot='key' type='nominal' />
       <column-instance column='[Calculation_3120624143000341]' derivation='Min' name='[min:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
       <column-instance column='[Calculation_0060624155441189]' derivation='None' name='[none:Calculation_0060624155441189:nk]' pivot='key' type='nominal' />
       <column-instance column='[Calculation_3120624143000341]' derivation='None' name='[none:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
-      <column-instance column='[Calculation_5140625160113917]' derivation='None' name='[none:Calculation_5140625160113917:nk]' pivot='key' type='nominal' />
-      <column-instance column='[Insurance Carrier]' derivation='None' name='[none:Insurance Carrier:nk]' pivot='key' type='nominal' />
       <column-instance column='[Insurance Plan]' derivation='None' name='[none:Insurance Plan:nk]' pivot='key' type='nominal' />
-      <group caption='Action (Insurance Plan)' name='[Action (Insurance Plan)]' name-style='unqualified' user:auto-column='sheet_link'>
+      <group caption='Action (Insurance Plan)' hidden='true' name='[Action (Insurance Plan)]' name-style='unqualified' user:auto-column='sheet_link'>
         <groupfilter function='crossjoin'>
           <groupfilter function='level-members' level='[Insurance Plan]' />
         </groupfilter>
       </group>
-      <group caption='Action (Insurance Plans aggregated)' name='[Action (Insurance Plans aggregated)]' name-style='unqualified' user:auto-column='sheet_link'>
+      <group caption='Action (Insurance Plans aggregated)' hidden='true' name='[Action (Insurance Plans aggregated)]' name-style='unqualified' user:auto-column='sheet_link'>
         <groupfilter function='crossjoin'>
           <groupfilter function='level-members' level='[Calculation_0060624155441189]' />
-        </groupfilter>
-      </group>
-      <group caption='Action (Insurance Plans aggregated,Insurance Carrier aggregated)' hidden='true' name='[Action (Insurance Plans aggregated,Insurance Carrier aggregated)]' name-style='unqualified' user:auto-column='sheet_link'>
-        <groupfilter function='crossjoin'>
-          <groupfilter function='level-members' level='[Calculation_0060624155441189]' />
-          <groupfilter function='level-members' level='[Calculation_5140625160113917]' />
-        </groupfilter>
-      </group>
-      <group caption='Action (Insurance Plans aggregated,Insurance Carrier)' hidden='true' name='[Action (Insurance Plans aggregated,Insurance Carrier)]' name-style='unqualified' user:auto-column='sheet_link'>
-        <groupfilter function='crossjoin'>
-          <groupfilter function='level-members' level='[Calculation_0060624155441189]' />
-          <groupfilter function='level-members' level='[Insurance Carrier]' />
         </groupfilter>
       </group>
       <group caption='Action (Insurance Plans aggregated,Insurance Plan)' hidden='true' name='[Action (Insurance Plans aggregated,Insurance Plan)]' name-style='unqualified' user:auto-column='sheet_link'>
@@ -373,14 +334,13 @@
         </groupfilter>
       </group>
       <extract count='-1' enabled='true' units='records'>
-        <connection class='dataengine' dbname='C:\mimir_analytics\modules\experimental\PromptPayment\PromptPayReport.tde' schema='Extract' tablename='Extract' update-time='06/25/2015 08:02:21 PM'>
+        <connection class='dataengine' dbname='C:\mimir_analytics\modules\experimental\PromptPayment\PromptPayReport.tde' schema='Extract' tablename='Extract' update-time='06/24/2015 06:01:32 PM'>
           <relation name='Extract' table='[Extract].[Extract]' type='table' />
           <calculations>
-            <calculation column='[Calculation_4840624133427649]' formula='-[Payment by Insurance]' />
             <calculation column='[Number of Records]' formula='1' />
           </calculations>
-          <refresh>
-            <refresh-event add-from-file-path='' increment-value='%null%' refresh-type='create' rows-inserted='14701' timestamp-start='2015-06-25 20:02:21.592' />
+          <refresh increment-key='' incremental-updates='false'>
+            <refresh-event add-from-file-path='' increment-value='%null%' refresh-type='create' rows-inserted='14701' timestamp-start='2015-06-24 18:01:32.326' />
           </refresh>
           <metadata-records>
             <metadata-record class='column'>
@@ -434,36 +394,12 @@
               </attributes>
             </metadata-record>
             <metadata-record class='column'>
-              <remote-name>Calculation_4840624133427649</remote-name>
-              <remote-type>4</remote-type>
-              <local-name>[Calculation_4840624133427649]</local-name>
-              <parent-name>[Extract]</parent-name>
-              <remote-alias>Calculation_4840624133427649</remote-alias>
-              <ordinal>2</ordinal>
-              <local-type>real</local-type>
-              <aggregation>Sum</aggregation>
-              <approx-count>14</approx-count>
-              <contains-null>false</contains-null>
-              <statistics>
-                <statistic aggregation='Min' datatype='real'>4.0</statistic>
-                <statistic aggregation='Max' datatype='real'>224.0</statistic>
-              </statistics>
-              <attributes>
-                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
-                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;array&quot;</attribute>
-                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>4</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
-                <attribute datatype='string' name='DebugRemoteType'>&quot;float&quot;</attribute>
-              </attributes>
-            </metadata-record>
-            <metadata-record class='column'>
               <remote-name>Charged by Provider</remote-name>
               <remote-type>4</remote-type>
               <local-name>[Charged by Provider]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Charged by Provider</remote-alias>
-              <ordinal>3</ordinal>
+              <ordinal>2</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
@@ -488,7 +424,7 @@
               <local-name>[Date Charged]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Date Charged</remote-alias>
-              <ordinal>4</ordinal>
+              <ordinal>3</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>date</local-type>
               <aggregation>Year</aggregation>
@@ -515,7 +451,7 @@
               <local-name>[Date Paid]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Date Paid</remote-alias>
-              <ordinal>5</ordinal>
+              <ordinal>4</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>date</local-type>
               <aggregation>Year</aggregation>
@@ -543,7 +479,7 @@
               <local-name>[Date of Birth]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Date of Birth</remote-alias>
-              <ordinal>6</ordinal>
+              <ordinal>5</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>date</local-type>
               <aggregation>Year</aggregation>
@@ -570,7 +506,7 @@
               <local-name>[Days until Payment]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Days until Payment</remote-alias>
-              <ordinal>7</ordinal>
+              <ordinal>6</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>integer</local-type>
               <aggregation>Sum</aggregation>
@@ -591,7 +527,7 @@
               <local-name>[EncounterDate]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>EncounterDate</remote-alias>
-              <ordinal>8</ordinal>
+              <ordinal>7</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>date</local-type>
               <aggregation>Year</aggregation>
@@ -618,7 +554,7 @@
               <local-name>[EncounterId]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>EncounterId</remote-alias>
-              <ordinal>9</ordinal>
+              <ordinal>8</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>string</local-type>
               <aggregation>Count</aggregation>
@@ -648,7 +584,7 @@
               <local-name>[Health Insurance Policy No]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Health Insurance Policy No</remote-alias>
-              <ordinal>10</ordinal>
+              <ordinal>9</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>string</local-type>
               <aggregation>Count</aggregation>
@@ -669,43 +605,12 @@
               </attributes>
             </metadata-record>
             <metadata-record class='column'>
-              <remote-name>Insurance Carrier</remote-name>
-              <remote-type>129</remote-type>
-              <local-name>[Insurance Carrier]</local-name>
-              <parent-name>[Extract]</parent-name>
-              <remote-alias>Insurance Carrier</remote-alias>
-              <ordinal>11</ordinal>
-              <family>vw_PromptPayReport</family>
-              <local-type>string</local-type>
-              <aggregation>Count</aggregation>
-              <approx-count>5</approx-count>
-              <scale>1</scale>
-              <width>50</width>
-              <contains-null>false</contains-null>
-              <collation flag='1' name='LEN_RUS_S2' />
-              <statistics>
-                <statistic aggregation='Min' datatype='string'>&quot;Aetna&quot;</statistic>
-                <statistic aggregation='Max' datatype='string'>&quot;United Healthcare&quot;</statistic>
-              </statistics>
-              <attributes>
-                <attribute datatype='string' name='DebugRemoteCollation'>&quot;en_US_CI&quot;</attribute>
-                <attribute datatype='boolean' name='DebugRemoteMetadata (comparable)'>true</attribute>
-                <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
-                <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (size)'>200</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>4</attribute>
-                <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
-                <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
-              </attributes>
-            </metadata-record>
-            <metadata-record class='column'>
               <remote-name>Insurance Plan</remote-name>
               <remote-type>129</remote-type>
               <local-name>[Insurance Plan]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Insurance Plan</remote-alias>
-              <ordinal>12</ordinal>
+              <ordinal>10</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>string</local-type>
               <aggregation>Count</aggregation>
@@ -724,7 +629,7 @@
                 <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>200</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>5</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>4</attribute>
                 <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>1</attribute>
                 <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
@@ -736,7 +641,7 @@
               <local-name>[Number of Records]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Number of Records</remote-alias>
-              <ordinal>13</ordinal>
+              <ordinal>11</ordinal>
               <local-type>integer</local-type>
               <aggregation>Sum</aggregation>
               <approx-count>1</approx-count>
@@ -757,7 +662,7 @@
               <local-name>[Patient Name]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Patient Name</remote-alias>
-              <ordinal>14</ordinal>
+              <ordinal>12</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>string</local-type>
               <aggregation>Count</aggregation>
@@ -776,7 +681,7 @@
                 <attribute datatype='string' name='DebugRemoteMetadata (compression)'>&quot;heap&quot;</attribute>
                 <attribute datatype='boolean' name='DebugRemoteMetadata (distinct)'>true</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (size)'>368</attribute>
-                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>6</attribute>
+                <attribute datatype='integer' name='DebugRemoteMetadata (sort-position)'>5</attribute>
                 <attribute datatype='string' name='DebugRemoteMetadata (sort-sense)'>&quot;asc&quot;</attribute>
                 <attribute datatype='integer' name='DebugRemoteMetadata (storagewidth)'>2</attribute>
                 <attribute datatype='string' name='DebugRemoteType'>&quot;str&quot;</attribute>
@@ -788,7 +693,7 @@
               <local-name>[Payment by Insurance]</local-name>
               <parent-name>[Extract]</parent-name>
               <remote-alias>Payment by Insurance</remote-alias>
-              <ordinal>15</ordinal>
+              <ordinal>13</ordinal>
               <family>vw_PromptPayReport</family>
               <local-type>real</local-type>
               <aggregation>Sum</aggregation>
@@ -813,6 +718,14 @@
       <layout dim-ordering='alphabetic' dim-percentage='0.484553' measure-ordering='alphabetic' measure-percentage='0.308943' show-structure='true' />
       <style>
         <style-rule element='mark'>
+          <encoding attr='color' field='[none:Calculation_3120624143000341:nk]' type='palette'>
+            <map to='#1f77b4'>
+              <bucket>&quot;0&quot;</bucket>
+            </map>
+            <map to='#ff7f0e'>
+              <bucket>&quot;1&quot;</bucket>
+            </map>
+          </encoding>
           <encoding attr='color' field='[none:Insurance Plan:nk]' type='palette'>
             <map to='#17becf'>
               <bucket>&quot;United Healthcare PPO&quot;</bucket>
@@ -845,52 +758,6 @@
               <bucket>&quot;Aetna PPO&quot;</bucket>
             </map>
           </encoding>
-          <encoding attr='color' field='[attr:Calculation_0060624155441189:nk]' type='palette'>
-            <map to='#1f77b4'>
-              <bucket>&quot;BCBS of TX PPO&quot;</bucket>
-            </map>
-            <map to='#2ca02c'>
-              <bucket>&quot;BCBS of TX HMO&quot;</bucket>
-            </map>
-            <map to='#7f7f7f'>
-              <bucket>&quot;Cigna PPO&quot;</bucket>
-            </map>
-            <map to='#8c564b'>
-              <bucket>&quot;Humana PPO&quot;</bucket>
-            </map>
-            <map to='#9467bd'>
-              <bucket>&quot;Humana HMO&quot;</bucket>
-            </map>
-            <map to='#bcbd22'>
-              <bucket>&quot;United Healthcare HMO&quot;</bucket>
-            </map>
-            <map to='#d62728'>
-              <bucket>&quot;United Healthcare PPO&quot;</bucket>
-            </map>
-            <map to='#e377c2'>
-              <bucket>&quot;Aetna PPO&quot;</bucket>
-            </map>
-            <map to='#ff7f0e'>
-              <bucket>&quot;other insurances&quot;</bucket>
-            </map>
-          </encoding>
-          <encoding attr='color' field='[none:Insurance Carrier:nk]' type='palette'>
-            <map to='#17becf'>
-              <bucket>&quot;United Healthcare&quot;</bucket>
-            </map>
-            <map to='#1f77b4'>
-              <bucket>&quot;Aetna&quot;</bucket>
-            </map>
-            <map to='#2ca02c'>
-              <bucket>&quot;Cigna&quot;</bucket>
-            </map>
-            <map to='#8c564b'>
-              <bucket>&quot;Humana&quot;</bucket>
-            </map>
-            <map to='#e377c2'>
-              <bucket>&quot;BCBS of TX&quot;</bucket>
-            </map>
-          </encoding>
           <encoding attr='color' field='[none:Calculation_0060624155441189:nk]' type='palette'>
             <map to='#1f77b4'>
               <bucket>&quot;BCBS of TX PPO&quot;</bucket>
@@ -920,20 +787,6 @@
               <bucket>&quot;other insurances&quot;</bucket>
             </map>
           </encoding>
-          <encoding attr='shape' field='[none:Calculation_3120624143000341:nk]' type='shape'>
-            <map to='KPI/02.png'>
-              <bucket>&quot;2&quot;</bucket>
-            </map>
-            <map to='KPI/02.png'>
-              <bucket>&quot;3&quot;</bucket>
-            </map>
-            <map to='circle'>
-              <bucket>&quot;1&quot;</bucket>
-            </map>
-            <map to='square'>
-              <bucket>&quot;0&quot;</bucket>
-            </map>
-          </encoding>
           <encoding attr='color' field='[min:Calculation_3120624143000341:nk]' type='palette'>
             <map to='#1f77b4'>
               <bucket>&quot;0&quot;</bucket>
@@ -949,40 +802,6 @@
             </map>
             <map to='#ffd94a'>
               <bucket>&quot;1&quot;</bucket>
-            </map>
-          </encoding>
-          <encoding attr='color' field='[none:Calculation_3120624143000341:nk]' type='palette'>
-            <map to='#32a251'>
-              <bucket>&quot;0&quot;</bucket>
-            </map>
-            <map to='#9c0824'>
-              <bucket>&quot;3&quot;</bucket>
-            </map>
-            <map to='#ff7f0e'>
-              <bucket>&quot;2&quot;</bucket>
-            </map>
-            <map to='#ffd94a'>
-              <bucket>&quot;1&quot;</bucket>
-            </map>
-          </encoding>
-          <encoding attr='color' field='[none:Calculation_5140625160113917:nk]' type='palette'>
-            <map to='#404040'>
-              <bucket>&quot;other carrier&quot;</bucket>
-            </map>
-            <map to='#67bf5c'>
-              <bucket>&quot;Cigna&quot;</bucket>
-            </map>
-            <map to='#6dccda'>
-              <bucket>&quot;BCBS of TX&quot;</bucket>
-            </map>
-            <map to='#a8786e'>
-              <bucket>&quot;United Healthcare&quot;</bucket>
-            </map>
-            <map to='#ad8bc9'>
-              <bucket>&quot;Aetna&quot;</bucket>
-            </map>
-            <map to='#cdcc5d'>
-              <bucket>&quot;Humana&quot;</bucket>
             </map>
           </encoding>
         </style-rule>
@@ -1005,11 +824,11 @@
             <member alias='on paper' value='&quot;paper&quot;' />
           </members>
         </column>
-        <column caption='Deadline electronic filing (30 days)' datatype='integer' default-format='N' name='[Parameter 2]' param-domain-type='any' role='measure' type='quantitative' value='30'>
-          <calculation class='tableau' formula='30' />
+        <column caption='Deadline electronic filing (30 days)' datatype='integer' default-format='N' name='[Parameter 2]' param-domain-type='any' role='measure' type='quantitative' value='-75'>
+          <calculation class='tableau' formula='-75' />
         </column>
-        <column caption='TOP n Plans' datatype='integer' name='[Parameter 3]' param-domain-type='range' role='measure' type='quantitative' value='6'>
-          <calculation class='tableau' formula='6' />
+        <column caption='TOP n Plans' datatype='integer' name='[Parameter 3]' param-domain-type='range' role='measure' type='quantitative' value='4'>
+          <calculation class='tableau' formula='4' />
           <range max='10' min='3' />
         </column>
       </datasource-dependencies>
@@ -1053,15 +872,6 @@
   </actions>
   <worksheets>
     <worksheet name='Patient List'>
-      <layout-options>
-        <title>
-          <formatted-text>
-            <run>&lt;</run>
-            <run>Sheet Name</run>
-            <run>&gt;</run>
-          </formatted-text>
-        </title>
-      </layout-options>
       <table>
         <view>
           <datasources>
@@ -1074,13 +884,13 @@
             <column caption='Penalty' datatype='real' name='[Calculation_2260624170129874]' role='measure' type='quantitative'>
               <calculation class='tableau' formula='IF [Calculation_3120624143000341]=&apos;0&apos; THEN&#13;&#10;    0&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;1&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649])/2 &gt; 100000 THEN &#13;&#10;            100000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649])/2 &lt; 100000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])/2&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;2&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000&#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])&#13;&#10;        END&#13;&#10;ELSEIF [Calculation_3120624143000341]=&apos;3&apos; THEN&#13;&#10;        IF ([Charged by Provider]-[Calculation_4840624133427649]) &gt; 200000 THEN &#13;&#10;            200000*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        ELSEIF ([Charged by Provider]-[Calculation_4840624133427649]) &lt; 200000 THEN &#13;&#10;            ([Charged by Provider]-[Calculation_4840624133427649])*(1+(0.18*[Calculation_8960624171850690]/365))   &#13;&#10;        END&#13;&#10;END' scope-isolation='false' />
             </column>
-            <column caption='Severity of Lateness' datatype='string' name='[Calculation_3120624143000341]' role='dimension' type='nominal'>
-              <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Parameter 2] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt;= 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and t=he applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt;= 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;END' scope-isolation='false' />
+            <column aggregation='Max' caption='Severity of Lateness' datatype='string' name='[Calculation_3120624143000341]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='IF [Parameters].[Parameter 1]=&apos;elect&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Parameter 2] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Parameter 2] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;ELSEIF [Parameters].[Parameter 1]=&apos;paper&apos; THEN&#13;&#10;    IF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 0 THEN &apos;0&apos;&#13;&#10;&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 46 THEN &apos;1&apos;&#13;&#10;         //lower of: HALF of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //          OR $100,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &lt; 91 THEN &apos;2&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate&#13;&#10;         //           OR $200,000&#13;&#10;    ELSEIF [Days until Payment]-[Parameters].[Deadline electronic filing (30 days) (copy)] &gt; 91 THEN &apos;3&apos;&#13;&#10;         //lower of: ALL of the difference between the billed charges and the applicable contracted rate &#13;&#10;         //           OR $200,000&#13;&#10;         // PLUS:     18 % annual interest on penalty (from date payment was due through date of actual payment)&#13;&#10;    END&#13;&#10;END' scope-isolation='false' />
               <aliases>
                 <alias key='&quot;0&quot;' value='not late' />
-                <alias key='&quot;1&quot;' value='1d - 45d' />
-                <alias key='&quot;2&quot;' value='46d - 91d' />
-                <alias key='&quot;3&quot;' value='&gt; 91d' />
+                <alias key='&quot;1&quot;' value='1-45 days late' />
+                <alias key='&quot;2&quot;' value='46-91 days late' />
+                <alias key='&quot;3&quot;' value='more than 91 days' />
               </aliases>
             </column>
             <column caption='Paid by Insurance' datatype='real' name='[Calculation_4840624133427649]' role='measure' type='quantitative'>
@@ -1102,6 +912,7 @@
             <column datatype='string' name='[Insurance Plan]' role='dimension' type='nominal'>
             </column>
             <column-instance column='[Days until Payment]' derivation='Avg' name='[avg:Days until Payment:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_3120624143000341]' derivation='Min' name='[min:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
             <column-instance column='[Calculation_3120624143000341]' derivation='None' name='[none:Calculation_3120624143000341:nk]' pivot='key' type='nominal' />
             <column-instance column='[Date Charged]' derivation='None' name='[none:Date Charged:ok]' pivot='key' type='ordinal' />
             <column-instance column='[Date Paid]' derivation='None' name='[none:Date Paid:ok]' pivot='key' type='ordinal' />
@@ -1117,30 +928,22 @@
             <groupfilter function='level-members' level='[Insurance Plan]' user:ui-enumeration='all' user:ui-marker='enumerate' />
           </filter>
           <filter class='categorical' column='[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated)]'>
-            <groupfilter function='level-members' level='[Calculation_0060624155441189]' user:ui-enumeration='all' user:ui-marker='enumerate' />
-          </filter>
-          <filter class='categorical' column='[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated,Insurance Carrier aggregated)]'>
-            <groupfilter function='crossjoin' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
-              <groupfilter function='empty-level' member='[Calculation_0060624155441189]' />
-              <groupfilter function='empty-level' member='[Calculation_5140625160113917]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated,Insurance Carrier)]'>
-            <groupfilter function='crossjoin' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[Calculation_0060624155441189]' />
-              <groupfilter function='level-members' level='[Insurance Carrier]' />
+            <groupfilter function='union' user:ui-action-filter='[Action2]' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='member' level='[Calculation_0060624155441189]' member='&quot;Humana HMO&quot;' />
+              <groupfilter function='member' level='[Calculation_0060624155441189]' member='&quot;United Healthcare PPO&quot;' />
             </groupfilter>
           </filter>
           <filter class='categorical' column='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]'>
-            <groupfilter function='level-members' level='[none:Calculation_3120624143000341:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+            <groupfilter function='union' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='member' level='[none:Calculation_3120624143000341:nk]' member='&quot;2&quot;' />
+              <groupfilter function='member' level='[none:Calculation_3120624143000341:nk]' member='&quot;3&quot;' />
+            </groupfilter>
           </filter>
           <slices>
             <column>[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]</column>
             <column>[sqlserver.42179.482573715279].[Action (Insurance Plan)]</column>
             <column>[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]</column>
             <column>[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated)]</column>
-            <column>[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated,Insurance Carrier)]</column>
-            <column>[sqlserver.42179.482573715279].[Action (Insurance Plans aggregated,Insurance Carrier aggregated)]</column>
           </slices>
           <aggregation value='false' />
         </view>
@@ -1159,18 +962,18 @@
             <format attr='color' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='#000000' />
           </style-rule>
           <style-rule element='header'>
-            <format attr='width' field='[sqlserver.42179.482573715279].[avg:Days until Payment:ok]' value='56' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[avg:Days until Payment:ok]' value='44' />
             <format attr='width' field='[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]' value='60' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[none:Date Paid:ok]' value='60' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]' value='40' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='64' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Date Paid:ok]' value='64' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]' value='44' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='68' />
             <format attr='width-header' value='60' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' value='72' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[none:Date Charged:ok]' value='80' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_8960624171850690:ok]' value='40' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_2260624170129874:ok]' value='52' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[none:Insurance Plan:nk]' value='104' />
-            <format attr='width' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='176' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' value='128' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Date Charged:ok]' value='88' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_8960624171850690:ok]' value='64' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[sum:Calculation_2260624170129874:ok]' value='88' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[none:Insurance Plan:nk]' value='128' />
+            <format attr='width' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='160' />
             <format attr='background-color' field='[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]' value='#ffffff' />
             <format attr='background-color' value='#00000000' />
           </style-rule>
@@ -1194,9 +997,6 @@
             <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]' value='c&quot;$&quot;#,##0.00;-&quot;$&quot;#,##0.00' />
             <format attr='text-format' field='[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]' value='C1033%' />
           </style-rule>
-          <style-rule element='mark'>
-            <encoding attr='size' field='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' field-type='nominal' max-size='1' min-size='0.446859' type='catsize' />
-          </style-rule>
           <style-rule element='pane'>
             <format attr='background-color' value='#00000000' />
           </style-rule>
@@ -1205,24 +1005,23 @@
             <format attr='row-horiz-levels' value='1' />
             <format attr='row-levels' value='12' />
           </style-rule>
-          <style-rule element='quick-filter-title'>
-            <format attr='text-align' value='right' />
-          </style-rule>
         </style>
         <panes>
           <pane id='2'>
             <view>
               <breakdown value='auto' />
             </view>
-            <mark class='Square' />
+            <mark class='Circle' />
             <encodings>
-              <color column='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' />
+              <color column='[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]' />
             </encodings>
             <customized-tooltip>
               <formatted-text>
                 <run fontcolor='#787878'> Patient Name, DoB:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[Date of Birth &amp; Patient Name (Combined)]&gt;</run>
-                <run fontcolor='#787878'>&#10;Severity of Lateness:&#9;&#10;Date Charged:&#9;</run>
+                <run fontcolor='#787878'>&#10;Severity of Lateness:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Date Charged:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Date Charged:ok]&gt;</run>
                 <run fontcolor='#787878'>&#10;Date Paid:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Date Paid:ok]&gt;</run>
@@ -1230,11 +1029,14 @@
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Insurance Plan:nk]&gt;</run>
                 <run fontcolor='#787878'>&#10;Days until Payment:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[avg:Days until Payment:ok]&gt;</run>
-                <run fontcolor='#787878'>&#10;Severity of Lateness:&#9;&#10;Adjustment by Insurance:&#9;</run>
+                <run fontcolor='#787878'>&#10;Severity of Lateness:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Adjustment by Insurance:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Adjustment by Insurance:ok]&gt;</run>
                 <run fontcolor='#787878'>&#10;Paid by Insurance:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Calculation_4840624133427649:ok]&gt;</run>
-                <run fontcolor='#787878'>&#10;Days Late:&#9;&#10;Charged by Provider:&#9;</run>
+                <run fontcolor='#787878'>&#10;Days Late:&#9;</run>
+                <run fontcolor='#787878'>&#10;Charged by Provider:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Charged by Provider:ok]&gt;</run>
               </formatted-text>
             </customized-tooltip>
@@ -1242,7 +1044,6 @@
               <style-rule element='mark'>
                 <format attr='mark-labels-cull' value='true' />
                 <format attr='mark-labels-show' value='false' />
-                <format attr='size' value='8.9010410308837891' />
               </style-rule>
               <style-rule element='pane'>
                 <format attr='aspect' value='0' />
@@ -1262,7 +1063,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Arial'>    Selection</run>
+            <run>Selection</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -1274,42 +1075,34 @@
           </datasources>
           <datasource-dependencies datasource='sqlserver.42179.482573715279'>
             <column caption='Insurance Plans aggregated' datatype='string' name='[Calculation_0060624155441189]' role='dimension' type='nominal'>
-              <calculation class='tableau' formula='IF [Top n Insurance Plans] THEN [Insurance Plan]&#13;&#10;ELSE &apos;other plans&apos;&#13;&#10;END' scope-isolation='false' />
-            </column>
-            <column caption='Insurance Carrier aggregated' datatype='string' name='[Calculation_5140625160113917]' role='dimension' type='nominal'>
-              <calculation class='tableau' formula='IF [Calculation_0060624155441189]=[Insurance Plan] THEN&#13;&#10;[Insurance Carrier]&#13;&#10;ELSE &apos;other carrier&apos;&#13;&#10;END' scope-isolation='false' />
+              <calculation class='tableau' formula='IF [Top n Insurance Plans] THEN [Insurance Plan]&#13;&#10;ELSE &apos;other insurances&apos;&#13;&#10;END' scope-isolation='false' />
             </column>
             <column aggregation='Avg' datatype='integer' name='[Days until Payment]' role='measure' type='quantitative'>
             </column>
             <column caption='Encounter Date' datatype='date' name='[EncounterDate]' role='dimension' type='ordinal'>
             </column>
+            <column datatype='string' name='[Insurance Plan]' role='dimension' type='nominal'>
+            </column>
             <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
               <calculation class='tableau' formula='1' />
             </column>
-            <column-instance column='[Calculation_0060624155441189]' derivation='Attribute' name='[attr:Calculation_0060624155441189:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Insurance Plan]' derivation='Attribute' name='[attr:Insurance Plan:nk]' pivot='key' type='nominal' />
             <column-instance column='[Days until Payment]' derivation='Avg' name='[avg:Days until Payment:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_0060624155441189]' derivation='None' name='[none:Calculation_0060624155441189:nk]' pivot='key' type='nominal' />
-            <column-instance column='[Calculation_5140625160113917]' derivation='None' name='[none:Calculation_5140625160113917:nk]' pivot='key' type='nominal' />
             <column-instance column='[Number of Records]' derivation='Sum' name='[sum:Number of Records:qk]' pivot='key' type='quantitative' />
             <column-instance column='[EncounterDate]' derivation='Quarter-Trunc' name='[tqr:EncounterDate:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
           <sort class='manual' column='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' direction='ASC'>
             <dictionary>
+              <bucket>&quot;Aetna PPO&quot;</bucket>
               <bucket>&quot;BCBS of TX HMO&quot;</bucket>
               <bucket>&quot;BCBS of TX PPO&quot;</bucket>
+              <bucket>&quot;Cigna PPO&quot;</bucket>
               <bucket>&quot;Humana HMO&quot;</bucket>
               <bucket>&quot;Humana PPO&quot;</bucket>
+              <bucket>&quot;United Healthcare HMO&quot;</bucket>
               <bucket>&quot;United Healthcare PPO&quot;</bucket>
               <bucket>&quot;other insurances&quot;</bucket>
-              <bucket>%all%</bucket>
-            </dictionary>
-          </sort>
-          <sort class='manual' column='[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]' direction='ASC'>
-            <dictionary>
-              <bucket>&quot;BCBS of TX&quot;</bucket>
-              <bucket>&quot;Humana&quot;</bucket>
-              <bucket>&quot;United Healthcare&quot;</bucket>
-              <bucket>&quot;other carrier&quot;</bucket>
               <bucket>%all%</bucket>
             </dictionary>
           </sort>
@@ -1320,21 +1113,9 @@
         </view>
         <style>
           <style-rule element='axis'>
-            <format attr='title' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='rows' value='Number of Claims' />
-            <format attr='subtitle' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='rows' value='' />
-            <format attr='auto-subtitle' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='rows' value='true' />
-          </style-rule>
-          <style-rule element='refline'>
-            <format attr='fill-above' id='refline2' value='#ebd1d1' />
-            <format attr='fill-below' id='refline2' value='#ffe791' />
-            <format attr='fill-above' id='refline5' value='#f2e6e6' />
-            <format attr='fill-below' id='refline5' value='#00000000' />
-            <format attr='line-pattern' id='refline5' value='none' />
-          </style-rule>
-          <style-rule element='refband'>
-            <format attr='fill-color' id='refline0' value='#fff2bf' />
-            <format attr='fill-color' id='refline3' value='#fae7c8' />
-            <format attr='reverse-palette' id='refline6' value='false' />
+            <format attr='title' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='cols' value='Number of Claims' />
+            <format attr='subtitle' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='cols' value='' />
+            <format attr='auto-subtitle' class='0' field='[sqlserver.42179.482573715279].[sum:Number of Records:qk]' scope='cols' value='true' />
           </style-rule>
           <style-rule element='quick-filter'>
             <format attr='title' field='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' value='Encounter Date'>
@@ -1351,37 +1132,23 @@
             </view>
             <mark class='Circle' />
             <encodings>
-              <color column='[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]' />
-              <lod column='[sqlserver.42179.482573715279].[attr:Calculation_0060624155441189:nk]' />
-              <lod column='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' />
+              <color column='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' />
+              <tooltip column='[sqlserver.42179.482573715279].[attr:Insurance Plan:nk]' />
             </encodings>
-            <reference-line axis-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' formula='constant' id='refline0' label='1d late' label-type='custom' paired-id='refline2' scope='per-pane' symmetric='false' value='30.0' value-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' z-order='2' />
-            <reference-line axis-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' formula='constant' id='refline1' label-type='automatic' paired-id='refline0' scope='per-table' symmetric='false' value='91.0' value-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' z-order='1' />
-            <reference-line axis-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' formula='constant' id='refline2' label-type='none' paired-id='refline0' scope='per-pane' symmetric='false' value='75.0' value-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' z-order='2' />
-            <reference-line axis-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' formula='constant' id='refline3' label='46d late' label-type='custom' paired-id='refline4' scope='per-table' symmetric='false' value='76.0' value-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' z-order='3' />
-            <reference-line axis-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' formula='constant' id='refline4' label-type='none' paired-id='refline3' scope='per-table' symmetric='false' value='120.0' value-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' z-order='3' />
-            <reference-line axis-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' formula='constant' id='refline5' label='91d late' label-type='custom' scope='per-pane' value='121.0' value-column='[sqlserver.42179.482573715279].[avg:Days until Payment:qk]' z-order='4' />
-            <customized-tooltip show-buttons='false'>
+            <customized-tooltip>
               <formatted-text>
-                <run fontcolor='#787878' indent='2520'>Insurance Plan:&#9;</run>
-                <run bold='true' indent='2520'>&lt;[sqlserver.42179.482573715279].[attr:Calculation_0060624155441189:nk]&gt;</run>
-                <run fontcolor='#787878'>&#10;Days until Paymen on averaget:&#9;</run>
+                <run fontcolor='#787878'>Insurance Plans aggregated:&#9;</run>
+                <run bold='true'>&lt;[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]&gt;</run>
+                <run fontcolor='#787878'>&#10;Days until Payment:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[avg:Days until Payment:qk]&gt;</run>
-                <run fontcolor='#787878'>&#10;Number of Claims:&#9;</run>
+                <run fontcolor='#787878'>&#10;Number of Records:&#9;</run>
                 <run bold='true'>&lt;[sqlserver.42179.482573715279].[sum:Number of Records:qk]&gt;</run>
               </formatted-text>
             </customized-tooltip>
-            <style>
-              <style-rule element='mark'>
-                <format attr='size' value='2' />
-                <format attr='has-stroke' value='true' />
-                <format attr='stroke-color' value='#555555' />
-              </style-rule>
-            </style>
           </pane>
         </panes>
-        <rows>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</rows>
-        <cols>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</cols>
+        <rows>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</rows>
+        <cols>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</cols>
       </table>
     </worksheet>
   </worksheets>
@@ -1389,65 +1156,50 @@
     <dashboard name='Prompt Pay Reporting'>
       <style>
       </style>
-      <size maxheight='1200' maxwidth='1500' minheight='600' minwidth='800' />
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
       <zones>
         <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
-          <zone h='45086' id='5' param='horz' type='layout-flow' w='100000' x='0' y='0'>
-            <zone h='45086' id='3' type='layout-basic' w='86147' x='0' y='0'>
-              <zone h='45086' id='1' name='Scatter' show-title='true' w='76797' x='3896' y='0'>
-              </zone>
-              <zone h='45086' id='24' type='empty' w='3896' x='0' y='0'>
-              </zone>
-              <zone h='45086' id='25' type='empty' w='5454' x='80693' y='0'>
+          <zone h='42250' id='5' param='horz' type='layout-flow' w='100000' x='0' y='0'>
+            <zone h='42250' id='3' type='layout-basic' w='84000' x='0' y='0'>
+              <zone h='42250' id='1' name='Scatter' show-title='true' w='84000' x='0' y='0'>
               </zone>
             </zone>
-            <zone fixed-size='160' h='45086' id='4' is-fixed='true' param='vert' type='layout-flow' w='13853' x='86147' y='0'>
-              <zone h='8736' id='6' name='Scatter' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' w='13853' x='86147' y='0'>
+            <zone fixed-size='160' h='42250' id='4' is-fixed='true' param='vert' type='layout-flow' w='16000' x='84000' y='0'>
+              <zone h='7000' id='6' mode='dropdown' name='Scatter' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' w='16000' x='84000' y='0'>
               </zone>
-              <zone h='11076' id='17' param='[Parameters].[Parameter 3]' type='paramctrl' w='13853' x='86147' y='8736'>
+              <zone custom-title='true' h='8875' id='17' mode='slider' param='[Parameters].[Parameter 3]' type='paramctrl' w='16000' x='84000' y='7000'>
                 <formatted-text>
                   <run>Display how many plans:</run>
                 </formatted-text>
               </zone>
-              <zone h='16069' id='7' name='Scatter' pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]' type='color' w='13853' x='86147' y='19812'>
+              <zone h='15375' id='7' name='Scatter' pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' type='color' w='16000' x='84000' y='15875'>
               </zone>
             </zone>
           </zone>
-          <zone h='29121' id='8' name='Patient List' show-title='true' w='92300' x='3700' y='57254'>
+          <zone h='38625' id='8' name='Patient List' show-title='true' w='100000' x='0' y='56125'>
           </zone>
-          <zone h='7254' id='10' param='[Parameters].[Parameter 1]' type='paramctrl' w='19048' x='0' y='50000'>
+          <zone h='6125' id='10' mode='compact' param='[Parameters].[Parameter 1]' type='paramctrl' w='25000' x='0' y='50000'>
           </zone>
-          <zone h='7000' id='12' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='paramctrl' w='24848' x='30390' y='93000'>
+          <zone h='6125' id='11' mode='type_in' param='[Parameters].[Parameter 2]' type='paramctrl' w='23200' x='25000' y='50000'>
           </zone>
-          <zone h='7254' id='13' name='Patient List' param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='filter' w='25022' x='74978' y='50000'>
+          <zone h='6125' id='12' mode='type_in' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='paramctrl' w='21600' x='48200' y='50000'>
           </zone>
-          <zone h='6625' id='14' param='horz' type='layout-flow' w='100000' x='0' y='86375'>
-            <zone fixed-size='219' h='6625' id='15' is-centered='0' is-fixed='true' is-scaled='1' param='C:\Users\Thorsten\Google Drive\_Mimir Shared Drive\Graphic Design\Mimir Logos\Mimir Logo resize.jpg' type='bitmap' w='19999' x='0' y='86375'>
+          <zone h='6125' id='13' mode='checkdropdown' name='Patient List' param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='filter' w='30200' x='69800' y='50000'>
+          </zone>
+          <zone h='5250' id='14' param='horz' type='layout-flow' w='100000' x='0' y='94750'>
+            <zone fixed-size='219' h='5250' id='15' is-centered='0' is-fixed='true' is-scaled='1' param='C:\Users\Thorsten\Google Drive\_Mimir Shared Drive\Graphic Design\Mimir Logos\Mimir Logo resize.jpg' type='bitmap' w='23100' x='0' y='94750'>
             </zone>
-            <zone forceUpdate='true' h='6625' id='16' type='text' w='79655' x='19999' y='86375'>
+            <zone forceUpdate='true' h='5250' id='16' type='text' w='76500' x='23100' y='94750'>
               <formatted-text>
                 <run fontalignment='2'>Mimir Health Intelligence 2015</run>
               </formatted-text>
             </zone>
           </zone>
-          <zone forceUpdate='true' h='4914' id='18' type='text' w='100000' x='0' y='45086'>
+          <zone forceUpdate='true' h='7750' id='18' type='text' w='100000' x='0' y='42250'>
             <formatted-text>
-              <run bold='true' fontalignment='2'>  Source:                    </run>
-              <run fontalignment='2'>Texas Medical Association </run>
-              <run auto-url='true' fontalignment='2' hyperlink='tabdoc:load-url url=&amp;quot;&#10;http://www.texmed.org/Template.aspx?id=1514&amp;quot;'>&#10;http://www.texmed.org/Template.aspx?id=1514</run>
+              <run fontalignment='2'>Based on information published by the Texas Medical Association &#10; </run>
+              <run auto-url='true' fontalignment='2' hyperlink='tabdoc:load-url url=&amp;quot;http://www.texmed.org/Template.aspx?id=1514&amp;quot;'>http://www.texmed.org/Template.aspx?id=1514</run>
             </formatted-text>
-          </zone>
-          <zone h='7000' id='19' type='layout-flow' w='30390' x='0' y='93000'>
-            <zone fixed-size='50' h='7000' id='11' is-fixed='true' param='[Parameters].[Parameter 2]' type='paramctrl' w='30390' x='0' y='93000'>
-            </zone>
-          </zone>
-          <zone h='7000' id='20' type='empty' w='44762' x='55238' y='93000'>
-          </zone>
-          <zone h='7254' id='21' type='empty' w='55930' x='19048' y='50000'>
-          </zone>
-          <zone h='29121' id='22' type='empty' w='3700' x='0' y='57254'>
-          </zone>
-          <zone h='29121' id='23' type='empty' w='4000' x='96000' y='57254'>
           </zone>
         </zone>
       </zones>
@@ -1455,8 +1207,7 @@
   </dashboards>
   <windows>
     <window class='schema' source-height='-1' />
-    <window auto-hidden='0' class='dashboard' maximized='0' name='Prompt Pay Reporting'>
-      <active id='1' />
+    <window auto-hidden='0' class='dashboard' maximized='1' name='Prompt Pay Reporting'>
       <zones>
         <zone name='Scatter'>
           <viewpoint>
@@ -1464,24 +1215,65 @@
           </viewpoint>
           <highlight>
             <color-one-way>
-              <field>[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]</field>
+              <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
             </color-one-way>
           </highlight>
           <selection-collection>
-            <node-selection select-tuples='false'>
-              <oriented-node-reference orientation='vertical'>
-                <node-reference>
-                  <axis>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</axis>
-                </node-reference>
-                <page-reference>
-                </page-reference>
-              </oriented-node-reference>
-            </node-selection>
+            <tuple-selection>
+              <tuple-reference>
+                <tuple-descriptor>
+                  <pane-descriptor>
+                    <x-fields>
+                      <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    </x-fields>
+                    <y-fields>
+                      <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    </y-fields>
+                  </pane-descriptor>
+                  <columns>
+                    <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+                    <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[attr:Insurance Plan:nk]</field>
+                  </columns>
+                </tuple-descriptor>
+                <tuple>
+                  <value>17.346613545816734</value>
+                  <value>&quot;United Healthcare PPO&quot;</value>
+                  <value>251</value>
+                  <value>&quot;United Healthcare PPO&quot;</value>
+                </tuple>
+              </tuple-reference>
+              <tuple-reference>
+                <tuple-descriptor>
+                  <pane-descriptor>
+                    <x-fields>
+                      <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    </x-fields>
+                    <y-fields>
+                      <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    </y-fields>
+                  </pane-descriptor>
+                  <columns>
+                    <field>[sqlserver.42179.482573715279].[avg:Days until Payment:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+                    <field>[sqlserver.42179.482573715279].[sum:Number of Records:qk]</field>
+                    <field>[sqlserver.42179.482573715279].[attr:Insurance Plan:nk]</field>
+                  </columns>
+                </tuple-descriptor>
+                <tuple>
+                  <value>19.526548672566371</value>
+                  <value>&quot;Humana HMO&quot;</value>
+                  <value>226</value>
+                  <value>&quot;Humana HMO&quot;</value>
+                </tuple>
+              </tuple-reference>
+            </tuple-selection>
           </selection-collection>
         </zone>
         <zone mode='dropdown' name='Scatter' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' />
         <zone custom-title='true' mode='slider' name='' param='[Parameters].[Parameter 3]' type='paramctrl' />
-        <zone name='Scatter' pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]' type='color' />
+        <zone name='Scatter' pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' type='color' />
         <zone name='Patient List'>
           <viewpoint>
             <zoom type='fit-width' />
@@ -1493,47 +1285,13 @@
           </highlight>
         </zone>
         <zone mode='compact' name='' param='[Parameters].[Parameter 1]' type='paramctrl' />
+        <zone mode='type_in' name='' param='[Parameters].[Parameter 2]' type='paramctrl' />
         <zone mode='type_in' name='' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='paramctrl' />
         <zone mode='checkdropdown' name='Patient List' param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='filter' />
         <zone is-centered='0' is-scaled='1' name='' type='bitmap' />
         <zone forceUpdate='true' name='' type='text' />
-        <zone forceUpdate='true' h='7750' id='18' name='' type='text' w='100000' x='0' y='42250' />
-        <zone mode='type_in' name='' param='[Parameters].[Parameter 2]' type='paramctrl' />
+        <zone forceUpdate='true' name='' type='text' />
       </zones>
-    </window>
-    <window auto-hidden='1' class='worksheet' maximized='1' name='Scatter'>
-      <cards>
-        <edge name='left'>
-          <strip size='160'>
-            <card type='pages' />
-            <card type='filters' />
-            <card type='marks' />
-            <card pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]' type='color' />
-          </strip>
-        </edge>
-        <edge name='top'>
-          <strip size='31'>
-            <card type='columns' />
-          </strip>
-          <strip size='31'>
-            <card type='rows' />
-          </strip>
-        </edge>
-        <edge name='right'>
-          <strip size='160'>
-            <card mode='radiolist' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' />
-            <card mode='slider' param='[Parameters].[Parameter 3]' type='parameter' />
-          </strip>
-        </edge>
-      </cards>
-      <highlight>
-        <color-one-way>
-          <field>[sqlserver.42179.482573715279].[attr:Calculation_0060624155441189:nk]</field>
-          <field>[sqlserver.42179.482573715279].[none:Calculation_5140625160113917:nk]</field>
-          <field>[sqlserver.42179.482573715279].[none:Insurance Plan:nk]</field>
-          <field>[sqlserver.42179.482573715279].[qr:EncounterDate:ok]</field>
-        </color-one-way>
-      </highlight>
     </window>
     <window class='hidden-worksheet' name='Patient List'>
       <cards>
@@ -1542,7 +1300,7 @@
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
-            <card pane-specification-id='2' param='[sqlserver.42179.482573715279].[none:Calculation_3120624143000341:nk]' type='color' />
+            <card pane-specification-id='2' param='[sqlserver.42179.482573715279].[min:Calculation_3120624143000341:nk]' type='color' />
           </strip>
         </edge>
         <edge name='top'>
@@ -1554,7 +1312,7 @@
           </strip>
         </edge>
         <edge name='right'>
-          <strip size='100'>
+          <strip size='213'>
             <card mode='compact' param='[Parameters].[Parameter 1]' type='parameter' />
             <card mode='type_in' param='[Parameters].[Parameter 2]' type='parameter' />
             <card mode='type_in' param='[Parameters].[Deadline electronic filing (30 days) (copy)]' type='parameter' />
@@ -1583,245 +1341,386 @@
       <selection-collection>
       </selection-collection>
     </window>
+    <window class='hidden-worksheet' name='Scatter'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card pane-specification-id='0' param='[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]' type='color' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='31'>
+            <card type='columns' />
+          </strip>
+          <strip size='31'>
+            <card type='rows' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='radiolist' param='[sqlserver.42179.482573715279].[tqr:EncounterDate:ok]' type='filter' />
+            <card mode='slider' param='[Parameters].[Parameter 3]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+      </viewpoint>
+      <highlight>
+        <color-one-way>
+          <field>[sqlserver.42179.482573715279].[none:Calculation_0060624155441189:nk]</field>
+          <field>[sqlserver.42179.482573715279].[none:Insurance Plan:nk]</field>
+          <field>[sqlserver.42179.482573715279].[qr:EncounterDate:ok]</field>
+        </color-one-way>
+      </highlight>
+      <selection-collection>
+      </selection-collection>
+    </window>
   </windows>
   <thumbnails>
     <thumbnail height='192' name='Prompt Pay Reporting' width='192'>
       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
-      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
-      4MS7b5Itemz+f7GpLW8BlHL5/n/8t5ixNmzXZGRsnEMHHiPdtYXJS6epGAnScRdD9zGVK9Hq
-      t5mzomzfvYvK6FmmFms41QKRvqfYktI5cuQIhvSCxAb3sVkh+rbvIZlsYWRyiUxXD60RA0fT
-      6ezsQMW6UcUxHM3Pzj27UDMD1OthNAWWMmlNB6mVfWztCZPNISu/2BSavg8wPTZEKN1DIiz3
-      2hUbn+wEC0+TM8HC0yQAwtMkAMLTJADC0yQAwtNWHYBatUyhWMRx7z7z69gWdfuzb5ajlEu1
-      WvtczxGimVY9Pfov/vu/Z95tIdLWz/Nf3IOjB1FLY5y8VWBXm0kl3Me2jJ9iXZGKBZnPLeEL
-      RiiMX+ZGPsAzXzgI9izf+94b/OVffoOJa2fJ+bpojyiCwSAvv/IG/+Arz9MSW/nWNkI0w+rv
-      D6CgWquRCgS4dPIt/u6dyzz/9GNcvJ4nUAyg0ho//d7PcRQ8fexJzlzPotsVDvUluLwY4uiT
-      B/joqbKp0ZtMkeNn75/kxRe/xtlz5zj05FEJgFhTq+4C6T4/f/Cnf8HXv7yfV14/gVMpEU1l
-      8BkGra1plGtRqdZJtveQjgbYue8JetvjtHd2oes66s4d0eenhnnttdfwR1OEEx0c2tHGycFx
-      MglZ8cXaW/WZ4IXZaaKpDvwGTE+MYLk6qUwbs5MTJJItaL4wqpJjrlCnp62FimPiWmVaEnFG
-      xybp2dKHT3cYujGEDWQyGdANFueyZLq2UM3PovwxMim5qkysHRkKITxNDoMKT5MACE+TAAhP
-      kwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MA
-      CE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhP
-      kwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MACE+TAAhPkwAIT5MA
-      CE+TAAhPkwAIT5MACE+TAAhPkwAITzM/+B+l1Hq2475omrbeTRAPGfOj/1hpBXNdF9uy8Qf8
-      D6xRQjwo5r3+oJRifHiMywMXGLs1wuNfPML+Jw9hmvd8ihCbjqbu9H2UUstbAKUUv3ntHcrF
-      ErZtoxsGAFbd4vjzz3J5YpbDO/u4Nj5DJOinUrNYKld5fPsWBsemiYeDWI7DYrHMbL7Il/bt
-      oG7ZVOsWoYAfVylMXWepXCEc8BMLB9F12R0RD9491zpd1xm5MUxnbxcHnzzE+K1RDF1naTHP
-      f3jpLc7dHOPf/K+XuTQ8xdsXb/A3P3udSyOT/Ku//RUXhyc5fW2U//n6KZbKVX595goj0/NM
-      zObILuQZn5mnVK1Rs2xuTc7iboL9D/Fw+tT+zL4nDtCSSvLuq2/z2y/8DpfOXACgvz3Nf/77
-      d0jFwss7z1vakvzNz1+nK52AO7sS5Wqd/3dmkL/+o69gaBoaULdtYpEQuq7REg0TDviZzRWo
-      2zZ+08C9k4Wg30c6EV2zNy4EfEoAhq7dJBAMkki30JJOcuXcJYav3+LwsSfpSMX4+vHHuTU1
-      RyQUIBEN0duW4k+ePcLV8SyRoB8NjUd723lsazfjsznaElFsxyUVj7BYKOM4Lpqm4bourlLY
-      jkvddrBth4DPxDSkSyTW3j33AWYmpjl34gyapjF6c4S+Hf2k21o59FuHUSz/yC9TgK5pHzuc
-      +sFyKy1/X42Tw55ija0YgA8opbh4+jzjw6Mcf/63CUfC69JIIdbKpwZAiIeddLSFpy0HQH79
-      hRfJFkB42pqPa1jMjvHeqUG29LUxMZPnmeNP4zdka7NRuPUS7wwM4q8t0tr/GNt629e7SQ/U
-      mm8BWtp6yQTrXJ5cojMdolJ31volxefw7ptvMDQ+jmb4WMgtrHdzHrg1D0AuO05ZC9KbCDI5
-      VybkN9b6JcXnsO/wU2zr6cD0GQT83hvxu3wYdOrGOc6PLZFMpjnwaD9KM9GUhYuJjs2p02fQ
-      Mejo6SDT1gGOSzgUoFypE4mEUK5DuVpn8uZFUo88TmtURo0201uvvoxuBuh99BDpsE4wFKFS
-      LhIIR6jns5wdnkYrVenu66U11YLu82MoB1czCQZMKuUyLjqRcGi938qGsryWlnKztPU/wdiZ
-      l7l06h20cJItSZPBqRLtUZOlcoV4OEp2doJ8oULQcIm2pBkZHuV3//jPmTj9fxi4Ok5HVweH
-      ew+u53t6KM0sFHnhuX384Oc/plC16O3bxuLYFYKZrWh2nXowjLGYY2ZujPmcRSTqQ1WKVH0J
-      /uyPf4+f/OCH+PwBnv/GHxGT36ZlH+sC3bhyDoIthAMmXe1pJrI5cCxQDrbjLi9nhiK0tYRx
-      NZN4uoNY0MA0fSTSHUT9OkNXLnLm5AnylozybBanWuDk2Yt0dvfg94eIGHXq+KnW6lj1+u3x
-      Jne0pNvx6S5+n0lXVycAyrWxFVw9P8CpgQEsR74b+MSZ4A/PBt8evfPBuB5NA6VWPlfwyTFE
-      n1xGzi80h3Ld29/KnfFWK/13hWcBGprmcub0eQ4cOoj+kcXku/lIAITwIjkRJjxNAiA8TQIg
-      PE0CIDzt/wPB7QwJ+yktRwAAAABJRU5ErkJggg==
-    </thumbnail>
-    <thumbnail height='192' name='Scatter' width='192'>
-      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
+      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
     </thumbnail>
   </thumbnails>
 </workbook>
