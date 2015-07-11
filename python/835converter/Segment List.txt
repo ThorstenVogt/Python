@@ -1,0 +1,52 @@
+
+ ~ Segment
+ * Data Element
+ : Component/Sub-element
+
+Architecture 
+
+ISA		Interchange Header
+		ISA9 Date, ISA10 Time
+IEA		Interchange Trailer
+
+GS*		Functional Group Header: ****Date*Time*Functional Group Control Number 
+GE*		Functional Group Trailer: Transaction Set Count*Group Control Number
+
+ST*835*		Transaction Set Header, Control Number
+SE*		Transaction Set Trailer: Transaction Segment Count*Control Number
+
+CLP		Claim Header
+
+SVC		Service Line Item
+
+
+
+
+DTM*050*	Date Claim Submitted
+
+
+SVC*		Claim Code Type:Code:Modifier:Modifier:Modifier*AmountCharged*AmountPaid*NumberofUnits
+
+
+DTM*150*	Service Start Date
+DTM*151*	Service End Date
+DTM*472*	Service Date
+
+NM1*QC*1*	Patient              Member Number
+NM1*IL*1*	Insured or Subscriber
+NM1*82*1*	Rendering Provider   Provider Number
+
+
+
+
+
+CAS 		Claim Adjustment
+
+CAS*CO		Contractual Adjustments
+CAS*OA		Other Adjustments
+CAS*PI		Payer initiated
+CAS*PR		Patient Responsibility
+
+CAS**		Reason Code
+CAS***		Adjustment Amount
+
