@@ -64,6 +64,12 @@ n=0  # Counter
 data = [["TransactNo","filename","production date","NoinFile"]]
 
 
+## Needed data items per row:
+
+## PayerName, PatFirstName, PatLastName, PatMI, PatId, 
+
+
+
 ## Okay, let's go then
 
 ## iterate over all files in target directory:
@@ -123,6 +129,32 @@ for infile in listing:
                elif k==cntitem:
                    itemstart=claim.rfind("~SVC")+1
                    item=claim[itemstart:]
+
+                ## Find number of claim adjustments for each item (max 6)
+                cntadj=item.count("~CAS")
+
+                # define a list each for ca group code, ca reason code & ca amount 
+                ca_group_code=[0]*6
+                ca_reason_code=[0]*6
+                ca_amount=[0]*6
+
+                
+                ## Iterate over all claim adjustment CAS for each item
+                for l in range(1,cntadj):
+                    adjinitem=l
+                    if l<cntadj:
+                        adjstart=item.replace("~CAS", "XXXX", l-1).find("~CAS")+1
+                        adjend=item.replace("~CAS", "XXXX", l).find("~CAS")
+                        adj=item[adjstart:adjend]
+                    elif l==cntadj:
+                        adjstart=item.rfind("~CAS")+1
+                        adj=item[itemstart:]
+
+                    ## extract data for claim adjustment
+                    ca_group_code[l]=
+                    ca_reason_code[l]=
+                    ca_amount=[l]=
+
 
 
                     ## data.append([n, infile, proddate, noinfile])
