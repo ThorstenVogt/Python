@@ -60,12 +60,14 @@ def convdate(a):
 path = "D:/"  # where the .x12 files are stored.
 n=0  # Counter
 
+data=[]
+
 ## This defines the columns for the csv file
-data = [[
+datastructure = [
 "Transact No","Filename","Prod Date"		        		## 0-2		TRN*: 2   FILENAME, DTM*405
 ,"Pat Ctrl No","Payer Clm No","Line Item No"		        	## 3-5		CLP*: 1,7   REF*6R*:  3
 ,"Payer Nm", "Payer Id", "Payer City", "Payer State","Crossover Payer"	## 6-10		N1*PR*:  2,4  N4*: 1,2  NM1*TT:  3
-,"Product Type"								## 11-12	REF*CE*:   2
+,"Product Type",''								## 11-12	REF*CE*:   2
 ,"Payee Nm", "Payee id", "Payee City", "Payee State"			## 13-16	N1*PE*:  2,4  N4*: 1,2
 ,"Pat Last Nm","Pat First Nm","Pat Mid Init","Pat Id"            	## 17-20	NM1*QC*: 3,4,5,9
 ,"Prov Last Nm","Prov First Nm","Prov Mid Init", "Prov Id"        	## 21-24	NM1*82*: 3,4,5,9
@@ -78,7 +80,19 @@ data = [[
 ,"CA Grp 4","CA Rsn 4","CA Amt 4"				        ## 40-42	
 ,"CA Grp 5","CA Rsn 5","CA Amt 5"				        ## 43-45	
 ,"CA Grp 6","CA Rsn 6","CA Amt 6"				        ## 46-48
-,"Clm Chrg","Clm Pmt", "Clm Pat"]]					## 49-51	CLP 3,4,5
+,"Clm Chrg","Clm Pmt", "Clm Pat"]					## 49-51	CLP 3,4,5
+
+
+## Turn the Data Structure into a String
+datastructurestring = ''
+for element in datastructure:
+   
+   datastructurestring += str(element)+', '
+   
+      ## add datarow to data
+print datastructurestring
+data.append([datastructurestring[:-2]])
+
 
 ## this is the intermediate storage where data is collected for each line item
 datarow=['']*52
@@ -243,10 +257,17 @@ for infile in listing:
                     ## Extract CA Amount
                     datarow[33+l*3]=returnelem(adj,4)   
 
-
+                ## Turn datarow into string
+                datarowstring = ''
+                for element in datarow:
                     
-                ## add datarow to data
-                data.append(datarow)
+                    datarowstring += str(element)+', '
+                    
+                ## add string to data
+            
+                data.append([datarowstring[:-2]])
+                
+                
 
 
 
