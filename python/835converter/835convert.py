@@ -74,14 +74,14 @@ def returnsubelement(text,number):
    
 def convdate(a):
     ## converts yyyymmdd to yyyy-mm-dd
-   if a==None:
+   if a==None or a=='':
       return ""
    else:
       return a[0:4]+"-"+a[4:6]+"-"+a[6:8]
 
 ### VARIABLES
 
-path = "C:/TestData/"  # where the .x12 files are stored.
+path = "D:/"  # where the .x12 files are stored.
 n=0  # Counter
 
 data=[]
@@ -125,160 +125,166 @@ datarow=['']*54
 listing = os.listdir(path)
 
 for infile in listing:
+   ## make sure only .x12 files are processed
+   if infile[-4:]!=".x12":
+      print infile+" is not a valid file type, it seems!"
+   elif infile[-4:]==".x12":
+         
+      ## Save Filename 
 
-   ## Save Filename 
-   datarow[1]=infile 
 
-   f=open(path+infile,"r")
-   content=f.read()
-   f.close
+      datarow[1]=infile 
+      
+      f=open(path+infile,"r")
+      content=f.read()
+      f.close
 
 
-   ## Find number of transaction sets in file
-   cnttransaction=content.count("ST*835*")
+      ## Find number of transaction sets in file
+      cnttransaction=content.count("ST*835*")
 
-   ## Iterate over all transaction sets in file: ST to SE
-   for i in range(1,cnttransaction+1):
-           transactioninfile=i       
-          
-           transactpos=content.find("ST*835*"+str(i).zfill(4))
-          
-           if i < cnttransaction:
-              nexttransactpos=content.find("ST*835*"+str(i+1).zfill(4))
-              transact=content[transactpos:nexttransactpos]
-           elif i == cnttransaction:
-              transact=content[transactpos:]
+      ## Iterate over all transaction sets in file: ST to SE
+      for i in range(1,cnttransaction+1):
+              transactioninfile=i       
+             
+              transactpos=content.find("ST*835*"+str(i).zfill(4))
+             
+              if i < cnttransaction:
+                 nexttransactpos=content.find("ST*835*"+str(i+1).zfill(4))
+                 transact=content[transactpos:nexttransactpos]
+              elif i == cnttransaction:
+                 transact=content[transactpos:]
 
-           ## Extract Transaction No - same as check or EFT no
-           datarow[0]=returnelement(transact,"TRN",2)
+              ## Extract Transaction No - same as check or EFT no
+              datarow[0]=returnelement(transact,"TRN",2)
 
-           ## Extract Production Date
-           proddatepos=content.find("DTM*405*")
-           datarow[2]=convdate(content[proddatepos+8:proddatepos+16])
-           
-           ## Extract Payer Information
-           datarow[6]=returnelement(transact,"N1*PR*",2)
-           datarow[7]=returnelement(transact,"N1*PR*",4)
-           datarow[8]=returnelement(transact,"N4*",1)
-           datarow[9]=returnelement(transact,"N4*",2)
-           
-           ## Extract Payee Information
-           datarow[13]=returnelement(transact,"N1*PE*",2)
-           datarow[14]=returnelement(transact,"N1*PE*",4)
-
-           ## Extract Payment Date 
-           datarow[32]=convdate(returnelement(transact,"BPR*",16))
-           
-           ## Find number of claims in transaction set
-           cntclaim=transact.count("~CLP")
-
+              ## Extract Production Date
+              proddatepos=content.find("DTM*405*")
+              datarow[2]=convdate(content[proddatepos+8:proddatepos+16])
               
-           ## Iterate over all claims in transaction set
-           for j in range(1,cntclaim+1):
-            claimintransaction=j
-            if j<cntclaim:
-               claimstart=transact.replace('~CLP', 'XXXX', j-1).find('~CLP')+1
-               claimend=transact.replace('~CLP','XXXX',j).find("~CLP")
-               claim=transact[claimstart:claimend]
-            elif j==cntclaim:
-               claimstart=transact.rfind("~CLP")+1
-               claim=transact[claimstart:]
+              ## Extract Payer Information
+              datarow[6]=returnelement(transact,"N1*PR*",2)
+              datarow[7]=returnelement(transact,"N1*PR*",4)
+              datarow[8]=returnelement(transact,"N4*",1)
+              datarow[9]=returnelement(transact,"N4*",2)
+              
+              ## Extract Payee Information
+              datarow[13]=returnelement(transact,"N1*PE*",2)
+              datarow[14]=returnelement(transact,"N1*PE*",4)
 
-            ## Extract Patient and Payer Claim Number
-            datarow[3]=returnelement(claim,"CLP",1)
-            datarow[4]=returnelement(claim,"CLP",7)
+              ## Extract Payment Date 
+              datarow[32]=convdate(returnelement(transact,"BPR*",16))
+              
+              ## Find number of claims in transaction set
+              cntclaim=transact.count("~CLP")
 
-            ## Extract Patient Info
-            datarow[17]=returnelement(claim,"NM1*QC*",3)
-            datarow[18]=returnelement(claim,"NM1*QC*",4)
-            datarow[19]=returnelement(claim,"NM1*QC*",5)
-            datarow[20]=returnelement(claim,"NM1*QC*",9)
-            
-            ## Extract Provider Info
-            datarow[21]=returnelement(claim,"NM1*82*",3)
-            datarow[22]=returnelement(claim,"NM1*82*",4)
-            datarow[23]=returnelement(claim,"NM1*82*",5)
-            datarow[24]=returnelement(claim,"NM1*82*",9)
+                 
+              ## Iterate over all claims in transaction set
+              for j in range(1,cntclaim+1):
+               claimintransaction=j
+               if j<cntclaim:
+                  claimstart=transact.replace('~CLP', 'XXXX', j-1).find('~CLP')+1
+                  claimend=transact.replace('~CLP','XXXX',j).find("~CLP")
+                  claim=transact[claimstart:claimend]
+               elif j==cntclaim:
+                  claimstart=transact.rfind("~CLP")+1
+                  claim=transact[claimstart:]
 
-            ## Extract Crossover Carrier
-            datarow[25]=returnelement(claim,"NM1*TT*",3)
+               ## Extract Patient and Payer Claim Number
+               datarow[3]=returnelement(claim,"CLP",1)
+               datarow[4]=returnelement(claim,"CLP",7)
 
-            ## Extract Product Type
-            datarow[11]=returnelement(claim,"REF*CE*",2)
+               ## Extract Patient Info
+               datarow[17]=returnelement(claim,"NM1*QC*",3)
+               datarow[18]=returnelement(claim,"NM1*QC*",4)
+               datarow[19]=returnelement(claim,"NM1*QC*",5)
+               datarow[20]=returnelement(claim,"NM1*QC*",9)
+               
+               ## Extract Provider Info
+               datarow[21]=returnelement(claim,"NM1*82*",3)
+               datarow[22]=returnelement(claim,"NM1*82*",4)
+               datarow[23]=returnelement(claim,"NM1*82*",5)
+               datarow[24]=returnelement(claim,"NM1*82*",9)
 
-            ## Extract Claim Payment Info
-            datarow[51]=returnelement(claim,"CLP",3)
-            datarow[52]=returnelement(claim,"CLP",4)
-            datarow[53]=returnelement(claim,"CLP",5)
+               ## Extract Crossover Carrier
+               datarow[25]=returnelement(claim,"NM1*TT*",3)
 
-            
-            ## Extract Claim Date
-            datarow[30]=convdate(returnelement(claim,"DTM*050*",2))
-          
-            ## Find number of service line items in claim
-            cntitem=claim.count("~SVC")
+               ## Extract Product Type
+               datarow[11]=returnelement(claim,"REF*CE*",2)
 
-            ## Iterate over all items in claim
-            for k in range(1,cntitem+1):
-                iteminclaim=k
-                n=n+1
-                if k<cntitem:
-                   itemstart=claim.replace("~SVC", "XXXX", k-1).find("~SVC")+1
-                   itemend=claim.replace("~SVC", "XXXX", k).find("~SVC")
-                   item=claim[itemstart:itemend]
-                elif k==cntitem:
-                   itemstart=claim.rfind("~SVC")+1
-                   item=claim[itemstart:]
+               ## Extract Claim Payment Info
+               datarow[51]=returnelement(claim,"CLP",3)
+               datarow[52]=returnelement(claim,"CLP",4)
+               datarow[53]=returnelement(claim,"CLP",5)
+
+               
+               ## Extract Claim Date
+               datarow[30]=convdate(returnelement(claim,"DTM*050*",2))
+             
+               ## Find number of service line items in claim
+               cntitem=claim.count("~SVC")
+
+               ## Iterate over all items in claim
+               for k in range(1,cntitem+1):
+                   iteminclaim=k
+                   n=n+1
+                   if k<cntitem:
+                      itemstart=claim.replace("~SVC", "XXXX", k-1).find("~SVC")+1
+                      itemend=claim.replace("~SVC", "XXXX", k).find("~SVC")
+                      item=claim[itemstart:itemend]
+                   elif k==cntitem:
+                      itemstart=claim.rfind("~SVC")+1
+                      item=claim[itemstart:]
 
 
-                ## Extract Service Line Item Number
-                datarow[5]=str(returnelement(item,"REF*6R*",2))
+                   ## Extract Service Line Item Number
+                   datarow[5]=str(returnelement(item,"REF*6R*",2))
 
-                ## Extract Service Date
-                datarow[25]=convdate(returnelement(item,"DTM*472*",2))
-                ## Extract Service Code & Code Modifiers
-                datarow[26]=returnsubelement((returnelement(item,"SVC*",1)[3:]),1)
-                datarow[27]=returnsubelement((returnelement(item,"SVC*",1)[3:]),2)
-                datarow[28]=returnsubelement((returnelement(item,"SVC*",1)[3:]),3)
+                   ## Extract Service Date
+                   datarow[25]=convdate(returnelement(item,"DTM*472*",2))
+                   ## Extract Service Code & Code Modifiers
+                   datarow[26]=returnsubelement((returnelement(item,"SVC*",1)[3:]),1)
+                   datarow[27]=returnsubelement((returnelement(item,"SVC*",1)[3:]),2)
+                   datarow[28]=returnsubelement((returnelement(item,"SVC*",1)[3:]),3)
 
-                ## Extract Amount Charged
-                datarow[29]=returnelement(item,"SVC*",2)
+                   ## Extract Amount Charged
+                   datarow[29]=returnelement(item,"SVC*",2)
 
-                ## Extract Amount Paid
-                datarow[31]=returnelement(item,"SVC*",3)
+                   ## Extract Amount Paid
+                   datarow[31]=returnelement(item,"SVC*",3)
 
-                ## Find number of claim adjustments for each item (max 6)
-                cntadj=item.count("~CAS")
+                   ## Find number of claim adjustments for each item (max 6)
+                   cntadj=item.count("~CAS")
 
-                
-                ## Iterate over all claim adjustment CAS for each item
-                for l in range(0,6):
-                    
-                    if l<cntadj-1:
-                        adjstart=item.replace("~CAS", "XXXX", l).find("~CAS")+1
-                        adjend=item.replace("~CAS", "XXXX", l+1).find("~CAS")
-                        adj=item[adjstart:adjend]
-                    elif l==cntadj-1:
-                        adjstart=item.replace("~CAS", "XXXX", l).find("~CAS")+1
-                        adjhelp=item[adjstart:]
-                        adj=adjhelp[:(adjhelp.find("~"))]    ## <-- careful, following element varies, so only the ~-sign as terminator!
-                    elif l>=cntadj:
-                        adj=''
-                        
+                   
+                   ## Iterate over all claim adjustment CAS for each item
+                   for l in range(0,6):
+                       
+                       if l<cntadj-1:
+                           adjstart=item.replace("~CAS", "XXXX", l).find("~CAS")+1
+                           adjend=item.replace("~CAS", "XXXX", l+1).find("~CAS")
+                           adj=item[adjstart:adjend]
+                       elif l==cntadj-1:
+                           adjstart=item.replace("~CAS", "XXXX", l).find("~CAS")+1
+                           adjhelp=item[adjstart:]
+                           adj=adjhelp[:(adjhelp.find("~"))]    ## <-- careful, following element varies, so only the ~-sign as terminator!
+                       elif l>=cntadj:
+                           adj=''
+                           
 
-                    ## Extract data for claim adjustment
-                        
-                    ## Extract CA Group Code
-                    datarow[33+l*3]=returnelem(adj,1)
-                    ## Extract CA Reason Code
-                    datarow[34+l*3]=returnelem(adj,2)
-                    ## Extract CA Amount
-                    datarow[35+l*3]=returnelem(adj,3)   
+                       ## Extract data for claim adjustment
+                           
+                       ## Extract CA Group Code
+                       datarow[33+l*3]=returnelem(adj,1)
+                       ## Extract CA Reason Code
+                       datarow[34+l*3]=returnelem(adj,2)
+                       ## Extract CA Amount
+                       datarow[35+l*3]=returnelem(adj,3)   
 
-                    
-                ## add string to data
-                update=datarow[:]
-                data.append(update)
+                       
+                   ## add string to data
+                   update=datarow[:]
+                   data.append(update)
                 
                 
 
