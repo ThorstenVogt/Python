@@ -1,19 +1,20 @@
 data = [[
 "Transact No","Filename","Prod Date"		        		## 0-2		TRN*: 2   FILENAME, DTM*405
-,"Pat Ctrl No","Payer Clm No","Line Item No"		        	## 3-5		CLP*: 2,7   REF*6R*:  3
-,"Payer Nm", "Payer Id", "Payer City", "Payer State","Crossover Payer"	## 6-10		N1*PR*:  2,4  ~N4*: 1,2
-,"Payee Nm", "Payee id", "Payee City", "Payee State"			## 11-14	N1*PE*:  2,4  ~N4*: 1,2
-,"Pat Last Nm","Pat First Nm","Pat Mid Init","Pat Id"            	## 15-18	NM1*QC*: 3,4,5,9
-,"Prov Last Nm","Prov First Nm","Prov Mid Init", "Prov Id"        	## 19-22	NM1*82*: 3,4,5,9
-,"Srv Date","Srv Code"  						## 23-24	DTM*472: 2  SVC* 1 seg 2
-,"Amt chrgd", "Clm Date"						## 25-26	SVC* 2      DTM*050* 2
-,"Amt paid", "Pmt Date"	        					## 27-28	SCV* 3      BPR*:    16
-,"CA Grp 1","CA Rsn 1","CA Amt 1"				        ## 29-31	CAS* 1,2,3
-,"CA Grp 2","CA Rsn 2","CA Amt 2"				        ## 32-34	
-,"CA Grp 3","CA Rsn 3","CA Amt 3"				        ## 35-37	
-,"CA Grp 4","CA Rsn 4","CA Amt 4"				        ## 38-40	
-,"CA Grp 5","CA Rsn 5","CA Amt 5"				        ## 41-43	
-,"CA Grp 6","CA Rsn 6","CA Amt 6"				        ## 44-46	
-,"Clm Chrg","Clm Pmt", "Clm Pat"]]					## 47-49	CLP 3,4,5
+,"Pat Ctrl No","Payer Clm No","Line Item No"		        	## 3-5		CLP*: 1,7   REF*6R*:  3
+,"Payer Nm", "Payer Id", "Payer City", "Payer State","Crossover Payer"	## 6-10		N1*PR*:  2,4  N4*: 1,2  NM1*TT:  3
+,"Product Type"								## 11-12	REF*CE*:   2
+,"Payee Nm", "Payee id", "Payee City", "Payee State"			## 13-16	N1*PE*:  2,4  N4*: 1,2
+,"Pat Last Nm","Pat First Nm","Pat Mid Init","Pat Id"            	## 17-20	NM1*QC*: 3,4,5,9
+,"Prov Last Nm","Prov First Nm","Prov Mid Init", "Prov Id"        	## 21-24	NM1*82*: 3,4,5,9
+,"Srv Date","Srv Code"  						## 25-26	DTM*472: 2  SVC* 1 seg 2
+,"Amt chrgd", "Clm Date"						## 27-28	SVC* 2      DTM*050* 2
+,"Amt paid", "Pmt Date"	        					## 29-30	SCV* 3      BPR*:    16
+,"CA Grp 1","CA Rsn 1","CA Amt 1"				        ## 31-33	CAS* 1,2,3
+,"CA Grp 2","CA Rsn 2","CA Amt 2"				        ## 34-36	
+,"CA Grp 3","CA Rsn 3","CA Amt 3"				        ## 37-39	
+,"CA Grp 4","CA Rsn 4","CA Amt 4"				        ## 40-42	
+,"CA Grp 5","CA Rsn 5","CA Amt 5"				        ## 43-45	
+,"CA Grp 6","CA Rsn 6","CA Amt 6"				        ## 46-48
+,"Clm Chrg","Clm Pmt", "Clm Pat"]]					## 49-51	CLP 3,4,5
 
 

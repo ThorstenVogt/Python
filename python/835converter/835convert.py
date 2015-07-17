@@ -83,15 +83,10 @@ datastructure = [
 ,"Clm Chrg","Clm Pmt", "Clm Pat"]					## 49-51	CLP 3,4,5
 
 
-## Turn the Data Structure into a String
-datastructurestring = ''
-for element in datastructure:
+
    
-   datastructurestring += str(element)+', '
-   
-      ## add datarow to data
-print datastructurestring
-data.append([datastructurestring[:-2]])
+## add datastructure to data
+data.append(datastructure)
 
 
 ## this is the intermediate storage where data is collected for each line item
@@ -257,15 +252,14 @@ for infile in listing:
                     ## Extract CA Amount
                     datarow[33+l*3]=returnelem(adj,4)   
 
-                ## Turn datarow into string
-                datarowstring = ''
-                for element in datarow:
+                ## Make a copy of datarow to write into data
+                    # This is important; otherwise all the datarows will be identical; when a pointer changes,
+                    # ALL the rows already in data change as well
+                update=datarow[:]
+
                     
-                    datarowstring += str(element)+', '
-                    
-                ## add string to data
-            
-                data.append([datarowstring[:-2]])
+                ## add update to data
+                data.append(update)
                 
                 
 
