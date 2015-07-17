@@ -81,7 +81,7 @@ data = [[
 ,"Clm Chrg","Clm Pmt", "Clm Pat"]]					## 49-51	CLP 3,4,5
 
 ## this is the intermediate storage where data is collected for each line item
-datarow=['']*48
+datarow=['']*52
 
 
 
